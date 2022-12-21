@@ -22,10 +22,14 @@ public enum KEY_SCRIPT_DATA
     Text,
     TextDuration,
     SkipMethod,
-    SkipDuration,
+    SkipDelay,
     Event,
     EventDuration,
     EventParam0,
     EventParam1,
+    EventParam2,
+    EventParam3,
+    EventParam4,
+    EventParam5,
 }
 #endregion

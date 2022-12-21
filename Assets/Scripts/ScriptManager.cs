@@ -8,6 +8,12 @@ public static class ScriptManager
     private static ScriptObject currentScript = null;
     public static List<ScriptObject> scripts = new List<ScriptObject>();
 
+    public static void ReadScript()
+    {
+        ScriptManager.scripts = CSVReader.ReadScript("Data/ScriptTable.CSV");
+    }
+
+
     public static void SetCurrentIndex(int idx)
     {
         currentIndex = idx;

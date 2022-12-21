@@ -38,7 +38,7 @@ public static class ExFunctions
 
     public static void Log(this ScriptObject obj)
     {
-        Debug.Log("{ " + obj.scriptID + ", " + obj.characterName+ ", " + obj.text + ", " + obj.textDuration + ", " + obj.skipMethod + ", " + obj.skipDuration + ", " + obj.eventType + ", " + obj.eventDuration + " }");
+        Debug.Log("{ " + obj.scriptID + ", " + obj.characterName+ ", " + obj.text + ", " + obj.textDuration + ", " + obj.skipMethod + ", " + obj.skipDelay + ", " + obj.eventType + ", " + obj.eventDuration + " }");
     }
 
     public static int TextLength(this string richText)
