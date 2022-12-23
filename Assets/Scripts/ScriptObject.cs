@@ -23,6 +23,7 @@ public enum EventType
 [System.Serializable]
 public class ScriptObject
 {
+
     public static readonly int UNVALID_ID = -1;
     public static readonly float DEFAULT_TEXT_DURATION = 0.1f;
     public static readonly SkipMethod DEFAULT_SKIP_METHOD = SkipMethod.Skipable;
@@ -40,9 +41,23 @@ public class ScriptObject
     //public EventType eventType = DEFAULT_EVENT_TYPE;
     public SkipMethod skipMethod = DEFAULT_SKIP_METHOD;
     public float skipDelay = DEFAULT_SKIP_DURATION;
+    public bool withEvent = false; //변수명 변경 필요. 221223
     public string eventType = null;
     public float eventDuration = DEFAULT_EVENT_DURATION;
     public string[] eventParam = new string[EVENT_PARAM_COUNT];
+
+    public bool isEvent
+    {
+        get
+        {
+            if (eventType != null && eventType.Length != 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     public void SetVariable(string key, string value)
     {
@@ -81,6 +96,10 @@ public class ScriptObject
 
                 case KEY_SCRIPT_DATA.SkipDelay:
                     float.TryParse(value, out skipDelay);
+                    break;
+
+                case KEY_SCRIPT_DATA.WithEvent:
+                    bool.TryParse(value, out withEvent);
                     break;
 
                 case KEY_SCRIPT_DATA.Event:

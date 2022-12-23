@@ -43,10 +43,10 @@ public class EventManager : MonoBehaviour
 
     public void Event_CreateCharacter(Sequence sequence, float duration, string[] parameter)
     {
-        //작동 확인함. 확장하여 다양하게 사용할 방법 고려할 것. 221222
-
         string resource = parameter[0];
         string index = parameter[1];
+        //캐릭터 위치 조정 관련된 파라미터 및 코드 필요.
+        //캐릭터 방향 관련 파라미터 및 코드 필요
 
         Sprite sprite = Resources.Load<Sprite>("Images/" + resource);
 

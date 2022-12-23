@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO : 스크립트의 getter, setter에 예외 처리 해주기. (배열 길이 초과, 없는 scriptID, scriptID 앞자리 변경 등) 221223
 public static class ScriptManager
 {
     private static int currentIndex = 0;
@@ -12,7 +13,6 @@ public static class ScriptManager
     {
         ScriptManager.scripts = CSVReader.ReadScript("Data/ScriptTable.CSV");
     }
-
 
     public static void SetCurrentIndex(int idx)
     {
@@ -33,6 +33,11 @@ public static class ScriptManager
         return script;
     }
 
+    public static ScriptObject GetNextScript()
+    {
+        return scripts[currentIndex + 1];
+    }
+
     public static int Next()
     {
         currentIndex += 1; //스크립트 앞 ID가 바뀌면 넘어가지 않도록 할 것.
@@ -41,6 +46,7 @@ public static class ScriptManager
 
         return currentIndex;
     }
+
 
     public static int GetCurrentScriptIndex()
     {

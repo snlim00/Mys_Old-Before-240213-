@@ -23,6 +23,7 @@ public enum KEY_SCRIPT_DATA
     TextDuration,
     SkipMethod,
     SkipDelay,
+    WithEvent,
     Event,
     EventDuration,
     EventParam0,

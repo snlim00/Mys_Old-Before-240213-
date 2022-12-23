@@ -10,10 +10,12 @@ using System;
 using System.Reflection;
 using System.Linq;
 using UnityEngine.EventSystems;
+using UnityEngine.Assertions.Must;
+using UnityEditor.PackageManager;
 
 public class DialogManager : MonoBehaviour
 {
-    private IDisposable skipStream;
+    private IDisposable skipStream = null;
 
     private TextManager textMgr;
     private EventManager eventMgr;
@@ -39,69 +41,70 @@ public class DialogManager : MonoBehaviour
 
     public void ExecuteScript(ScriptObject script)
     {
-        float skipDuration = script.skipDelay;
-        string eventType = script.eventType;
+        ("ExecuteScript: " + script.scriptID).Log();
 
-        bool isEvent = false;
+        bool isEvent = script.isEvent;
 
-        if (eventType != null && eventType.Length != 0)
-        {
-            isEvent = true;
-        }
+        Sequence sequence = null;
 
         if (isEvent == true)
         {
-            ExecuteEvent(script);
+            sequence = CreateEventSequence(script); //스크립트 종료도 이벤트에서 처리할 것임.
         }
         else
-        {
-            ExecuteText(script);
+        { 
+            sequence = CreateTextSequence(script);
         }
+
+        //스킵 처리
+        if (script.skipMethod == SkipMethod.Auto)
+        {
+            sequence.AppendInterval(script.skipDelay);
+            sequence.AppendCallback(() => "오토스킵".로그());
+            sequence.AppendCallback(() => NextScript());
+        }
+        else if (script.skipMethod == SkipMethod.Skipable)
+        {
+            CreateSkipStream(script, sequence);
+        }
+
+        //연결 이벤트 시퀀스에 추가
+        AppendNextEvent(script, sequence);
+
+        //시퀀스 실행
+        sequence.Play();
     }
 
-    private void ExecuteText(ScriptObject script)
+    private Sequence CreateTextSequence(ScriptObject script)
     {
         Sequence textSeq = textMgr.CreateTextSequence(script);
 
-        float skipDelay = script.skipDelay;
-
-
-        if (script.skipMethod == SkipMethod.Auto)
-        {
-            textSeq.AppendInterval(skipDelay);
-            textSeq.AppendCallback(() => NextScript());
-        }
-
-        textSeq.Play();
-
-
-        //스킵 옵저버 등록
-        if (script.skipMethod == SkipMethod.Skipable)
-        {
-            CreateSkipStream(script, textSeq);
-        }
+        return textSeq;
     }
 
-    private void ExecuteEvent(ScriptObject script)
+    private Sequence CreateEventSequence(ScriptObject script)
     {
         Sequence eventSeq = eventMgr.CreateEventSequence(script);
 
-        float skipDelay = script.skipDelay;
+        return eventSeq;
+    }
 
-        if (script.skipMethod == SkipMethod.Auto)
-        {
-            eventSeq.AppendInterval(skipDelay);
-            eventSeq.AppendCallback(() => NextScript());
-        }
+    private void AppendNextEvent(ScriptObject script, Sequence sequence)
+    {
+        if (script.withEvent == false) return;
 
-        eventSeq.Play();
+        ScriptManager.Next(); //만약 실수로 다음이 이벤트가 아님에도 withEvent를 달았을 때, 인덱스 하나가 스킵되는 문제가 있음. (Next는 아예 다음 인덱스로 넘어가기 때문에) 221223
+        ScriptObject nextScript = ScriptManager.GetCurrentScript();
 
+        if (nextScript.isEvent == false) return;
 
-        //스킵 옵저버 등록
-        if (script.skipMethod == SkipMethod.Skipable)
-        {
-            CreateSkipStream(script, eventSeq);
-        }
+        Sequence nextEvent = eventMgr.CreateEventSequence(nextScript);
+
+        sequence.Insert(0, nextEvent);
+
+        "AppendNextEvent".Log();
+
+        AppendNextEvent(nextScript, sequence);
     }
 
     private void CreateSkipStream(ScriptObject script, Sequence sequence)
@@ -115,14 +118,10 @@ public class DialogManager : MonoBehaviour
     {
         if (sequence.IsActive() && script.skipMethod == SkipMethod.Skipable)
         {
-            "텍스트 연출 스킵".Log();
             sequence.Kill(true);
         }
         else if (sequence.IsActive() == false)
         {
-            //스크립트 종료 시 다음 스크립트가 아닌 대화 종료가 되도록 하기!
-
-            "다음 대사로 이동".Log();
             NextScript();
         }
     }
@@ -130,18 +129,15 @@ public class DialogManager : MonoBehaviour
     private void NextScript()
     {
         ScriptManager.Next();
-        skipStream.Dispose();
+
+        if(skipStream != null)
+        {
+            skipStream.Dispose();
+        }
 
         ExecuteScript(ScriptManager.GetCurrentScript());
 
+
         "다음 스크립트".로그();
-    }
-
-    public void CloseScript(Action callback)
-    {
-        //scriptSequence.Kill(true);
-        //skipStream.Dispose();
-
-        //callback();
     }
 }
