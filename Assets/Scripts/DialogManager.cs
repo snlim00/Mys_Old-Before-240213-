@@ -76,16 +76,32 @@ public class DialogManager : MonoBehaviour
 
 
         //스킵 옵저버 등록
-        CreateSkipStream(script, textSeq);
+        if (script.skipMethod == SkipMethod.Skipable)
+        {
+            CreateSkipStream(script, textSeq);
+        }
     }
 
     private void ExecuteEvent(ScriptObject script)
     {
         Sequence eventSeq = eventMgr.CreateEventSequence(script);
 
+        float skipDelay = script.skipDelay;
+
+        if (script.skipMethod == SkipMethod.Auto)
+        {
+            eventSeq.AppendInterval(skipDelay);
+            eventSeq.AppendCallback(() => NextScript());
+        }
+
         eventSeq.Play();
 
-        CreateSkipStream(script, eventSeq);
+
+        //스킵 옵저버 등록
+        if (script.skipMethod == SkipMethod.Skipable)
+        {
+            CreateSkipStream(script, eventSeq);
+        }
     }
 
     private void CreateSkipStream(ScriptObject script, Sequence sequence)

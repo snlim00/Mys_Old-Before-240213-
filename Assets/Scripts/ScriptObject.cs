@@ -12,17 +12,17 @@ public enum SkipMethod
     //WithNext, //해당 스크립트와 함께 다음 스크립트 즉시 시작. (다음 스크립트가 이벤트가 아니라면 무효 처리) //관련 처리는 SKipMethod가 아닌 별도의 파라미터로 처리하는 것이 좋을 듯. 221220
 }
 
+public enum EventType
+{
+    None,
+    ChangeCharacter,
+    ChangeBackground,
+}
+
+//해당 클래스의 모든 멤버변수는 멤버함수에 의해서만 변경되어야 함.
 [System.Serializable]
 public class ScriptObject
 {
-
-    public enum EventType
-    {
-        None,
-        ChangeCharacter,
-        ChangeBackground,
-    }
-
     public static readonly int UNVALID_ID = -1;
     public static readonly float DEFAULT_TEXT_DURATION = 0.1f;
     public static readonly SkipMethod DEFAULT_SKIP_METHOD = SkipMethod.Skipable;

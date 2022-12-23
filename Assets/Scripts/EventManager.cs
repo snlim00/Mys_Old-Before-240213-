@@ -13,38 +13,51 @@ using UnityEditor;
 public class EventManager : MonoBehaviour
 {
     [SerializeField] private GameObject characters;
-    [SerializeField] private GameObject characterPref;
-    private List<Image> characterList;
+    private GameObject characterPref;
+    private Dictionary<string, Image> characterList;
 
     private void Awake()
     {
-        characterList = new List<Image>();
+        characterList = new Dictionary<string, Image>();
+        characterPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
     }
 
     public Sequence CreateEventSequence(ScriptObject script)
     {
-        "이벤트 실행".로그();
-
         Sequence eventSequence = DOTween.Sequence().Pause();
 
-        Event_CreateCharacter(eventSequence, 10, null);
+        CallEvent(script, eventSequence);
 
         return eventSequence;
+    }
+
+    public void CallEvent(ScriptObject script, Sequence sequence)
+    {
+        Event_CreateCharacter(sequence, 10, script.eventParam);
+
+        switch(script.eventType)
+        {
+            //case EventType.
+        }
     }
 
     public void Event_CreateCharacter(Sequence sequence, float duration, string[] parameter)
     {
         //작동 확인함. 확장하여 다양하게 사용할 방법 고려할 것. 221222
 
-        //string resource = parameter[0];
-        //int index = int.Parse(parameter[1]);
-        int index = 0;
+        string resource = parameter[0];
+        string index = parameter[1];
+
+        Sprite sprite = Resources.Load<Sprite>("Images/" + resource);
 
         Image character = Instantiate(characterPref).GetComponent<Image>();
-        //characterList[index] = character;
+        characterList[index] = character;
+
+        character.sprite = sprite;
         character.transform.SetParent(characters.transform);
         character.transform.localPosition = new Vector2(0, 0);
+        character.color = new Color(255, 255, 255, 0); //테스트 코드
 
-        sequence.Append(character.DOFade(0, 10));
+        sequence.Append(character.DOFade(1, 2));
     }
 }
