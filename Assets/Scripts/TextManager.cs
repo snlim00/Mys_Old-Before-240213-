@@ -25,7 +25,7 @@ public class TextManager : MonoBehaviour
 
         float skipDuration = script.skipDelay;
 
-        Sequence textSeq = DOTween.Sequence().Pause();
+        Sequence textSeq = DOTween.Sequence().Pause().SetAutoKill(false);
         textSeq.AppendCallback(() => textBox.text = "");
 
         if (textDuration == 0) //textDuration이 0이라면 DOText를 실행하지 않고 그냥 텍스트를 설정하도록 함. (안 그러면 시퀀스가 좀 이상해지는 듯) 221219

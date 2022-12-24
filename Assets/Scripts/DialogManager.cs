@@ -49,7 +49,7 @@ public class DialogManager : MonoBehaviour
 
         if (isEvent == true)
         {
-            sequence = CreateEventSequence(script); //스크립트 종료도 이벤트에서 처리할 것임.
+            sequence = CreateEventSequence(script); //스크립트 종료도 이벤트에서 처리할 것임. 221223
         }
         else
         { 
@@ -59,11 +59,14 @@ public class DialogManager : MonoBehaviour
         //스킵 처리
         if (script.skipMethod == SkipMethod.Auto)
         {
-            sequence.AppendInterval(script.skipDelay);
-            sequence.AppendCallback(() => "오토스킵".로그());
+            sequence.AppendInterval(script.skipDelay); 
+            //스킵 딜레이로 하는 것도 좋은데 텍스트가 이벤트에 비해 너무 짧은 경우에 대한 처리 필요함!! 221223
+            //(AppendINterval이 아닌 Insert로 한 후 가장 긴 시간을 넣는 것도 방법일 듯) 
+            //스킵할 때는 이게 문제되지 않음 221224
+            
             sequence.AppendCallback(() => NextScript());
         }
-        else if (script.skipMethod == SkipMethod.Skipable)
+        else
         {
             CreateSkipStream(script, sequence);
         }
@@ -93,7 +96,7 @@ public class DialogManager : MonoBehaviour
     {
         if (script.withEvent == false) return;
 
-        ScriptManager.Next(); //만약 실수로 다음이 이벤트가 아님에도 withEvent를 달았을 때, 인덱스 하나가 스킵되는 문제가 있음. (Next는 아예 다음 인덱스로 넘어가기 때문에) 221223
+        ScriptManager.Next();
         ScriptObject nextScript = ScriptManager.GetCurrentScript();
 
         if (nextScript.isEvent == false) return;
@@ -116,11 +119,13 @@ public class DialogManager : MonoBehaviour
 
     private void Skip(ScriptObject script, Sequence sequence)
     {
-        if (sequence.IsActive() && script.skipMethod == SkipMethod.Skipable)
+        if (sequence.IsPlaying() && script.skipMethod == SkipMethod.Skipable)
         {
-            sequence.Kill(true);
+            //sequence.Kill(true);
+            sequence.Complete();
+            //sequence.Pause();
         }
-        else if (sequence.IsActive() == false)
+        else if (sequence.IsPlaying() == false)
         {
             NextScript();
         }
@@ -134,6 +139,7 @@ public class DialogManager : MonoBehaviour
         {
             skipStream.Dispose();
         }
+
 
         ExecuteScript(ScriptManager.GetCurrentScript());
 

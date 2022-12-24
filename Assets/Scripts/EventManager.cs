@@ -24,7 +24,7 @@ public class EventManager : MonoBehaviour
 
     public Sequence CreateEventSequence(ScriptObject script)
     {
-        Sequence eventSequence = DOTween.Sequence().Pause();
+        Sequence eventSequence = DOTween.Sequence().Pause().SetAutoKill(false);
 
         CallEvent(script, eventSequence);
 
@@ -33,7 +33,7 @@ public class EventManager : MonoBehaviour
 
     public void CallEvent(ScriptObject script, Sequence sequence)
     {
-        Event_CreateCharacter(sequence, 10, script.eventParam);
+        Event_CreateCharacter(sequence, script.eventDuration, script.eventParam);
 
         switch(script.eventType)
         {
@@ -58,6 +58,6 @@ public class EventManager : MonoBehaviour
         character.transform.localPosition = new Vector2(0, 0);
         character.color = new Color(255, 255, 255, 0); //테스트 코드
 
-        sequence.Append(character.DOFade(1, 2));
+        sequence.Append(character.DOFade(1, duration));
     }
 }
