@@ -52,17 +52,17 @@ public class DialogManager : MonoBehaviour
             sequence = CreateEventSequence(script); //스크립트 종료도 이벤트에서 처리할 것임. 221223
         }
         else
-        { 
+        {
             sequence = CreateTextSequence(script);
         }
 
         //스킵 처리
         if (script.skipMethod == SkipMethod.Auto)
         {
-            sequence.AppendInterval(script.skipDelay); 
+            sequence.AppendInterval(script.skipDelay);
             //스킵 딜레이로 하는 것도 좋은데 텍스트가 이벤트에 비해 너무 짧은 경우에 대한 처리 필요함!! 221223
-            //(AppendINterval이 아닌 Insert로 한 후 가장 긴 시간을 넣는 것도 방법일 듯) 
-            //스킵할 때는 이게 문제되지 않음 221224
+            //(AppendINterval이 아닌 Insert로 한 후 가장 긴 시간을 넣는 것도 방법일 듯)
+            //스킵할 때는 이게 문제되지 않음 221224 (이벤트, 텍스트 관계 없이 하나의 시퀀스를 사용하도록 한 이후 알아서 가장 느린 연출 뒤로 가게 됨.)
             
             sequence.AppendCallback(() => NextScript());
         }
@@ -94,7 +94,7 @@ public class DialogManager : MonoBehaviour
 
     private void AppendNextEvent(ScriptObject script, Sequence sequence)
     {
-        if (script.withEvent == false) return;
+        if (script.linkEvent == false) return;
 
         ScriptManager.Next();
         ScriptObject nextScript = ScriptManager.GetCurrentScript();
