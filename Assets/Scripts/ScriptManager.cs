@@ -47,6 +47,22 @@ public static class ScriptManager
         return currentIndex;
     }
 
+    public static int Prev()
+    {
+        currentIndex -= 1;
+
+        SetCurrentIndex(currentIndex);
+
+        return currentIndex;
+    }
+
+
+    public static int GetPrefixID(int id)
+    {
+        int prefixID = (int)Mathf.Floor(id / 10000f);
+
+        return prefixID;
+    }
 
     public static int GetCurrentScriptIndex()
     {

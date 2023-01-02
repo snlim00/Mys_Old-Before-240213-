@@ -24,7 +24,7 @@ public class EventManager : MonoBehaviour
 
     public Sequence CreateEventSequence(ScriptObject script)
     {
-        Sequence eventSequence = DOTween.Sequence().Pause().SetAutoKill(false);
+        Sequence eventSequence = DOTween.Sequence();
 
         CallEvent(script, eventSequence);
 

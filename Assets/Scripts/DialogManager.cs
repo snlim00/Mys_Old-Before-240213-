@@ -31,15 +31,18 @@ public class DialogManager : MonoBehaviour
     {
         ScriptManager.ReadScript();
 
-        ScriptManager.SetScriptFromID(10001);
-
-
-        ScriptObject currentScript = ScriptManager.GetCurrentScript();
-
-        ExecuteScript(currentScript);
+        DialogStart(10001);
     }
 
-    public void ExecuteScript(ScriptObject script)
+    private void DialogStart(int scriptID)
+    {
+        ScriptManager.SetScriptFromID(scriptID);
+        ScriptObject script = ScriptManager.GetCurrentScript();
+
+        ExecuteScript(script);
+    }
+
+    private void ExecuteScript(ScriptObject script)
     {
         ("ExecuteScript: " + script.scriptID).Log();
 
@@ -72,7 +75,7 @@ public class DialogManager : MonoBehaviour
         }
 
         //연결 이벤트 시퀀스에 추가
-        AppendNextEvent(script, sequence);
+        AppendLinkEvent(script, sequence);
 
         //시퀀스 실행
         sequence.Play();
@@ -92,14 +95,18 @@ public class DialogManager : MonoBehaviour
         return eventSeq;
     }
 
-    private void AppendNextEvent(ScriptObject script, Sequence sequence)
+    private void AppendLinkEvent(ScriptObject script, Sequence sequence)
     {
         if (script.linkEvent == false) return;
 
         ScriptManager.Next();
         ScriptObject nextScript = ScriptManager.GetCurrentScript();
 
-        if (nextScript.isEvent == false) return;
+        if (nextScript.isEvent == false)
+        {
+            ScriptManager.Prev();
+            return;
+        }
 
         Sequence nextEvent = eventMgr.CreateEventSequence(nextScript);
 
@@ -107,7 +114,7 @@ public class DialogManager : MonoBehaviour
 
         "AppendNextEvent".Log();
 
-        AppendNextEvent(nextScript, sequence);
+        AppendLinkEvent(nextScript, sequence);
     }
 
     private void CreateSkipStream(ScriptObject script, Sequence sequence)
