@@ -10,8 +10,6 @@ using System;
 using System.Reflection;
 using System.Linq;
 using UnityEngine.EventSystems;
-using UnityEngine.Assertions.Must;
-using UnityEditor.PackageManager;
 
 public class DialogManager : MonoBehaviour
 {
@@ -19,6 +17,8 @@ public class DialogManager : MonoBehaviour
 
     private TextManager textMgr;
     private EventManager eventMgr;
+
+    private List<Tween> tweenList;
 
     private void Awake()
     {
@@ -44,43 +44,89 @@ public class DialogManager : MonoBehaviour
 
     private void ExecuteScript(ScriptObject script)
     {
+        tweenList = new List<Tween>();
+
         ("ExecuteScript: " + script.scriptID).Log();
 
         bool isEvent = script.isEvent;
 
-        Sequence sequence = null;
-
         if (isEvent == true)
         {
-            sequence = CreateEventSequence(script); //스크립트 종료도 이벤트에서 처리할 것임. 221223
+            tweenList.Add(CreateEventSequence(script)); //스크립트 종료도 이벤트에서 처리할 것임. 221223
         }
         else
         {
-            sequence = CreateTextSequence(script);
+            tweenList.Add(CreateTextSequence(script));
         }
+
+        AppendLinkEvent(script);
 
         //스킵 처리
         if (script.skipMethod == SkipMethod.Auto)
         {
-            sequence.AppendInterval(script.skipDelay);
-            //스킵 딜레이로 하는 것도 좋은데 텍스트가 이벤트에 비해 너무 짧은 경우에 대한 처리 필요함!! 221223
-            //(AppendINterval이 아닌 Insert로 한 후 가장 긴 시간을 넣는 것도 방법일 듯)
-            //스킵할 때는 이게 문제되지 않음 221224 (이벤트, 텍스트 관계 없이 하나의 시퀀스를 사용하도록 한 이후 알아서 가장 느린 연출 뒤로 가게 됨.)
-            
-            sequence.AppendCallback(() => NextScript());
+            Sequence skipSeq = DOTween.Sequence();
+
+            //가장 큰 duration 뽑기
+            float duration = tweenList[0].Duration();
+            for(int i = 1; i < tweenList.Count; ++i)
+            {
+                if(tweenList[i].Duration() == Mathf.Infinity) continue;
+
+                if(duration < tweenList[i].Duration() || duration == Mathf.Infinity)
+                {
+                    duration = tweenList[i].Duration();
+                }
+            }
+
+            float skipDelay = 0;
+            if(duration == Mathf.Infinity)
+            {
+                skipDelay = script.skipDelay;
+            }
+            else
+            {
+                skipDelay = duration + script.skipDelay;
+            }
+
+            skipSeq.AppendInterval(skipDelay);
+            skipSeq.AppendCallback(() => NextScript());
+
+            tweenList.Add(skipSeq);
         }
         else
         {
-            CreateSkipStream(script, sequence);
+            CreateSkipStream(script);
         }
 
-        //연결 이벤트 시퀀스에 추가
-        AppendLinkEvent(script, sequence);
-
-        //시퀀스 실행
-        sequence.Play();
+        PlayAllTweens();
     }
 
+    #region DoAllTweens
+    private void DoAllTweens(Action<Tween> action)
+    {
+        foreach(Tween tween in tweenList)
+        {
+            action(tween);
+        }
+    }
+
+    private void PlayAllTweens()
+    {
+        DoAllTweens(tween => tween.Play());
+    }
+
+    private void PauseAllTweens()
+    {
+        DoAllTweens(tween => tween.Pause());
+    }
+
+    private void CompleteAllTweens()
+    {
+        DoAllTweens(tween => tween.Complete());
+    }
+    #endregion
+
+    #region CreateSequences
     private Sequence CreateTextSequence(ScriptObject script)
     {
         Sequence textSeq = textMgr.CreateTextSequence(script);
@@ -94,8 +140,9 @@ public class DialogManager : MonoBehaviour
 
         return eventSeq;
     }
+    #endregion
 
-    private void AppendLinkEvent(ScriptObject script, Sequence sequence)
+    private void AppendLinkEvent(ScriptObject script)
     {
         if (script.linkEvent == false) return;
 
@@ -110,31 +157,47 @@ public class DialogManager : MonoBehaviour
 
         Sequence nextEvent = eventMgr.CreateEventSequence(nextScript);
 
-        sequence.Insert(0, nextEvent);
+        tweenList.Add(nextEvent);
 
         "AppendNextEvent".Log();
-
-        AppendLinkEvent(nextScript, sequence);
     }
 
-    private void CreateSkipStream(ScriptObject script, Sequence sequence)
+    private void CreateSkipStream(ScriptObject script)
     {
         skipStream = Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.Space))
-            .Subscribe(_ => Skip(script, sequence));
+            .Subscribe(_ => Skip(script));
     }
 
-    private void Skip(ScriptObject script, Sequence sequence)
+    private void Skip(ScriptObject script)
     {
-        if (sequence.IsPlaying() && script.skipMethod == SkipMethod.Skipable)
+        "스킵".로그();
+        bool isPlaying = false;
+
+        isPlaying.Log();
+
+        foreach(var tween in tweenList)
         {
-            //sequence.Kill(true);
-            sequence.Complete();
-            //sequence.Pause();
+            if(tween.IsPlaying() == true)
+            {
+                isPlaying = true;
+                break;
+            }
         }
-        else if (sequence.IsPlaying() == false)
+
+        if(script.skipMethod == SkipMethod.Skipable && isPlaying == true)
         {
+            CompleteAllTweens();
+        }
+        else if(isPlaying == false)
+        {
+            skipStream.Dispose();
+            PauseAllTweens(); //Loop Event들은 위의 Complete로 멈추지 않기(멈춰서도 안 됨) 때문에 여기서 퍼즈시켜줌.
             NextScript();
+        }
+        else
+        {
+            "스킵 씹힘".로그();
         }
     }
 
