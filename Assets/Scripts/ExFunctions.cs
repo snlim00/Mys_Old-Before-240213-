@@ -10,6 +10,11 @@ public static class ExFunctions
         Debug.Log(obj);
     }
 
+    public static void LogError(this object obj)
+    {
+        Debug.LogError(obj);
+    }
+
     public static void ·Î±×(this object obj)
     {
         Debug.Log(obj);

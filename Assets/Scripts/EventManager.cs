@@ -26,22 +26,28 @@ public class EventManager : MonoBehaviour
     {
         Sequence eventSequence = DOTween.Sequence();
 
-        CallEvent(script, eventSequence);
+        CallEvent(script, ref eventSequence);
 
         return eventSequence;
     }
 
-    public void CallEvent(ScriptObject script, Sequence sequence)
+    public void CallEvent(ScriptObject script, ref Sequence sequence)
     {
         Event_CreateCharacter(sequence, script.eventDuration, script.eventParam);
 
         switch(script.eventType)
         {
-            //case EventType.
+            case EventType.None:
+                ("이벤트가 존재하지 않습니다. ScriptID : " + script.scriptID).LogError();
+                break;
+
+            case EventType.CreateCharacter:
+
+                break;
         }
     }
 
-    public void Event_CreateCharacter(Sequence sequence, float duration, string[] parameter)
+    public void Event_CreateCharacter(Sequence sequence, float duration, List<string> parameter)
     {
         string resource = parameter[0];
         string index = parameter[1];
