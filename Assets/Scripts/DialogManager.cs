@@ -144,7 +144,11 @@ public class DialogManager : MonoBehaviour
 
     private void AppendLinkEvent(ScriptObject script)
     {
-        if (script.linkEvent == false) return;
+        if (script.linkEvent == false)
+        {
+            "No have link event".Log();
+            return;
+        }
 
         ScriptManager.Next();
         ScriptObject nextScript = ScriptManager.GetCurrentScript();
@@ -174,8 +178,6 @@ public class DialogManager : MonoBehaviour
         "스킵".로그();
         bool isPlaying = false;
 
-        isPlaying.Log();
-
         foreach(var tween in tweenList)
         {
             if(tween.IsPlaying() == true)
@@ -185,7 +187,7 @@ public class DialogManager : MonoBehaviour
             }
         }
 
-        if(script.skipMethod == SkipMethod.Skipable && isPlaying == true)
+        if(script.skipMethod == SkipMethod.Skipable && isPlaying == true) //무한 루프가 있다면 항상 isPlaying이 true인 문제가 있음... 무한 루프 트윈은 따로 관리해야 하나..?
         {
             CompleteAllTweens();
         }

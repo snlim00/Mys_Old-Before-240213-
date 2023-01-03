@@ -43,7 +43,7 @@ public static class ExFunctions
 
     public static void Log(this ScriptObject obj)
     {
-        Debug.Log("{ " + obj.scriptID + ", " + obj.characterName+ ", " + obj.text + ", " + obj.textDuration + ", " + obj.skipMethod + ", " + obj.skipDelay + ", " + obj.eventType + ", " + obj.eventDuration + " }");
+        //Debug.Log("{ " + obj.scriptID + ", " + obj.characterName+ ", " + obj.text + ", " + obj.textDuration + ", " + obj.skipMethod + ", " + obj.skipDelay + ", " + obj.eventType + ", " + obj.eventDuration + " }");
     }
 
     //테스트를 위해 추가했던 함수. 사용하지 않음

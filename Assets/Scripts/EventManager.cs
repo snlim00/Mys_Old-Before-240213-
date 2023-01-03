@@ -28,14 +28,31 @@ public class EventManager : MonoBehaviour
 
         CallEvent(script, ref eventSequence);
 
+        //루프 처리
+        if(script.eventData.loopCount != 0)
+        {
+            if(script.eventData.loopDelay != 0)
+            {
+                eventSequence.AppendInterval(script.eventData.loopDelay);
+                "set loop delay".Log();
+            }
+
+            eventSequence.SetLoops(script.eventData.loopCount);
+            "set loop count".Log();
+        }
+        else
+        {
+            ("Not Loop : "+script.eventData.loopCount + " " + script.scriptID).Log();
+        }
+
         return eventSequence;
     }
 
     public void CallEvent(ScriptObject script, ref Sequence sequence)
     {
-        Event_CreateCharacter(sequence, script.eventDuration, script.eventParam);
+        Event_CreateCharacter(sequence, script.eventData);
 
-        switch(script.eventType)
+        switch(script.eventData.eventType)
         {
             case EventType.None:
                 ("이벤트가 존재하지 않습니다. ScriptID : " + script.scriptID).LogError();
@@ -47,10 +64,10 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public void Event_CreateCharacter(Sequence sequence, float duration, List<string> parameter)
+    public void Event_CreateCharacter(Sequence sequence, in EventData eventData)
     {
-        string resource = parameter[0];
-        string index = parameter[1];
+        string resource = eventData.eventParam[0];
+        string index = eventData.eventParam[1];
         //캐릭터 위치 조정 관련된 파라미터 및 코드 필요.
         //캐릭터 방향 관련 파라미터 및 코드 필요
 
@@ -64,6 +81,6 @@ public class EventManager : MonoBehaviour
         character.transform.localPosition = new Vector2(0, 0);
         character.color = new Color(255, 255, 255, 0); //테스트 코드
 
-        sequence.Append(character.DOFade(1, duration));
+        sequence.Append(character.DOFade(1, eventData.eventDuration));
     }
 }
