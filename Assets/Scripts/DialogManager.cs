@@ -146,7 +146,6 @@ public class DialogManager : MonoBehaviour
     {
         if (script.linkEvent == false)
         {
-            "No have link event".Log();
             return;
         }
 
@@ -182,19 +181,30 @@ public class DialogManager : MonoBehaviour
         {
             if(tween.IsPlaying() == true)
             {
-                isPlaying = true;
+                if(tween.Loops() != -1) //무한 루프 트윈들은 제외함
+                {
+                    isPlaying = true;
+                }
+
                 break;
             }
         }
 
         if(script.skipMethod == SkipMethod.Skipable && isPlaying == true) //무한 루프가 있다면 항상 isPlaying이 true인 문제가 있음... 무한 루프 트윈은 따로 관리해야 하나..?
         {
-            CompleteAllTweens();
+            CompleteAllTweens(); //무한 루프 트윈은 Complete가 먹히지 않음.
         }
         else if(isPlaying == false)
         {
             skipStream.Dispose();
-            PauseAllTweens(); //Loop Event들은 위의 Complete로 멈추지 않기(멈춰서도 안 됨) 때문에 여기서 퍼즈시켜줌.
+
+            //무한 루프 트윈을 멈추기 위해 시퀀스의 끝 시간으로 Goto시키고, Pause로 멈춤.
+            DoAllTweens(tween =>
+            {
+                tween.Goto(tween.Duration(false));
+                tween.Pause();
+            });
+            
             NextScript();
         }
         else

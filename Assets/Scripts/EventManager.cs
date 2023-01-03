@@ -40,10 +40,6 @@ public class EventManager : MonoBehaviour
             eventSequence.SetLoops(script.eventData.loopCount);
             "set loop count".Log();
         }
-        else
-        {
-            ("Not Loop : "+script.eventData.loopCount + " " + script.scriptID).Log();
-        }
 
         return eventSequence;
     }
