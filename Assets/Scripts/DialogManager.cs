@@ -11,6 +11,34 @@ using System.Reflection;
 using System.Linq;
 using UnityEngine.EventSystems;
 
+public class TweenObject
+{
+    public Tween tween;
+
+    public int durationTurn = 0;
+    public int remainingTurn = 0;
+    public bool isInfinityLoop
+    {
+        get
+        {
+            if (tween.Loops() == -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+
+    public TweenObject(Tween tween)
+    {
+        this.tween = tween;
+    }
+}
+
 public class DialogManager : MonoBehaviour
 {
     private IDisposable skipStream = null;

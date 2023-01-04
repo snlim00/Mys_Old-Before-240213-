@@ -65,10 +65,6 @@ public class EventData
                     {
                         loopCount = DEFAULT_LOOP_COUNT;
                     }
-                    else
-                    {
-                        loopCount.Log();
-                    }
                     break;
 
                 case KEY_SCRIPT_DATA.LoopDelay:
@@ -91,6 +87,7 @@ public class EventData
 public class ScriptObject
 {
     public static readonly int UNVALID_ID = -1;
+    public static readonly bool DEFAULT_LINK_TEXT = false;
     public static readonly float DEFAULT_TEXT_DURATION = 0.1f;
     public static readonly SkipMethod DEFAULT_SKIP_METHOD = SkipMethod.Skipable;
     public static readonly float DEFAULT_SKIP_DELAY = 0.5f;
@@ -98,6 +95,7 @@ public class ScriptObject
 
     public int scriptID = UNVALID_ID;
     public string characterName = null;
+    public bool linkText = DEFAULT_LINK_TEXT;
     public string text = null;
     public float textDuration = DEFAULT_TEXT_DURATION;
     public SkipMethod skipMethod = DEFAULT_SKIP_METHOD;
@@ -134,6 +132,13 @@ public class ScriptObject
 
                 case KEY_SCRIPT_DATA.CharacterName:
                     characterName = value;
+                    break;
+
+                case KEY_SCRIPT_DATA.LinkText:
+                    if (bool.TryParse(value, out linkText) == false)
+                    {
+                        linkText = DEFAULT_LINK_TEXT;
+                    }
                     break;
 
                 case KEY_SCRIPT_DATA.Text:

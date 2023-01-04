@@ -34,11 +34,9 @@ public class EventManager : MonoBehaviour
             if(script.eventData.loopDelay != 0)
             {
                 eventSequence.AppendInterval(script.eventData.loopDelay);
-                "set loop delay".Log();
             }
 
             eventSequence.SetLoops(script.eventData.loopCount);
-            "set loop count".Log();
         }
 
         return eventSequence;

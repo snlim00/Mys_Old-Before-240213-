@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
- * 대문자는 테이블을 가져올 때 키로 사용하는 값을 의미
+ * 대문자는 테이블을 가져올 때 키로 사용하는 값임을 의미
  */
 
 public static class Constants //해당 프로젝트에서는 사용되지 않음. 221217
@@ -19,6 +19,7 @@ public enum KEY_SCRIPT_DATA
 {
     ScriptID,
     CharacterName,
+    LinkText,
     Text,
     TextDuration,
     SkipMethod,
