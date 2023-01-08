@@ -20,6 +20,6 @@ public class Character : MonoBehaviour
 
         transform.SetParent(parent);
 
-        transform.position = Vector3.zero;
+        transform.localPosition = Vector3.zero;
     }
 }

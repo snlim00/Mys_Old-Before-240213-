@@ -32,6 +32,7 @@ public class TweenObject
 
         if(remainingTurn > 0 && isSkipped == false) //남은 턴이 존재하며, 아직 스킵되지 않은 이벤트라면 턴만 감소시키고 스킵하지 않음.
         {
+            //"턴 감소".Log();
             remainingTurn -= 1;
             isSkipped = true;
         }
@@ -40,6 +41,7 @@ public class TweenObject
             if (isInfinityLoop == false)
             {
                 tween.Complete();
+                //"Complete 1".Log();
                 DialogManager.instance.RemoveTween(this);
             }
             else
@@ -48,6 +50,7 @@ public class TweenObject
                 {
                     tween.Goto(tween.Duration(false));
                     tween.Pause();
+                    //"Complete 2".Log();
                     DialogManager.instance.RemoveTween(this);
                 }
             }
@@ -107,7 +110,7 @@ public class DialogManager : MonoBehaviour
 
     private void DoAllTweens(Action<TweenObject> action)
     {
-        for(int i = 0; i < tweenList.Count; ++i)
+        for(int i = tweenList.Count - 1; i >= 0; --i)
         {
             action(tweenList[i]);
         }
@@ -192,11 +195,13 @@ public class DialogManager : MonoBehaviour
 
             if (tween.IsPlaying() == true)
             {
-                if (tweenObj.isInfinityLoop == false) //무한 루프는 플레이 중 여부를 고려하지 않음.
+                if (tweenObj.isInfinityLoop == true || tweenObj.isSkipped == true) //무한 루프 / 이미 스킵된 트윈은 플레이 중 여부를 고려하지 않음.
                 {
-                    isPlaying = true;
-                    break;
+                    continue;
                 }
+
+                isPlaying = true;
+                break;
             }
         }
 
@@ -219,7 +224,6 @@ public class DialogManager : MonoBehaviour
     {
         //플레이 중인 트윈이 있는지 확인.
         bool isPlaying = ExistPlayingTween();
-        ("Skip : " + isPlaying).Log();
 
         if (script.skipMethod == SkipMethod.Skipable && isPlaying == true)
         {
