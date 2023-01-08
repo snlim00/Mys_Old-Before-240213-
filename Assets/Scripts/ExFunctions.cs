@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class ExFunctions
 {
@@ -70,5 +71,13 @@ public static class ExFunctions
         }
 
         return len;
+    }
+
+    public static void SetAlpha(this MaskableGraphic graphic, float alpha)
+    {
+        Color color = graphic.color;
+        color.a = alpha;
+
+        graphic.color = color;
     }
 }

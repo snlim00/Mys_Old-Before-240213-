@@ -1,86 +1,145 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Callbacks;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using DG.Tweening;
-using UniRx;
 using System;
-using System.Reflection;
-using System.Linq;
-using UnityEngine.EventSystems;
+using UnityEditor;
+using UniRx;
 
 public class TweenObject
 {
     public Tween tween;
 
-    public int durationTurn = 0;
-    public int remainingTurn = 0;
+    public ScriptObject script;
+
+    public int durationTurn = 0; //해당 트윈이 사리지기까지 남은 총 턴. (최초 한 번 초기화 이후 건드리지 않음)
+    public int remainingTurn = 0; //해당 트윈이 사라지기까지 남은 턴.
+    public bool isSkipped = false;
+
     public bool isInfinityLoop
     {
-        get
+        get { return tween.Loops() == -1; }
+    }
+
+    public void Skip(bool completeInfinityLoop = false)
+    {
+        if (script.isEvent == false)
         {
-            if (tween.Loops() == -1)
+            tween.Complete();
+            DialogManager.instance.RemoveTween(this);
+            return;
+        }
+
+        if(remainingTurn > 0 && isSkipped == false) //남은 턴이 존재하며, 아직 스킵되지 않은 이벤트라면 턴만 감소시키고 스킵하지 않음.
+        {
+            remainingTurn -= 1;
+            isSkipped = true;
+        }
+        else if(remainingTurn <= 0)
+        {
+            if (isInfinityLoop == false)
             {
-                return true;
+                tween.Complete();
+                DialogManager.instance.RemoveTween(this);
             }
             else
             {
-                return false;
+                if(completeInfinityLoop == true)
+                {
+                    tween.Goto(tween.Duration(false));
+                    tween.Pause();
+                    DialogManager.instance.RemoveTween(this);
+                }
             }
         }
     }
 
-
-    public TweenObject(Tween tween)
+    public TweenObject(Tween tween, ScriptObject script)
     {
         this.tween = tween;
+        this.script = script;
     }
 }
 
 public class DialogManager : MonoBehaviour
 {
+    public static DialogManager instance = null;
+
     private IDisposable skipStream = null;
 
     private TextManager textMgr;
     private EventManager eventMgr;
 
-    private List<Tween> tweenList;
+    public List<TweenObject> tweenList = new();
 
     private void Awake()
     {
+        if(instance != null)
+        {
+            Destroy(this.gameObject);
+        }
+        instance = this;
+
         textMgr = FindObjectOfType<TextManager>();
         eventMgr = FindObjectOfType<EventManager>();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         ScriptManager.ReadScript();
 
         DialogStart(10001);
     }
 
+    public void RemoveTween(TweenObject tweenObj)
+    {
+        tweenList.Remove(tweenObj);
+    }
+
     private void DialogStart(int scriptID)
     {
-        ScriptManager.SetScriptFromID(scriptID);
-        ScriptObject script = ScriptManager.GetCurrentScript();
+        ScriptObject script = ScriptManager.GetScriptFromID(scriptID);
+
+        ScriptManager.SetCurrentScript(script);
 
         ExecuteScript(script);
     }
 
+    private void DoAllTweens(Action<TweenObject> action)
+    {
+        for(int i = 0; i < tweenList.Count; ++i)
+        {
+            action(tweenList[i]);
+        }
+    }
+
+    private TweenObject CreateTextSequence(ScriptObject script)
+    {
+        Tween tween = textMgr.CreateTextSequence(script);
+        TweenObject tweenObj = new(tween, script);
+
+        return tweenObj;
+    }
+
+    private TweenObject CreateEventSequence(ScriptObject script)
+    {
+        Tween tween = eventMgr.CreateEventSequence(script);
+        TweenObject tweenObj = new(tween, script);
+
+        if (script.eventData.durationTurn > 0)
+        {
+            tweenObj.durationTurn = script.eventData.durationTurn;
+            tweenObj.remainingTurn = script.eventData.durationTurn;
+        }
+
+        return tweenObj;
+    }
+
     private void ExecuteScript(ScriptObject script)
     {
-        tweenList = new List<Tween>();
-
-        ("ExecuteScript: " + script.scriptID).Log();
-
-        bool isEvent = script.isEvent;
-
-        if (isEvent == true)
+        if (script.isEvent == true)
         {
-            tweenList.Add(CreateEventSequence(script)); //스크립트 종료도 이벤트에서 처리할 것임. 221223
+            tweenList.Add(CreateEventSequence(script));
         }
         else
         {
@@ -89,86 +148,18 @@ public class DialogManager : MonoBehaviour
 
         AppendLinkEvent(script);
 
-        //스킵 처리
-        if (script.skipMethod == SkipMethod.Auto)
+        DoAllTweens(tweenObj =>
         {
-            Sequence skipSeq = DOTween.Sequence();
-
-            //가장 큰 duration 뽑기
-            float duration = tweenList[0].Duration();
-            for(int i = 1; i < tweenList.Count; ++i)
+            if (tweenObj.tween.IsPlaying() == false)
             {
-                if(tweenList[i].Duration() == Mathf.Infinity) continue;
-
-                if(duration < tweenList[i].Duration() || duration == Mathf.Infinity)
-                {
-                    duration = tweenList[i].Duration();
-                }
+                tweenObj.tween.Play();
             }
 
-            float skipDelay = 0;
-            if(duration == Mathf.Infinity)
-            {
-                skipDelay = script.skipDelay;
-            }
-            else
-            {
-                skipDelay = duration + script.skipDelay;
-            }
+            tweenObj.isSkipped = false;
+        });
 
-            skipSeq.AppendInterval(skipDelay);
-            skipSeq.AppendCallback(() => NextScript());
-
-            tweenList.Add(skipSeq);
-        }
-        else
-        {
-            CreateSkipStream(script);
-        }
-
-        PlayAllTweens();
+        SetSkip(script);
     }
-
-    #region DoAllTweens
-    private void DoAllTweens(Action<Tween> action)
-    {
-        foreach(Tween tween in tweenList)
-        {
-            action(tween);
-        }
-    }
-
-    private void PlayAllTweens()
-    {
-        DoAllTweens(tween => tween.Play());
-    }
-
-    private void PauseAllTweens()
-    {
-        DoAllTweens(tween => tween.Pause());
-    }
-
-    private void CompleteAllTweens()
-    {
-        DoAllTweens(tween => tween.Complete());
-    }
-    #endregion
-
-    #region CreateSequences
-    private Sequence CreateTextSequence(ScriptObject script)
-    {
-        Sequence textSeq = textMgr.CreateTextSequence(script);
-
-        return textSeq;
-    }
-
-    private Sequence CreateEventSequence(ScriptObject script)
-    {
-        Sequence eventSeq = eventMgr.CreateEventSequence(script);
-
-        return eventSeq;
-    }
-    #endregion
 
     private void AppendLinkEvent(ScriptObject script)
     {
@@ -177,71 +168,109 @@ public class DialogManager : MonoBehaviour
             return;
         }
 
-        ScriptManager.Next();
-        ScriptObject nextScript = ScriptManager.GetCurrentScript();
+        ScriptObject nextScript = ScriptManager.GetNextScript();
 
-        if (nextScript.isEvent == false)
+        if(nextScript.isEvent == false)
         {
-            ScriptManager.Prev();
             return;
         }
 
-        Sequence nextEvent = eventMgr.CreateEventSequence(nextScript);
+        TweenObject nextEvent = CreateEventSequence(nextScript);
 
         tweenList.Add(nextEvent);
 
-        "AppendNextEvent".Log();
+        ScriptManager.SetCurrentScript(nextScript);
     }
 
-    private void CreateSkipStream(ScriptObject script)
+    private bool ExistPlayingTween()
     {
-        skipStream = Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.Space))
-            .Subscribe(_ => Skip(script));
+        bool isPlaying = false;
+
+        foreach (var tweenObj in tweenList)
+        {
+            Tween tween = tweenObj.tween;
+
+            if (tween.IsPlaying() == true)
+            {
+                if (tweenObj.isInfinityLoop == false) //무한 루프는 플레이 중 여부를 고려하지 않음.
+                {
+                    isPlaying = true;
+                    break;
+                }
+            }
+        }
+
+        return isPlaying;
+    }
+
+    private void Next()
+    {
+        DoAllTweens(tweenObj =>
+        {
+            tweenObj.Skip(true);
+        });
+
+        skipStream.Dispose();
+
+        ExecuteNextScript();
     }
 
     private void Skip(ScriptObject script)
     {
-        "스킵".로그();
-        bool isPlaying = false;
+        //플레이 중인 트윈이 있는지 확인.
+        bool isPlaying = ExistPlayingTween();
+        ("Skip : " + isPlaying).Log();
 
-        foreach(var tween in tweenList)
+        if (script.skipMethod == SkipMethod.Skipable && isPlaying == true)
         {
-            if(tween.IsPlaying() == true)
+            DoAllTweens(tweenObj =>
             {
-                if(tween.Loops() != -1) //무한 루프 트윈들은 제외함
-                {
-                    isPlaying = true;
-                }
-
-                break;
-            }
-        }
-
-        if(script.skipMethod == SkipMethod.Skipable && isPlaying == true) //무한 루프가 있다면 항상 isPlaying이 true인 문제가 있음... 무한 루프 트윈은 따로 관리해야 하나..?
-        {
-            CompleteAllTweens(); //무한 루프 트윈은 Complete가 먹히지 않음.
-        }
-        else if(isPlaying == false)
-        {
-            skipStream.Dispose();
-
-            //무한 루프 트윈을 멈추기 위해 시퀀스의 끝 시간으로 Goto시키고, Pause로 멈춤.
-            DoAllTweens(tween =>
-            {
-                tween.Goto(tween.Duration(false));
-                tween.Pause();
+                tweenObj.Skip();
             });
-            
-            NextScript();
         }
-        else
+        else if (isPlaying == false)
         {
-            "스킵 씹힘".로그();
+            Next();
         }
     }
 
-    private void NextScript()
+    private void SetSkip(ScriptObject script)
+    {
+        if (script.skipMethod == SkipMethod.Auto)
+        {
+            Sequence skipSeq = DOTween.Sequence();
+
+            //가장 큰 duration 뽑기
+            float duration = tweenList[0].tween.Duration();
+            for (int i = 1; i < tweenList.Count; ++i)
+            {
+                if (tweenList[i].tween.Duration() == Mathf.Infinity)
+                    continue;
+
+                if (duration < tweenList[i].tween.Duration() || duration == Mathf.Infinity)
+                {
+                    duration = tweenList[i].tween.Duration();
+                }
+            }
+
+            float skipInterval = script.skipDelay;
+            if (duration != Mathf.Infinity)
+            {
+                skipInterval += duration;
+            }
+
+            skipSeq.AppendInterval(skipInterval);
+            skipSeq.AppendCallback(Next);
+        }
+        else
+        {
+            skipStream = Observable.EveryUpdate()
+                .Where(_ => Input.GetKeyDown(KeyCode.Space))
+                .Subscribe(_ => Skip(script));
+        }
+    }
+
+    private void ExecuteNextScript()
     {
         ScriptManager.Next();
 
@@ -250,10 +279,6 @@ public class DialogManager : MonoBehaviour
             skipStream.Dispose();
         }
 
-
-        ExecuteScript(ScriptManager.GetCurrentScript());
-
-
-        "다음 스크립트".로그();
+        ExecuteScript(ScriptManager.currentScript);
     }
 }

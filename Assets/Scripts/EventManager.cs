@@ -1,51 +1,45 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Callbacks;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
-using UniRx;
-using System;
-using System.Reflection;
-using System.Linq;
-using UnityEditor;
 
 public class EventManager : MonoBehaviour
 {
-    [SerializeField] private GameObject characters;
+    public GameObject[] characterSet;
     private GameObject characterPref;
-    private Dictionary<string, Image> characterList;
+    private Dictionary<int, Character> characterList;
 
     private void Awake()
     {
-        characterList = new Dictionary<string, Image>();
+        characterList = new();
         characterPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
     }
 
     public Sequence CreateEventSequence(ScriptObject script)
     {
-        Sequence eventSequence = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence();
 
-        CallEvent(script, ref eventSequence);
+        CallEvent(script, ref seq);
 
         //루프 처리
-        if(script.eventData.loopCount != 0)
+        if (script.eventData.loopCount != 0)
         {
-            if(script.eventData.loopDelay != 0)
+            if (script.eventData.loopDelay != 0)
             {
-                eventSequence.AppendInterval(script.eventData.loopDelay);
+                seq.AppendInterval(script.eventData.loopDelay);
             }
 
-            eventSequence.SetLoops(script.eventData.loopCount);
+            seq.SetLoops(script.eventData.loopCount, script.eventData.loopType);
         }
 
-        return eventSequence;
+        return seq;
     }
+
 
     public void CallEvent(ScriptObject script, ref Sequence sequence)
     {
-        Event_CreateCharacter(sequence, script.eventData);
-
         switch(script.eventData.eventType)
         {
             case EventType.None:
@@ -53,28 +47,44 @@ public class EventManager : MonoBehaviour
                 break;
 
             case EventType.CreateCharacter:
+                Event_CreateCharacter(script, ref sequence);
+                break;
 
+            case EventType.VibrationCharacter:
+                Event_VibrationCharacter(script, ref sequence);
                 break;
         }
     }
 
-    public void Event_CreateCharacter(Sequence sequence, in EventData eventData)
+    public void Event_CreateCharacter(ScriptObject script, ref Sequence sequence)
     {
+        EventData eventData = script.eventData;
+
         string resource = eventData.eventParam[0];
-        string index = eventData.eventParam[1];
-        //캐릭터 위치 조정 관련된 파라미터 및 코드 필요.
-        //캐릭터 방향 관련 파라미터 및 코드 필요
+        int index = int.Parse(eventData.eventParam[1]);
 
         Sprite sprite = Resources.Load<Sprite>("Images/" + resource);
 
-        Image character = Instantiate(characterPref).GetComponent<Image>();
-        characterList[index] = character;
+        Character character = Instantiate(characterPref).GetComponent<Character>();
 
-        character.sprite = sprite;
-        character.transform.SetParent(characters.transform);
-        character.transform.localPosition = new Vector2(0, 0);
-        character.color = new Color(255, 255, 255, 0); //테스트 코드
+        void CreateCharacter()
+        {
+            characterList[index] = character;
+            character.SetIndex(index);
 
-        sequence.Append(character.DOFade(1, eventData.eventDuration));
+            character.image.sprite = sprite;
+
+            character.image.SetAlpha(0);
+        }
+
+        sequence.AppendCallback(CreateCharacter);
+        sequence.Append(character.image.DOFade(1, eventData.eventDuration));
+    }
+
+    public void Event_VibrationCharacter(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        
     }
 }

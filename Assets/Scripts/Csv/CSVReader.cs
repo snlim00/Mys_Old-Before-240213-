@@ -1,9 +1,8 @@
-using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 //CSVReader.ReadClass의 TValue로 쓰이는 클래스는 IData를 상속받아야 함.
 public interface IData
@@ -100,7 +99,7 @@ public static class CSVReader
         file.Close();
 
         string[] header = Regex.Split(lines[0], SPLIT_RE);
-        for(int i = 1; i < lines.Length; ++i) //0번째 인덱스는 header로 사용됨.
+        for (int i = 1; i < lines.Length; ++i) //0번째 인덱스는 header로 사용됨.
         {
             string[] values = Regex.Split(lines[i], SPLIT_RE);
 
@@ -110,7 +109,7 @@ public static class CSVReader
             //j가 1부터 시작하므로 1을 빼 줌. 그렇지 않으면 배열 한 칸이 남을 것.
             int paramSize = Math.Max(header.Length, values.Length) - 1;
             object[] paramArr = new object[paramSize];
-            for(int j = 0; j < paramSize; ++j) 
+            for (int j = 0; j < paramSize; ++j)
             {
                 string param = values[j + 1]; //0번째 인덱스는 Key로 사용되므로 j에 1을 더해서 밸류를 가져옴.
                 param = param.TrimStart(TRIM_CHARS).TrimEnd(TRIM_CHARS).Replace("\\", "");
@@ -147,7 +146,7 @@ public static class CSVReader
 
         if (lines.Length <= 1) return list;
 
-        var header = Regex.Split(lines[0], SPLIT_RE); 
+        var header = Regex.Split(lines[0], SPLIT_RE);
         for (var i = 1; i < lines.Length; i++)
         {
             var values = Regex.Split(lines[i], SPLIT_RE);

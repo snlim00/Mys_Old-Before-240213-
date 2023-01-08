@@ -2,60 +2,67 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO : 스크립트의 getter, setter에 예외 처리 해주기. (배열 길이 초과, 없는 scriptID, scriptID 앞자리 변경 등) 221223
 public static class ScriptManager
 {
-    private static int currentIndex = 0;
-    private static ScriptObject currentScript = null;
     public static List<ScriptObject> scripts = new List<ScriptObject>();
+
+    public static int currentIndex { get; private set; } = 0;
+    public static ScriptObject currentScript
+    {
+        get
+        {
+            return scripts[currentIndex];
+        }
+    }
 
     public static void ReadScript()
     {
-        ScriptManager.scripts = CSVReader.ReadScript("Data/ScriptTable.CSV");
+        scripts = CSVReader.ReadScript("Data/ScriptTable.CSV");
     }
 
-    public static void SetCurrentIndex(int idx)
+    public static void SetCurrentScript(ScriptObject script)
     {
-        currentIndex = idx;
-
-        ScriptObject script = scripts[currentIndex];
+        currentIndex = scripts.IndexOf(script);
     }
 
-    public static int GetCurrentIndex()
+    public static ScriptObject Next()
     {
-        return currentIndex;
-    }
+        ScriptObject nextScript = GetNextScript();
 
-    public static ScriptObject GetCurrentScript()
-    {
-        ScriptObject script = scripts[currentIndex];
+        SetCurrentScript(nextScript);
 
-        return script;
+        return nextScript;
     }
 
     public static ScriptObject GetNextScript()
     {
-        return scripts[currentIndex + 1];
+        int currID = currentScript.scriptID;
+        int nextID = currentScript.scriptID + 1;
+
+        if(IsSameScriptGroup(currID, nextID) == false)
+        {
+            ("다른 그룹의 스크립트에 접근했습니다. " + currID + ", " + nextID + " / " + GetPrefixID(currID) + ", " + GetPrefixID(nextID)).LogError();
+            return null;
+        }
+
+        ScriptObject nextScript = GetScriptFromID(nextID);
+
+        return nextScript;
     }
 
-    public static int Next()
+    public static ScriptObject GetScriptFromID(int id)
     {
-        currentIndex += 1; //스크립트 앞 ID가 바뀌면 넘어가지 않도록 할 것.
+        foreach(var script in scripts)
+        {
+            if(script.scriptID == id)
+            {
+                return script;
+            }
+        }
 
-        SetCurrentIndex(currentIndex);
-
-        return currentIndex;
+        ("Script ID를 찾을 수 없습니다 : " + id).LogError();
+        return null;
     }
-
-    public static int Prev()
-    {
-        currentIndex -= 1;
-
-        SetCurrentIndex(currentIndex);
-
-        return currentIndex;
-    }
-
 
     public static int GetPrefixID(int id)
     {
@@ -64,35 +71,8 @@ public static class ScriptManager
         return prefixID;
     }
 
-    public static int GetCurrentScriptIndex()
+    public static bool IsSameScriptGroup(int id1, int id2)
     {
-        return currentIndex;
-    }
-
-    public static int GetCurrentScriptID()
-    {
-        return currentScript.scriptID;
-    }
-
-    public static void SetScriptFromID(int scriptID)
-    {
-        bool isFind = false;
-
-        foreach(ScriptObject script in scripts)
-        {
-            if(script.scriptID == scriptID)
-            {
-                int index = scripts.IndexOf(script);
-
-                SetCurrentIndex(index);
-
-                isFind = true;
-            }
-        }
-
-        if(isFind == false)
-        {
-            ("Script ID를 찾을 수 없습니다 : " + scriptID).Log();
-        }
+        return (GetPrefixID(id1) == GetPrefixID(id2));
     }
 }

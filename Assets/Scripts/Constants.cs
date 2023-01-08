@@ -15,6 +15,22 @@ public static class Constants //해당 프로젝트에서는 사용되지 않음. 221217
 }
 
 #region Script
+public enum SkipMethod
+{
+    Skipable, //스킵 가능
+    NoSkip, //스킵 불가능
+    Auto, //대사, 이벤트 종료 이후 자동으로 다음 스크립트로 이동 (스킵 불가능)
+    //WithNext, //해당 스크립트와 함께 다음 스크립트 즉시 시작. (다음 스크립트가 이벤트가 아니라면 무효 처리) //관련 처리는 SKipMethod가 아닌 별도의 파라미터로 처리하는 것이 좋을 듯. 221220
+}
+
+public enum EventType
+{
+    None,
+    CreateCharacter,
+    VibrationCharacter,
+    ChangeBackground,
+}
+
 public enum KEY_SCRIPT_DATA
 {
     ScriptID,
@@ -26,8 +42,11 @@ public enum KEY_SCRIPT_DATA
     SkipDelay,
     LinkEvent,
     Event,
+    DurationTurn,
+    EventDelay,
     EventDuration,
     LoopCount,
+    LoopType,
     LoopDelay,
     //EventParam0,
     //EventParam1,
