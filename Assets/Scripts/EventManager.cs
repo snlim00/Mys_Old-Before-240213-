@@ -14,6 +14,7 @@ public class EventManager : MonoBehaviour
     private void Awake()
     {
         characterList = new();
+
         characterPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
     }
 
@@ -22,6 +23,12 @@ public class EventManager : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         CallEvent(script, ref seq);
+
+        //急掉 贸府
+        if (script.eventData.eventDuration > 0)
+        {
+            seq.AppendInterval(script.eventData.eventDuration);
+        }
 
         //风橇 贸府
         if (script.eventData.loopCount != 0)
@@ -50,8 +57,8 @@ public class EventManager : MonoBehaviour
                 Event_CreateCharacter(script, ref sequence);
                 break;
 
-            case EventType.VibrationCharacter:
-                Event_VibrationCharacter(script, ref sequence);
+            case EventType.RemoveCharacter:
+                Event_RemoveCharacter(script, ref sequence);
                 break;
         }
     }
@@ -81,10 +88,22 @@ public class EventManager : MonoBehaviour
         sequence.Append(character.image.DOFade(1, eventData.eventDuration));
     }
 
-    public void Event_VibrationCharacter(ScriptObject script, ref Sequence sequence)
+    public void Event_RemoveCharacter(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
 
-        
+        int index = int.Parse(eventData.eventParam[0]);
+
+        Character character = characterList[index];
+
+        void RemoveCharacter()
+        {
+            characterList.Remove(index);
+
+            Destroy(character);
+        }
+
+        sequence.Append(character.image.DOFade(0, eventData.eventDuration));
+        sequence.AppendCallback(RemoveCharacter);
     }
 }

@@ -25,7 +25,7 @@ public class TweenObject
     {
         if (script.isEvent == false)
         {
-            tween.Complete();
+            tween.Complete(true);
             DialogManager.instance.RemoveTween(this);
             return;
         }
@@ -40,7 +40,7 @@ public class TweenObject
         {
             if (isInfinityLoop == false)
             {
-                tween.Complete();
+                tween.Complete(true);
                 //"Complete 1".Log();
                 DialogManager.instance.RemoveTween(this);
             }
@@ -183,6 +183,8 @@ public class DialogManager : MonoBehaviour
         tweenList.Add(nextEvent);
 
         ScriptManager.SetCurrentScript(nextScript);
+
+        AppendLinkEvent(nextScript);
     }
 
     private bool ExistPlayingTween()
@@ -245,18 +247,25 @@ public class DialogManager : MonoBehaviour
             Sequence skipSeq = DOTween.Sequence();
 
             //°¡Àå Å« duration »Ì±â
-            float duration = tweenList[0].tween.Duration();
+            float duration = tweenList[0].tween.Duration() - tweenList[0].tween.position;
+
             for (int i = 1; i < tweenList.Count; ++i)
             {
-                if (tweenList[i].tween.Duration() == Mathf.Infinity)
-                    continue;
-
-                if (duration < tweenList[i].tween.Duration() || duration == Mathf.Infinity)
+                if (tweenList[i].tween.Duration() == Mathf.Infinity || tweenList[i].remainingTurn > 0)
                 {
-                    duration = tweenList[i].tween.Duration();
+                    continue;
+                }
+
+                if (duration < tweenList[i].tween.Duration() - tweenList[i].tween.position || duration == Mathf.Infinity)
+                {
+                    duration = tweenList[i].tween.Duration() - tweenList[i].tween.position;
+                }
+                else if (tweenList[0].remainingTurn > 0)
+                {
+                    duration = tweenList[i].tween.Duration() - tweenList[i].tween.position;
                 }
             }
-
+            
             float skipInterval = script.skipDelay;
             if (duration != Mathf.Infinity)
             {
@@ -264,7 +273,10 @@ public class DialogManager : MonoBehaviour
             }
 
             skipSeq.AppendInterval(skipInterval);
+            ("Auto Skip in... " + skipInterval).Log();
             skipSeq.AppendCallback(Next);
+
+            skipSeq.Play();
         }
         else
         {

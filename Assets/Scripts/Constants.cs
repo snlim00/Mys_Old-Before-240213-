@@ -27,7 +27,7 @@ public enum EventType
 {
     None,
     CreateCharacter,
-    VibrationCharacter,
+    RemoveCharacter,
     ChangeBackground,
 }
 
