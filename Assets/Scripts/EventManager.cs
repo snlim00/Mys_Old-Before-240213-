@@ -22,13 +22,13 @@ public class EventManager : MonoBehaviour
     {
         Sequence seq = DOTween.Sequence();
 
-        CallEvent(script, ref seq);
-
         //急掉 贸府
-        if (script.eventData.eventDuration > 0)
+        if (script.eventData.eventDelay > 0)
         {
-            seq.AppendInterval(script.eventData.eventDuration);
+            seq.AppendInterval(script.eventData.eventDelay);
         }
+
+        CallEvent(script, ref seq);
 
         //风橇 贸府
         if (script.eventData.loopCount != 0)
@@ -105,5 +105,12 @@ public class EventManager : MonoBehaviour
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
         sequence.AppendCallback(RemoveCharacter);
+    }
+
+    public void Event_Goto(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        int index = int.Parse(eventData.eventParam[0]);
     }
 }
