@@ -5,6 +5,7 @@ using DG.Tweening;
 using System;
 using UnityEditor;
 using UniRx;
+using System.Runtime.CompilerServices;
 
 public class TweenObject
 {
@@ -21,39 +22,54 @@ public class TweenObject
         get { return tween.Loops() == -1; }
     }
 
-    public void Skip(bool completeInfinityLoop = false)
+    public void Skip(bool completeInfinityLoop = false, bool ignoreRemainingTurn = false)
     {
         if (script.isEvent == false)
         {
-            tween.Complete(true);
-            DialogManager.instance.RemoveTween(this);
+            Complete(completeInfinityLoop);
             return;
         }
 
         if (remainingTurn > 0 && isSkipped == false) //남은 턴이 존재하며, 아직 스킵되지 않은 이벤트라면 턴만 감소시키고 스킵하지 않음.
         {
-            //"턴 감소".Log();
-            remainingTurn -= 1;
-            isSkipped = true;
+            if(ignoreRemainingTurn == true)
+            {
+                Complete(completeInfinityLoop);
+            }
+            else
+            {
+                remainingTurn -= 1;
+                isSkipped = true;
+            }
         }
         else if (remainingTurn <= 0)
         {
             if (isInfinityLoop == false)
             {
-                tween.Complete(true);
-                //"Complete 1".Log();
-                DialogManager.instance.RemoveTween(this);
+                Complete(completeInfinityLoop);
             }
             else
             {
                 if (completeInfinityLoop == true)
                 {
-                    tween.Goto(tween.Duration(false));
-                    tween.Pause();
-                    //"Complete 2".Log();
-                    DialogManager.instance.RemoveTween(this);
+                    Complete(completeInfinityLoop);
                 }
             }
+        }
+    }
+
+    private void Complete(bool completeInfinityLoop = false)
+    {
+        if(isInfinityLoop == true && completeInfinityLoop == true)
+        {
+            tween.Goto(tween.Duration(false));
+            tween.Pause();
+            DialogManager.instance.RemoveTween(this);
+        }
+        else
+        {
+            tween.Complete(true);
+            DialogManager.instance.RemoveTween(this);
         }
     }
 

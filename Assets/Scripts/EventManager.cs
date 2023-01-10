@@ -60,6 +60,10 @@ public class EventManager : MonoBehaviour
             case EventType.RemoveCharacter:
                 Event_RemoveCharacter(script, ref sequence);
                 break;
+
+            case EventType.Goto:
+                Event_Goto(script, ref sequence);
+                break;
         }
     }
 
@@ -77,8 +81,8 @@ public class EventManager : MonoBehaviour
         void CreateCharacter()
         {
             characterList[index] = character;
-            character.SetIndex(index);
 
+            character.SetPosition(index);
             character.image.sprite = sprite;
 
             character.image.SetAlpha(0);
@@ -111,6 +115,10 @@ public class EventManager : MonoBehaviour
     {
         EventData eventData = script.eventData;
 
-        int index = int.Parse(eventData.eventParam[0]);
+        int scriptID = int.Parse(eventData.eventParam[0]);
+
+        DialogManager dialogMgr = FindObjectOfType<DialogManager>();
+
+        dialogMgr.Goto(scriptID);
     }
 }

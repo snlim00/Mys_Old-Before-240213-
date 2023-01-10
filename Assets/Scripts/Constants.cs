@@ -28,6 +28,7 @@ public enum EventType
     None,
     CreateCharacter,
     RemoveCharacter,
+    Goto,
     ChangeBackground,
 }
 

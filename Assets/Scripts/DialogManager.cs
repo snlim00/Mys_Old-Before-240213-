@@ -37,11 +37,6 @@ public class DialogManager : MonoBehaviour
         DialogStart(10001);
     }
 
-    public void RemoveTween(TweenObject tweenObj)
-    {
-        tweenList.Remove(tweenObj);
-    }
-
     private void DialogStart(int scriptID)
     {
         ScriptObject script = ScriptManager.GetScriptFromID(scriptID);
@@ -49,6 +44,11 @@ public class DialogManager : MonoBehaviour
         ScriptManager.SetCurrentScript(script);
 
         ExecuteScript(script);
+    }
+
+    public void RemoveTween(TweenObject tweenObj)
+    {
+        tweenList.Remove(tweenObj);
     }
 
     private void DoAllTweens(Action<TweenObject> action)
@@ -59,6 +59,7 @@ public class DialogManager : MonoBehaviour
         }
     }
 
+    #region createSequence
     private TweenObject CreateTextSequence(ScriptObject script)
     {
         Tween tween = textMgr.CreateTextSequence(script);
@@ -80,11 +81,21 @@ public class DialogManager : MonoBehaviour
 
         return tweenObj;
     }
+    #endregion
 
+    #region ExecuteScript
     private void ExecuteScript(ScriptObject script)
     {
+        //("ExecuteScript : " + script.scriptID).Log();
+
         if (script.isEvent == true)
         {
+            if(script.eventData.eventType == EventType.Goto)
+            {
+                CreateEventSequence(script);
+                return;
+            }
+
             tweenList.Add(CreateEventSequence(script));
         }
         else
@@ -129,7 +140,9 @@ public class DialogManager : MonoBehaviour
 
         AppendLinkEvent(nextScript);
     }
+    #endregion
 
+    #region Skip
     private bool ExistPlayingTween()
     {
         bool isPlaying = false;
@@ -169,6 +182,8 @@ public class DialogManager : MonoBehaviour
     {
         //플레이 중인 트윈이 있는지 확인.
         bool isPlaying = ExistPlayingTween();
+
+        isPlaying.Log();
 
         if (script.skipMethod == SkipMethod.Skipable && isPlaying == true)
         {
@@ -240,5 +255,29 @@ public class DialogManager : MonoBehaviour
         }
 
         ExecuteScript(ScriptManager.currentScript);
+    }
+    #endregion
+
+    public void Goto(int scriptID)
+    {
+        //진행 중인 시퀀스, 스트림 모두 중지
+        if(skipStream != null)
+        {
+            "Dispose".Log();
+            skipStream.Dispose();
+        }
+
+        if(autoSkipSequence.IsActive() == true)
+        {
+            autoSkipSequence.Kill(false);
+        }
+
+        DoAllTweens(tween =>
+        {
+            tween.Skip(true);
+            RemoveTween(tween);
+        });
+
+        DialogStart(scriptID);
     }
 }
