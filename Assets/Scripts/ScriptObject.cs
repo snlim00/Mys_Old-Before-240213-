@@ -156,7 +156,7 @@ public class ScriptObject
                     break;
 
                 case KEY_SCRIPT_DATA.Text:
-                    text = value;
+                    text = value.Replace("<br>", "\r\n");
                     break;
 
                 case KEY_SCRIPT_DATA.TextDuration:

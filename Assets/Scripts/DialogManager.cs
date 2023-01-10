@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System;
-using UnityEditor;
 using UniRx;
+using TMPro;
 
 public class DialogManager : MonoBehaviour
 {
@@ -34,10 +34,10 @@ public class DialogManager : MonoBehaviour
     {
         ScriptManager.ReadScript();
 
-        DialogStart(10001);
+        //DialogStart(10001);
     }
 
-    private void DialogStart(int scriptID)
+    public void DialogStart(int scriptID)
     {
         ScriptObject script = ScriptManager.GetScriptFromID(scriptID);
 
@@ -258,6 +258,7 @@ public class DialogManager : MonoBehaviour
     }
     #endregion
 
+    #region Goto / MoveTo
     public void Goto(int scriptID)
     {
         //진행 중인 시퀀스, 스트림 모두 중지
@@ -280,4 +281,61 @@ public class DialogManager : MonoBehaviour
 
         DialogStart(scriptID);
     }
+
+    public void ExecuteMoveTo(int targetID)
+    {
+        int startID = ScriptManager.GetPrefixID(targetID) * 10000 + 1;
+        ScriptObject script = ScriptManager.GetScriptFromID(startID);
+        ScriptManager.SetCurrentScript(script);
+
+        MoveTo(script, targetID);
+    }
+
+    private void MoveTo(ScriptObject script, int targetID)
+    {
+        if(script.scriptID == targetID)
+        {
+            DialogStart(script.scriptID);
+            return;
+        }
+
+        int scriptID = script.scriptID;
+
+        float orgEventDuration = script.eventData.eventDuration;
+        script.eventData.eventDuration = 0;
+
+        float orgTextDuration = script.textDuration;
+        script.textDuration = 0;
+
+        if (script.isEvent == true)
+        {
+            if (script.eventData.eventType == EventType.Goto)
+            {
+                CreateEventSequence(script);
+                return;
+            }
+
+            tweenList.Add(CreateEventSequence(script));
+        }
+        else
+        {
+            tweenList.Add(CreateTextSequence(script));
+        }
+
+        script.eventData.eventDuration = orgEventDuration;
+        script.textDuration = orgTextDuration;
+
+        DoAllTweens(tweenObj =>
+        {
+            if (tweenObj.tween.IsPlaying() == false)
+            {
+                tweenObj.tween.Play();
+            }
+
+            tweenObj.isSkipped = false;
+        });
+
+        MoveTo(ScriptManager.Next(), targetID);
+    }
+    #endregion
 }

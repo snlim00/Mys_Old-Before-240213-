@@ -1,7 +1,7 @@
 ﻿ScriptID,CharacterName,LinkText,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Event,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5
 10001,익명,TRUE,때 이른 봄 몇 송이 꺾어다 너의 방문 앞에 두었어.,,,,TRUE,,,,,,,,,,,,,
-10002,익명,,,,,,,CreateCharacter,,,,,,,Test,1,1,1,,
-10003,익명,,실컷 자고 돌아올때면 그때쯤엔 활짝 피어 있겠다.,,,,,,,,,,,,,,,,,
+10002,,,,,,,,CreateCharacter,,,0,,,,Test,1,1,1,,
+10003,익명,,실컷 자고 돌아올때면<br>그때쯤엔 활짝 피어 있겠다.,0,,,,,,,,,,,,,,,,
 10004,익명,,별 띄운 여름 한 컵 따라다 너의 방 문 앞에 두었어.,,,,,,,,,,,,,,,,,
 10005,익명,,금세 다 녹을텐데 너는 아직 혼자 쉬고 싶은가 봐.,,,,,,,,,,,,,,,,,
 10006,익명,,너 없이 보는 첫 봄이 여름이 왜 이렇게 예쁘니.,,,,TRUE,,,,,,,,,,,,,
@@ -9,3 +9,4 @@
 10008,익명,,다 가기 전에 널 보여줘야 하는데 꼭 봐야 하는데.,,,,,,,,,,,,,,,,,
 10009,익명,,,,,,,,,,,,,,,,,,,
 10010,익명,,,,,,,,,,,,,,,,,,,
+10011,,,,,,,,,,,,,,,,,,,,

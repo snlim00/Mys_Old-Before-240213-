@@ -69,6 +69,7 @@ public class EventManager : MonoBehaviour
 
     public void Event_CreateCharacter(ScriptObject script, ref Sequence sequence)
     {
+        script.scriptID.Log();
         EventData eventData = script.eventData;
 
         string resource = eventData.eventParam[0];
@@ -77,11 +78,10 @@ public class EventManager : MonoBehaviour
         Sprite sprite = Resources.Load<Sprite>("Images/" + resource);
 
         Character character = Instantiate(characterPref).GetComponent<Character>();
+        characterList[index] = character;
 
         void CreateCharacter()
         {
-            characterList[index] = character;
-
             character.SetPosition(index);
             character.image.sprite = sprite;
 
@@ -97,6 +97,9 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
 
         int index = int.Parse(eventData.eventParam[0]);
+
+        script.scriptID.Log();
+        characterList.Count.Log();
 
         Character character = characterList[index];
 

@@ -44,17 +44,7 @@ public class TweenObject
         }
         else if (remainingTurn <= 0)
         {
-            if (isInfinityLoop == false)
-            {
-                Complete(completeInfinityLoop);
-            }
-            else
-            {
-                if (completeInfinityLoop == true)
-                {
-                    Complete(completeInfinityLoop);
-                }
-            }
+            Complete(completeInfinityLoop);
         }
     }
 
