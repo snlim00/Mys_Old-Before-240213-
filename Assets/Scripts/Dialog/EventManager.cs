@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class EventManager : MonoBehaviour
 {
+    private DialogManager dialogMgr;
+
     public GameObject[] characterSet;
     private GameObject characterPref;
     private Dictionary<int, Character> characterList;
@@ -16,6 +18,11 @@ public class EventManager : MonoBehaviour
         characterList = new();
 
         characterPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
+    }
+
+    private void Start()
+    {
+        dialogMgr = DialogManager.instance;
     }
 
     public Sequence CreateEventSequence(ScriptObject script)
@@ -119,8 +126,6 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
 
         int scriptID = int.Parse(eventData.eventParam[0]);
-
-        DialogManager dialogMgr = FindObjectOfType<DialogManager>();
 
         dialogMgr.Goto(scriptID);
     }

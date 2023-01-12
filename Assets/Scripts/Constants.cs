@@ -6,6 +6,11 @@ using UnityEngine;
  * 대문자는 테이블을 가져올 때 키로 사용하는 값임을 의미
  */
 
+public static class GameConstants
+{
+    public static bool isEditorMode = true;
+}
+
 public static class Constants //해당 프로젝트에서는 사용되지 않음. 221217
 {
     public static int essentialKeyCount = 2;

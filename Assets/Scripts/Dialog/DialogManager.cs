@@ -90,7 +90,7 @@ public class DialogManager : MonoBehaviour
 
         if (script.isEvent == true)
         {
-            if(script.eventData.eventType == EventType.Goto)
+            if(script.eventData.eventType == EventType.Goto) //이 코드를 여기에 둬도 되나?? 230111
             {
                 CreateEventSequence(script);
                 return;
@@ -282,20 +282,21 @@ public class DialogManager : MonoBehaviour
         DialogStart(scriptID);
     }
 
-    public void ExecuteMoveTo(int targetID)
+    public void ExecuteMoveTo(int targetID, Action<int> moveCB)
     {
-        int startID = ScriptManager.GetPrefixID(targetID) * 10000 + 1;
+        int groupID = ScriptManager.GetGroupID(targetID);
+        int startID = ScriptManager.GetFirstScriptIDFromGroupID(groupID);
         ScriptObject script = ScriptManager.GetScriptFromID(startID);
         ScriptManager.SetCurrentScript(script);
 
-        MoveTo(script, targetID);
+        MoveTo(script, targetID, moveCB);
     }
 
-    private void MoveTo(ScriptObject script, int targetID)
+    private void MoveTo(ScriptObject script, int targetID, Action<int> moveCB)
     {
         if(script.scriptID == targetID)
         {
-            DialogStart(script.scriptID);
+            moveCB(script.scriptID);
             return;
         }
 
@@ -335,7 +336,7 @@ public class DialogManager : MonoBehaviour
             tweenObj.isSkipped = false;
         });
 
-        MoveTo(ScriptManager.Next(), targetID);
+        MoveTo(ScriptManager.Next(), targetID, moveCB);
     }
     #endregion
 }

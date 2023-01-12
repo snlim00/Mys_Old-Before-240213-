@@ -17,16 +17,16 @@ public class TestDialogStarter : MonoBehaviour
 
             SceneManager.LoadScene("DialogScene");
 
-            if (scriptID - (ScriptManager.GetPrefixID(scriptID) * 10000) == 1)
+            if (GameConstants.isEditorMode == true)
             {
                 Observable.TimerFrame(1).Subscribe(_ =>
-                    FindObjectOfType<DialogManager>().DialogStart(scriptID)
+                    EditorManager.instance.LoadScript(ScriptManager.GetGroupID(scriptID))
                 );
             }
             else
             {
                 Observable.TimerFrame(1).Subscribe(_ =>
-                    FindObjectOfType<DialogManager>().ExecuteMoveTo(scriptID)
+                    DialogManager.instance.ExecuteMoveTo(scriptID, DialogManager.instance.DialogStart)
                 );
             }
         });
