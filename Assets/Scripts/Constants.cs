@@ -41,11 +41,12 @@ public enum KEY_SCRIPT_DATA
 {
     ScriptID,
     CharacterName,
-    LinkText,
     Text,
     TextDuration,
     SkipMethod,
     SkipDelay,
+    Audio0,
+    Audio1,
     LinkEvent,
     Event,
     DurationTurn,

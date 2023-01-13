@@ -101,7 +101,6 @@ public class EventData
 public class ScriptObject
 {
     public static readonly int UNVALID_ID = -1;
-    public static readonly bool DEFAULT_LINK_TEXT = false;
     public static readonly float DEFAULT_TEXT_DURATION = 0.1f;
     public static readonly SkipMethod DEFAULT_SKIP_METHOD = SkipMethod.Skipable;
     public static readonly float DEFAULT_SKIP_DELAY = 0.5f;
@@ -111,10 +110,10 @@ public class ScriptObject
 
     public string characterName = null;
 
-    public bool linkText = DEFAULT_LINK_TEXT;
-
     public string text = null;
     public float textDuration = DEFAULT_TEXT_DURATION;
+
+    public string[] audio = new string[2];
 
     public SkipMethod skipMethod = DEFAULT_SKIP_METHOD;
     public float skipDelay = DEFAULT_SKIP_DELAY;
@@ -124,10 +123,7 @@ public class ScriptObject
 
     public bool isEvent
     {
-        get
-        {
-            return eventData.eventType != EventType.None;
-        }
+        get { return eventData.eventType != EventType.None; }
     }
 
     public void SetVariable(string key, string value)
@@ -146,13 +142,6 @@ public class ScriptObject
 
                 case KEY_SCRIPT_DATA.CharacterName:
                     characterName = value;
-                    break;
-
-                case KEY_SCRIPT_DATA.LinkText:
-                    if (bool.TryParse(value, out linkText) == false)
-                    {
-                        linkText = DEFAULT_LINK_TEXT;
-                    }
                     break;
 
                 case KEY_SCRIPT_DATA.Text:
@@ -190,6 +179,14 @@ public class ScriptObject
                         linkEvent = DEFAULT_LINK_EVENT;
                     }
 
+                    break;
+
+                case KEY_SCRIPT_DATA.Audio0:
+                    audio[0] = value;
+                    break;
+                
+                case KEY_SCRIPT_DATA.Audio1:
+                    audio[1] = value;
                     break;
 
                 default:

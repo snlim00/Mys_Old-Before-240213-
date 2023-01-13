@@ -16,6 +16,11 @@ public static class ExFunctions
         Debug.LogError(obj);
     }
 
+    public static void LogWarning(this object obj)
+    {
+        Debug.LogWarning(obj);
+    }
+
     public static void ·Î±×(this object obj)
     {
         Debug.Log(obj);
@@ -79,5 +84,18 @@ public static class ExFunctions
         color.a = alpha;
 
         graphic.color = color;
+    }
+
+    public static void DestroyAllChildren(this Transform transform)
+    {
+        Transform[] childList = transform.GetComponentsInChildren<Transform>();
+
+        foreach (var child in childList)
+        {
+            if (child != transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+        }
     }
 }

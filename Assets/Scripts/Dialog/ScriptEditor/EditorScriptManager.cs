@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class ScriptManager
+public static class EditorScriptManager
 {
     public static List<ScriptObject> scripts = new List<ScriptObject>();
 
@@ -19,9 +19,25 @@ public static class ScriptManager
     /// Data/ScriptTable.CSV 파일을 읽어옴.<br/>
     /// 전체 게임 내에서 한 번만 호출.
     /// </summary>
-    public static void ReadScript()
+    public static void SetScript(int targetScriptGroupID)
     {
-        scripts = CSVReader.ReadScript("Data/ScriptTable.CSV");
+        scripts = new();
+
+        //같은 그룹의 스크립트를 모두 리스트에 추가.
+        foreach (var script in ScriptManager.scripts)
+        {
+            int groupID = ScriptManager.GetGroupID(script.scriptID);
+
+            if (targetScriptGroupID == groupID)
+            {
+                scripts.Add(script);
+            }
+        }
+
+        scripts.Sort((a, b) =>
+        {
+            return a.scriptID.CompareTo(b.scriptID);
+        });
     }
 
     public static void SetCurrentScript(ScriptObject script)
@@ -50,7 +66,7 @@ public static class ScriptManager
         int currID = currentScript.scriptID;
         int nextID = currentScript.scriptID + 1;
 
-        if(IsSameScriptGroup(currID, nextID) == false)
+        if (IsSameScriptGroup(currID, nextID) == false)
         {
             ("다른 그룹의 스크립트에 접근했습니다. " + currID + ", " + nextID + " / " + GetGroupID(currID) + ", " + GetGroupID(nextID)).LogWarning();
             return null;
@@ -65,7 +81,7 @@ public static class ScriptManager
     {
         int currID = currentScript.scriptID;
         int prevID = currID - 1;
-        
+
         if (IsSameScriptGroup(currID, prevID) == false)
         {
             ("다른 그룹의 스크립트에 접근했습니다. " + currID + ", " + prevID + " / " + GetGroupID(currID) + ", " + GetGroupID(prevID)).LogWarning();
@@ -95,9 +111,9 @@ public static class ScriptManager
 
     public static ScriptObject GetScriptFromID(int id)
     {
-        foreach(var script in scripts)
+        foreach (var script in scripts)
         {
-            if(script.scriptID == id)
+            if (script.scriptID == id)
             {
                 return script;
             }
@@ -124,3 +140,4 @@ public static class ScriptManager
         return (GetGroupID(id1) == GetGroupID(id2));
     }
 }
+

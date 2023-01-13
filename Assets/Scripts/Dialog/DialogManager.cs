@@ -101,6 +101,8 @@ public class DialogManager : MonoBehaviour
         else
         {
             tweenList.Add(CreateTextSequence(script));
+
+            //Audio 호출 관련 내용 추가할 것 230113
         }
 
         AppendLinkEvent(script);
@@ -284,6 +286,8 @@ public class DialogManager : MonoBehaviour
 
     public void ExecuteMoveTo(int targetID, Action<int> moveCB)
     {
+        eventMgr.RemoveAllCharacter();
+
         int groupID = ScriptManager.GetGroupID(targetID);
         int startID = ScriptManager.GetFirstScriptIDFromGroupID(groupID);
         ScriptObject script = ScriptManager.GetScriptFromID(startID);
@@ -294,7 +298,7 @@ public class DialogManager : MonoBehaviour
 
     private void MoveTo(ScriptObject script, int targetID, Action<int> moveCB)
     {
-        if(script.scriptID == targetID)
+        if(script.scriptID > targetID)
         {
             moveCB(script.scriptID);
             return;

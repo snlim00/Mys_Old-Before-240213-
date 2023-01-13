@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx.Triggers;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,7 +77,6 @@ public class EventManager : MonoBehaviour
 
     public void Event_CreateCharacter(ScriptObject script, ref Sequence sequence)
     {
-        script.scriptID.Log();
         EventData eventData = script.eventData;
 
         string resource = eventData.eventParam[0];
@@ -99,8 +99,18 @@ public class EventManager : MonoBehaviour
         sequence.Append(character.image.DOFade(1, eventData.eventDuration));
     }
 
+    public void RemoveCharacter(int index)
+    {
+        Character character = characterList[index];
+
+        characterList.Remove(index);
+
+        Destroy(character.gameObject);
+    }
+
     public void Event_RemoveCharacter(ScriptObject script, ref Sequence sequence)
     {
+   
         EventData eventData = script.eventData;
 
         int index = int.Parse(eventData.eventParam[0]);
@@ -110,15 +120,32 @@ public class EventManager : MonoBehaviour
 
         Character character = characterList[index];
 
-        void RemoveCharacter()
-        {
-            characterList.Remove(index);
+        sequence.Append(character.image.DOFade(0, eventData.eventDuration));
+        sequence.AppendCallback(() => RemoveCharacter(index));
+    }
 
-            Destroy(character);
+    public void RemoveAllCharacter()
+    {
+        Dictionary<int, Character>.KeyCollection keys = characterList.Keys;
+
+        List<int> keyList = new();
+
+        foreach(int key in keys)
+        {
+            keyList.Add(key);
         }
 
-        sequence.Append(character.image.DOFade(0, eventData.eventDuration));
-        sequence.AppendCallback(RemoveCharacter);
+        for(int i = 0; i < keyList.Count; ++i)
+        {
+            RemoveCharacter(keyList[i]);
+        }
+    }
+
+    public void Event_RemoveAllCharacter(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        sequence.AppendCallback(RemoveAllCharacter);
     }
 
     public void Event_Goto(ScriptObject script, ref Sequence sequence)

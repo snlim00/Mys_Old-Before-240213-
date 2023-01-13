@@ -23,7 +23,8 @@ public class Character : MonoBehaviour
         if(parent.childCount > 0)
         {
             ("해당 위치에 이미 캐릭터가 있습니다 : " + position).Log();
-            return;
+            parent.DestroyAllChildren();
+            //return;
         }
 
         transform.SetParent(parent);
