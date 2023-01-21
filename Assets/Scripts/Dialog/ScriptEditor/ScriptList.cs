@@ -12,16 +12,6 @@ public class ScriptList : MonoBehaviour
     public GameObject selectHighlight;
     public Button selectButton;
 
-    /*
-     * 왼쪽에 판넬? 띄울까
-     * 텍스트랑
-     * 이벤트
-     * 보여주고.....
-     * 아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
-     * 대가리터ㅣㅈㅁ
-     * 
-     * */
-
     public void SetText(string text)
     {
         scriptText.text = text;

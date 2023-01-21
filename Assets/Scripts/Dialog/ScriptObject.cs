@@ -25,6 +25,8 @@ public class EventData
     public float loopDelay = DEFAULT_LOOP_DELAY;
     public List<string> eventParam = new List<string>();
 
+    public ScriptObject script = null;
+
     public void SetVariable(string key, string value, ScriptObject owner)
     {
         object objValue;
@@ -128,6 +130,11 @@ public class ScriptObject
 
     public void SetVariable(string key, string value)
     {
+        if(eventData.script == null)
+        {
+            eventData.script = this;
+        }
+
         object objValue;
         KEY_SCRIPT_DATA enumValue;
         if (Enum.TryParse(typeof(KEY_SCRIPT_DATA), key, out objValue))

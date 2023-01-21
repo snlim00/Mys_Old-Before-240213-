@@ -26,7 +26,15 @@ public static class ScriptManager
 
     public static void SetCurrentScript(ScriptObject script)
     {
-        currentIndex = scripts.IndexOf(script);
+        int index = scripts.IndexOf(script);
+
+        if(index == -1)
+        {
+            ("스크립트를 찾을 수 없습니다. ScriptID : " + script.scriptID).Log();
+            return;
+        }
+
+        currentIndex = index;
     }
 
     public static void SetCurrentScript(int scriptID)
@@ -57,6 +65,11 @@ public static class ScriptManager
         }
 
         ScriptObject nextScript = GetScriptFromID(nextID);
+
+        if(nextScript == null)
+        {
+            ("다음 스크립트를 찾을 수 없습니다. ScriptID : " + nextID).Log();
+        }
 
         return nextScript;
     }

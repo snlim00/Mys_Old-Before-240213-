@@ -1,4 +1,5 @@
 using DG.Tweening;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx.Triggers;
@@ -69,8 +70,16 @@ public class EventManager : MonoBehaviour
                 Event_RemoveCharacter(script, ref sequence);
                 break;
 
+            case EventType.RemoveAllCharacter:
+                Event_RemoveAllCharacter(script, ref sequence);
+                break;
+
             case EventType.Goto:
                 Event_Goto(script, ref sequence);
+                break;
+
+            case EventType.Branch:
+                Event_Branch(script, ref sequence);
                 break;
         }
     }
@@ -81,7 +90,7 @@ public class EventManager : MonoBehaviour
 
         string resource = eventData.eventParam[0];
         int index = int.Parse(eventData.eventParam[1]);
-
+        
         Sprite sprite = Resources.Load<Sprite>("Images/" + resource);
 
         Character character = Instantiate(characterPref).GetComponent<Character>();
@@ -148,12 +157,73 @@ public class EventManager : MonoBehaviour
         sequence.AppendCallback(RemoveAllCharacter);
     }
 
+    public void Event_AddLovePoint(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        string target = eventData.eventParam[0];
+        int amount = int.Parse(eventData.eventParam[1]);
+
+        sequence.AppendCallback(() => ProgressData.AddLovePoint(script, target, amount));
+    }
+
+    public void Goto(int scriptID)
+    {
+        dialogMgr.Goto(scriptID);
+    }
+
     public void Event_Goto(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
 
         int scriptID = int.Parse(eventData.eventParam[0]);
 
-        dialogMgr.Goto(scriptID);
+        sequence.AppendCallback(() => Goto(scriptID));
+    }
+
+    public void Event_Branch(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        string target = eventData.eventParam[0];
+        int lovePoint = ProgressData.GetLovePointFromCharacter(script, target);
+
+        List<int> requiredValue = new();
+        List<int> targetScriptID = new();
+
+        for(int i = 1; i < eventData.eventParam.Count; ++i)
+        {
+            if(i % 2 == 0)
+            {
+                int param = int.Parse(eventData.eventParam[i]);
+                targetScriptID.Add(param);
+            }
+            else
+            {
+                int param = int.Parse(eventData.eventParam[i]);
+                requiredValue.Add(param);
+            }
+        }
+
+        int branch = -1;
+
+        for(int i = requiredValue.Count - 1; i >= 0; --i)
+        {
+            if (requiredValue[i] <= lovePoint)
+            {
+                branch = i;
+                break;
+            }
+        }
+
+        if (branch == -1)
+        {
+            ("분기를 찾을 수 없습니다. ScriptID : " + script.scriptID).Log();
+            return;
+        }
+
+        int scriptID = targetScriptID[branch];
+
+        sequence.AppendCallback(() => Goto(scriptID));
     }
 }

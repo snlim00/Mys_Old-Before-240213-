@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class GameConstants
 {
-    public static bool isEditorMode = true;
+    public static bool isEditorMode = false;
 }
 
 public static class Constants //해당 프로젝트에서는 사용되지 않음. 221217
@@ -33,7 +33,10 @@ public enum EventType
     None,
     CreateCharacter,
     RemoveCharacter,
+    RemoveAllCharacter,
+    AddLovePoint,
     Goto,
+    Branch,
     ChangeBackground,
 }
 
@@ -63,3 +66,10 @@ public enum KEY_SCRIPT_DATA
     //EventParam5,
 }
 #endregion
+
+public static class CharacterName
+{
+    public const string Jihyae = "Jihyae";
+    public const string Yunha = "Yunha";
+    public const string Seeun = "Seeun";
+}
