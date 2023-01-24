@@ -152,17 +152,8 @@ public static class CSVReader
             var values = Regex.Split(lines[i], SPLIT_RE);
             if (values.Length == 0 || values[0] == "") continue;
 
-            ScriptObject entry = new ScriptObject();
-            for (var j = 0; j < header.Length && j < values.Length; j++)
-            {
-                string value = values[j];
-                value = value.TrimStart(TRIM_CHARS).TrimEnd(TRIM_CHARS).Replace("\\", "");
+            ScriptObject entry = new ScriptObject(values);
 
-                value = value.Replace("<br>", "\n"); // 추가된 부분. 개행문자를 \n대신 <br>로 사용한다.
-                value = value.Replace("<c>", ",");
-
-                entry.SetVariable(header[j], value);
-            }
             list.Add(entry);
         }
         return list;
