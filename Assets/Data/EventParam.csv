@@ -1,0 +1,8 @@
+﻿Event,Param0,Param1,Param2,Param3,Param4,Param5,Param6
+CreateCharacter,"캐릭터 리소스 경로 (""Images/Character/"" 이후의 경로만 입력)",캐릭터 인덱스,,,,,
+RemoveCharacter,캐릭터 인덱스,,,,,,
+RemoveAllCharacter,,,,,,,
+AddLovePoint,캐릭터 이름,포인트 양,,,,,
+Goto,스크립트 ID,,,,,,
+Branch,캐릭터 이름,포인트 양,ScriptID,포인트 양,ScriptID,포인트 양,ScriptID
+SetBackground,"배경 리소스 경로 (""Images/Background/"" 이후의 경로만 입력)",,,,,,

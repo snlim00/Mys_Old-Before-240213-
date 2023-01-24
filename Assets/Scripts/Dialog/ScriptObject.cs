@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[System.Serializable]
 public class EventData
 {
     public static readonly float DEFAULT_EVENT_DELAY = 0;
@@ -71,7 +72,7 @@ public class ScriptObject
 
         characterName = param[(int)KEY_SCRIPT_DATA.CharacterName];
 
-        text = param[(int)KEY_SCRIPT_DATA.Text];
+        text = param[(int)KEY_SCRIPT_DATA.Text].Replace("<br>", "\n");
 
         //TextDuration
         {

@@ -15,6 +15,8 @@ public class EventManager : MonoBehaviour
     private GameObject characterPref;
     private Dictionary<int, Character> characterList;
 
+    [SerializeField] private Image background;
+
     private void Awake()
     {
         characterList = new();
@@ -81,6 +83,10 @@ public class EventManager : MonoBehaviour
             case EventType.Branch:
                 Event_Branch(script, ref sequence);
                 break;
+
+            case EventType.SetBackground:
+                Event_SetBackground(script, ref sequence);
+                break;
         }
     }
 
@@ -91,7 +97,7 @@ public class EventManager : MonoBehaviour
         string resource = eventData.eventParam[0];
         int index = int.Parse(eventData.eventParam[1]);
         
-        Sprite sprite = Resources.Load<Sprite>("Images/" + resource);
+        Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
 
         Character character = Instantiate(characterPref).GetComponent<Character>();
         characterList[index] = character;
@@ -225,5 +231,23 @@ public class EventManager : MonoBehaviour
         int scriptID = targetScriptID[branch];
 
         sequence.AppendCallback(() => Goto(scriptID));
+    }
+
+    public void Event_SetBackground(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        string resource = eventData.eventParam[0];
+
+        Sprite sprite = Resources.Load<Sprite>("Images/Background/" + resource);
+
+        void SetBackground()
+        {
+            background.sprite = sprite;
+        }
+
+        sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
+        sequence.AppendCallback(SetBackground);
+        sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
     }
 }

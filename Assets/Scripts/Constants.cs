@@ -37,7 +37,7 @@ public enum EventType
     AddLovePoint,
     Goto,
     Branch,
-    ChangeBackground,
+    SetBackground,
 }
 
 public enum KEY_SCRIPT_DATA
@@ -48,9 +48,9 @@ public enum KEY_SCRIPT_DATA
     TextDuration,
     SkipMethod,
     SkipDelay,
+    LinkEvent,
     Audio0,
     Audio1,
-    LinkEvent,
     Event,
     DurationTurn,
     EventDelay,
