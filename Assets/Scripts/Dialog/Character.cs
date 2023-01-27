@@ -24,7 +24,6 @@ public class Character : MonoBehaviour
         {
             ("해당 위치에 이미 캐릭터가 있습니다 : " + position).Log();
             parent.DestroyAllChildren();
-            //return;
         }
 
         transform.SetParent(parent);

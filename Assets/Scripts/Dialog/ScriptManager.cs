@@ -122,9 +122,9 @@ public static class ScriptManager
 
     public static int GetGroupID(int id)
     {
-        int prefixID = (int)Mathf.Floor(id / 10000f);
+        int groupID = (int)Mathf.Floor(id / 10000f);
 
-        return prefixID;
+        return groupID;
     }
 
     public static int GetFirstScriptIDFromGroupID(int id)

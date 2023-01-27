@@ -33,8 +33,6 @@ public class DialogManager : MonoBehaviour
     private void Start()
     {
         ScriptManager.ReadScript();
-
-        //DialogStart(10001);
     }
 
     public void DialogStart(int scriptID)

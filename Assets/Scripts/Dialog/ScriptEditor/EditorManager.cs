@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UniRx;
+using System.IO;
 
 public class EditorManager : MonoBehaviour
 {
@@ -14,10 +15,12 @@ public class EditorManager : MonoBehaviour
 
     private EventManager eventMgr;
 
-    private GameObject scriptListPref;
-
+    [SerializeField] private GameObject nodePref;
+    public GameObject graph;
     [SerializeField] private GameObject scrollViewContent;
-    private Dictionary<int, ScriptList> scriptLists; //scriptID : ScriptList
+    private GameObject scriptGraph;
+
+    public List<Node> nodeList;
 
     private void Awake()
     {
@@ -27,8 +30,6 @@ public class EditorManager : MonoBehaviour
             return;
         }
         instance = this;
-
-        scriptListPref = Resources.Load<GameObject>("Prefabs/ScriptListPref");
     }
 
     // Start is called before the first frame update
@@ -37,74 +38,49 @@ public class EditorManager : MonoBehaviour
         dialogMgr = DialogManager.instance;
         eventMgr = FindObjectOfType<EventManager>();
 
-        //테스트 코드
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.R))
-            .Subscribe(_ => eventMgr.RemoveAllCharacter());
-    }
 
-    public void LoadScript(int targetScriptGroupID)
-    {
-        EditorScriptManager.SetScript(targetScriptGroupID);
+        //test code
+        nodeList = new();
 
-        dialogMgr.ExecuteMoveTo(EditorScriptManager.scripts[0].scriptID, EditorScriptManager.SetCurrentScript);
-
-        RefreshScriptScrollView();
-
-        int firstScriptID = EditorScriptManager.GetFirstScriptIDFromGroupID(targetScriptGroupID);
-        SetCurrentScript(firstScriptID);
-    }
-
-    private void SetCurrentScript(int scriptID)
-    {
-        EditorScriptManager.SetCurrentScript(scriptID);
-
-        foreach (var kvp in scriptLists)
         {
-            kvp.Value.SetHighlight(false);
+            Node node = Instantiate(nodePref).GetComponent<Node>();
+            nodeList.Add(node);
+            node.Init();
+        }
+        {
+            Node node = Instantiate(nodePref).GetComponent<Node>();
+            nodeList.Add(node);
+            node.Init();
+        }
+        {
+            Node node = Instantiate(nodePref).GetComponent<Node>();
+            nodeList.Add(node);
+            node.Init();
+        }
+    }
+
+    private void LoadScriptGraph(int groupID)
+    {
+        string graphPath = Application.dataPath + "/Assets/Resources/Prefabs/ScriptGraph/ScriptGraph" + groupID + ".prefab";
+
+        if (!File.Exists(graphPath))
+        {
+            CreateNewScriptTree();
+            return;
         }
 
-        scriptLists[scriptID].SetHighlight(true);
+        GameObject prefab = Resources.Load<GameObject>(graphPath);
 
-        dialogMgr.ExecuteMoveTo(scriptID, _ => { });
-    }
-
-    private void RefreshScriptScrollView()
-    {
-        scriptLists = new();
+        GameObject scriptGraph = Instantiate(prefab); 
         scrollViewContent.transform.DestroyAllChildren();
 
-        foreach (var script in EditorScriptManager.scripts)
-        {
-            GameObject obj = Instantiate(scriptListPref);
-            ScriptList scriptList = obj.GetComponent<ScriptList>();
+        scriptGraph.transform.SetParent(scrollViewContent.transform);
 
-            obj.transform.SetParent(scrollViewContent.transform);
-            obj.transform.localScale = Vector3.one;
-            obj.name = script.scriptID.ToString();
+        this.scriptGraph = scriptGraph;
+    }
 
-            scriptList.script = script;
-            scriptList.SetText(script.scriptID.ToString());
-            scriptList.SetHighlight(false);
-
-            ScriptObject prevScript = EditorScriptManager.GetPrevScriptFromID(script.scriptID);
-
-            if (prevScript != null && prevScript.linkEvent == true)
-            {
-                scriptList.scriptText.color = Color.gray;
-                scriptList.selectButton.interactable = false;
-            }
-            else
-            {
-                scriptList.SetButtonCallback(() => {
-                    SetCurrentScript(scriptList.script.scriptID);
-                    ("클릭 : " + scriptList.script.scriptID).Log();
-                });
-            }
-
-
-
-            scriptLists.Add(script.scriptID, scriptList);
-        }
+    private void CreateNewScriptTree()
+    {
+        
     }
 }
