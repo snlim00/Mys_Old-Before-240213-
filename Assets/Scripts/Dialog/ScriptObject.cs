@@ -64,6 +64,11 @@ public class ScriptObject
         get { return eventData.eventType != EventType.None; }
     }
 
+    public ScriptObject()
+    {
+
+    }
+
     public ScriptObject(string[] param)
     {
         eventData = new(this);

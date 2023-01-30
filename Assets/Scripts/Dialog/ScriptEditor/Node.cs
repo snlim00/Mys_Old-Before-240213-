@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks.Sources;
 using UniRx;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,54 +10,83 @@ using UnityEngine.UI.Extensions;
 
 public class Node : MonoBehaviour
 {
-    private EditorManager editorMgr;
+    public readonly Color selectedColor = new Color32(114, 134, 211, 255);
+    public readonly Color subSelectedColor = new Color32(142, 162, 233, 255);
+    public const float interval = -30;
+
+    private NodeGraph nodeGraph;
 
     [SerializeField] private Button button;
+    [SerializeField] private Image buttonImage;
     [SerializeField] private Text text;
     [SerializeField] private UILineRenderer lineRdr;
 
-    private RectTransform rect;
+    public Node prevNode = null;
+    public Node nextNode = null;
 
-    private void Awake()
+    public ScriptObject script = new();
+
+    private void Start()
     {
-        rect = GetComponent<RectTransform>();
+        button.onClick.AddListener(OnButtonClick);
+        nodeGraph = NodeGraph.instance;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnButtonClick()
     {
-        
+        nodeGraph.SelectNode(this);
     }
 
-    public void Init()
+    public void SetScriptID(int id)
     {
-        editorMgr = EditorManager.instance;
+        script.scriptID = EditorManager.instance.scriptGroupID * 10000 + id;
 
-        transform.SetParent(editorMgr.graph.transform);
-        transform.localScale = Vector2.one;
+        text.text = id.ToString();
+    }
 
-        int index = editorMgr.nodeList.IndexOf(this);
-        transform.localPosition = new Vector2(0, index * -30);
+    public void SetNextNode(Node node)
+    {
+        Node oldNode = null;
+        if(nextNode != null)
+        {
+            oldNode = nextNode;
+        }
 
-        lineRdr.Points = new Vector2[2];
+        this.nextNode = node;
+        node.prevNode = this;
+        node.nextNode = oldNode;
 
-        Observable.EveryLateUpdate()
-            .Subscribe(_ =>
-            {
-                lineRdr.transform.position = editorMgr.graph.transform.position;
+        if(oldNode != null)
+        {
+            oldNode.prevNode = node;
+        }
+    }
 
-                lineRdr.Points[0] = rect.anchoredPosition;
+    public void SetPrevNode(Node node)
+    {
+        Node oldNode = null;
+        if (nextNode != null)
+        {
+            oldNode = prevNode;
+        }
 
+        this.prevNode = node;
+        node.nextNode = this;
+        node.prevNode = oldNode;
 
-                int index = editorMgr.nodeList.IndexOf(this);
+        if(oldNode != null)
+        {
+            oldNode.nextNode = node;
+        }
+    }
 
-                if (editorMgr.nodeList.Count <= index + 1)
-                {
-                    return;
-                }
+    public void Select()
+    {
+        buttonImage.color = selectedColor;
+    }
 
-                lineRdr.Points[1] = editorMgr.nodeList[index + 1].rect.anchoredPosition;
-                lineRdr.SetAllDirty();
-            });
+    public void Deselect()
+    {
+        buttonImage.color = Color.white;
     }
 }

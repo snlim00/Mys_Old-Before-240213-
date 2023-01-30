@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UniRx;
 using System.IO;
+using System;
 
 public class EditorManager : MonoBehaviour
 {
@@ -15,72 +16,42 @@ public class EditorManager : MonoBehaviour
 
     private EventManager eventMgr;
 
-    [SerializeField] private GameObject nodePref;
-    public GameObject graph;
-    [SerializeField] private GameObject scrollViewContent;
-    private GameObject scriptGraph;
+    private NodeGraph nodeGraph;
 
-    public List<Node> nodeList;
+    public RectTransform scrollViewContent;
+
+    public int scriptGroupID = -1;
 
     private void Awake()
     {
-        if(instance != null)
+        if (instance != null)
         {
             Destroy(this.gameObject);
-            return;
         }
         instance = this;
+
+        nodeGraph = FindObjectOfType<NodeGraph>();
     }
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        dialogMgr = DialogManager.instance;
-        eventMgr = FindObjectOfType<EventManager>();
-
-
         //test code
-        nodeList = new();
-
-        {
-            Node node = Instantiate(nodePref).GetComponent<Node>();
-            nodeList.Add(node);
-            node.Init();
-        }
-        {
-            Node node = Instantiate(nodePref).GetComponent<Node>();
-            nodeList.Add(node);
-            node.Init();
-        }
-        {
-            Node node = Instantiate(nodePref).GetComponent<Node>();
-            nodeList.Add(node);
-            node.Init();
-        }
+        LoadGraph(1);
     }
 
-    private void LoadScriptGraph(int groupID)
+    public void LoadGraph(int scriptGroupID)
     {
-        string graphPath = Application.dataPath + "/Assets/Resources/Prefabs/ScriptGraph/ScriptGraph" + groupID + ".prefab";
+        this.scriptGroupID = scriptGroupID;
 
-        if (!File.Exists(graphPath))
+        string path = Application.dataPath + "/Assets/Resources/Prefabs/ScriptGraph/ScriptGraph" + scriptGroupID + ".prefab";
+        bool isExists = File.Exists(path);
+
+        if(isExists)
         {
-            CreateNewScriptTree();
-            return;
+            nodeGraph.LoadGraph(path);
         }
-
-        GameObject prefab = Resources.Load<GameObject>(graphPath);
-
-        GameObject scriptGraph = Instantiate(prefab); 
-        scrollViewContent.transform.DestroyAllChildren();
-
-        scriptGraph.transform.SetParent(scrollViewContent.transform);
-
-        this.scriptGraph = scriptGraph;
-    }
-
-    private void CreateNewScriptTree()
-    {
-        
+        else
+        {
+            nodeGraph.CreateGraph();
+        }
     }
 }
