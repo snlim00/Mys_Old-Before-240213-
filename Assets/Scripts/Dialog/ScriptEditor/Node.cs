@@ -8,6 +8,12 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
+public enum NodeType
+{
+    Text,
+    Event,
+}
+
 public class Node : MonoBehaviour
 {
     public readonly Color selectedColor = new Color32(114, 134, 211, 255);
@@ -25,6 +31,8 @@ public class Node : MonoBehaviour
     public Node nextNode = null;
 
     public ScriptObject script = new();
+
+    public NodeType nodeType = NodeType.Text;
 
     private void Start()
     {

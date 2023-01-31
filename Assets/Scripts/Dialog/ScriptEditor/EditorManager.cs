@@ -7,13 +7,15 @@ using UnityEngine.UIElements;
 using UniRx;
 using System.IO;
 using System;
+using UnityEditor.SceneManagement;
 
 public class EditorManager : MonoBehaviour
 {
     public static EditorManager instance = null;
 
-    private DialogManager dialogMgr;
+    private GameObject graphPref;
 
+    private DialogManager dialogMgr;
     private EventManager eventMgr;
 
     private NodeGraph nodeGraph;
@@ -30,28 +32,39 @@ public class EditorManager : MonoBehaviour
         }
         instance = this;
 
-        nodeGraph = FindObjectOfType<NodeGraph>();
+        graphPref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Graph");
     }
     private void Start()
     {
         //test code
-        LoadGraph(1);
+        EditorStart(1);
     }
 
-    public void LoadGraph(int scriptGroupID)
+    public void EditorStart(int scriptGroupID)
     {
         this.scriptGroupID = scriptGroupID;
 
-        string path = Application.dataPath + "/Assets/Resources/Prefabs/ScriptGraph/ScriptGraph" + scriptGroupID + ".prefab";
+        string fileName = "ScriptGraph" + scriptGroupID;
+        string path = Application.dataPath + "/Resources/Prefabs/ScriptGraph/" + fileName + ".prefab";
         bool isExists = File.Exists(path);
+
+        (path + " : " + isExists).Log();
 
         if(isExists)
         {
-            nodeGraph.LoadGraph(path);
+            GameObject pref = Resources.Load<GameObject>("Prefabs/ScriptGraph/" + fileName);
+
+            nodeGraph = Instantiate(pref).GetComponent<NodeGraph>();
         }
         else
         {
-            nodeGraph.CreateGraph();
+            nodeGraph = Instantiate(graphPref).GetComponent<NodeGraph>();
+
+            nodeGraph.CreateGraph(this);
         }
+
+        nodeGraph.transform.SetParent(scrollViewContent.transform);
+        nodeGraph.transform.localScale = Vector3.one;
+        nodeGraph.transform.localPosition = new Vector2(0, -50);
     }
 }

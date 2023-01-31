@@ -2,20 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UniRx.Triggers;
+using UnityEditor;
 using UnityEngine;
 
 public class NodeGraph : MonoBehaviour
 {
     public static NodeGraph instance = null;
 
-    [SerializeField] private EditorManager editorMgr;
+    private EditorManager editorMgr;
 
     public Node firstNode;
     public List<Node> nodeList;
 
-    [SerializeField] private GameObject nodePref;
+    private GameObject nodePref;
 
     public Node selectedNode = null;
+
+    private RectTransform rect;
 
     private void Awake()
     {
@@ -24,26 +28,38 @@ public class NodeGraph : MonoBehaviour
             Destroy(this.gameObject);
         }
         instance = this;
+
+        editorMgr = EditorManager.instance;
+
+        string prefPath = Application.dataPath + "/Resources/Prefabs/ScriptEditor/Node";
+        prefPath.Log();
+        nodePref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Node");
+        rect = GetComponent<RectTransform>();
     }
 
     private void Start()
     {
-        editorMgr = EditorManager.instance;
+        
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.C) && Input.GetMouseButtonDown(0))
             .Subscribe(_ => CreateNextNode());
+
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.S))
+            .Subscribe(_ =>
+            {
+                "Save".Log();
+                PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
+            });
+
+        SetContentSize();
     }
 
-    public void LoadGraph(string path)
+    public void CreateGraph(EditorManager em)
     {
-        GameObject graphPref = Resources.Load<GameObject>(path);
+        //editorMgr = em;
 
-        GameObject graph = Instantiate(graphPref);
-    }
-
-    public void CreateGraph()
-    {
         int scriptGroupID = editorMgr.scriptGroupID;
 
         Node node = Instantiate(nodePref).GetComponent<Node>();
@@ -78,30 +94,57 @@ public class NodeGraph : MonoBehaviour
         SelectNode(node);
     }
 
-    public void SetNodePosition()
+    public int DoAllNode(bool includeBranch, Action<int, Node> action)
     {
         Node node = firstNode;
-        int loopCount = 1;
+        int loopCount = 0;
 
-        while(node.nextNode != null)
+        while (true)
         {
-            loopCount.Log();
+            ++loopCount;
+
+            if(action != null)
+            {
+                action(loopCount, node);
+            }
+
+            if(node.nextNode == null)
+            {
+                break;
+            }
 
             node = node.nextNode;
-            ++loopCount;
-            node.SetScriptID(loopCount);
-
-
-            Vector2 pos = node.prevNode.transform.localPosition;
-            pos.y += Node.interval;
-            pos.Log();
-            node.transform.localPosition = pos;
         }
 
-        var rect = GetComponent<RectTransform>();
+        return loopCount;
+    }
+
+    public int GetNodeCount()
+    {
+        return DoAllNode(true, null);
+    }
+
+    public void SetNodePosition()
+    {
+        int loopCount = DoAllNode(true, (loopCount, node) =>
+        {
+            node.SetScriptID(loopCount);
+
+            if(node.prevNode != null)
+            {
+                Vector2 pos = node.prevNode.transform.localPosition;
+                pos.y += Node.interval;
+                node.transform.localPosition = pos;
+            }
+        });
+    }
+
+    public void SetContentSize()
+    {
+        int nodeCount = GetNodeCount();
 
         Vector2 sizeDelta = rect.sizeDelta;
-        sizeDelta.y = loopCount * Mathf.Abs(Node.interval) + 100;
+        sizeDelta.y = nodeCount * Mathf.Abs(Node.interval) + 100;
         rect.sizeDelta = sizeDelta;
 
         editorMgr.scrollViewContent.sizeDelta = new Vector2(editorMgr.scrollViewContent.sizeDelta.x, sizeDelta.y);
@@ -118,5 +161,10 @@ public class NodeGraph : MonoBehaviour
         selectedNode = node;
         node.Select();
     }
+
+    private void ShowInspecter(Node node)
+    {
+
+    }    
     #endregion
 }

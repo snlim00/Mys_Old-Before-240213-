@@ -44,6 +44,7 @@ public class ScriptObject
     public static readonly float DEFAULT_SKIP_DELAY = 0.5f;
     public static readonly bool DEFAULT_LINK_EVENT = false;
 
+    
     public int scriptID = UNVALID_ID;
 
     public string characterName = null;
