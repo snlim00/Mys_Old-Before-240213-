@@ -40,7 +40,7 @@ public enum EventType
     SetBackground,
 }
 
-public enum KEY_SCRIPT_DATA
+public enum ScriptDataKey
 {
     ScriptID,
     CharacterName,
@@ -58,12 +58,13 @@ public enum KEY_SCRIPT_DATA
     LoopCount,
     LoopType,
     LoopDelay,
-    //EventParam0,
-    //EventParam1,
-    //EventParam2,
-    //EventParam3,
-    //EventParam4,
-    //EventParam5,
+    EventParam0,
+    EventParam1,
+    EventParam2,
+    EventParam3,
+    EventParam4,
+    EventParam5,
+    EventParam6,
 }
 #endregion
 

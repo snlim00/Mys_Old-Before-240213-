@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEditor;
 
 [System.Serializable]
 public class EventData
@@ -24,7 +25,7 @@ public class EventData
     public int loopCount = DEFAULT_LOOP_COUNT;
     public LoopType loopType = DEFAULT_LOOP_TYPE;
     public float loopDelay = DEFAULT_LOOP_DELAY;
-    public List<string> eventParam = new List<string>();
+    public Dictionary<int, string> eventParam = new();
 
     public ScriptObject script = null;
 
@@ -33,6 +34,7 @@ public class EventData
         this.script = script;
     }
 }
+
 
 //해당 클래스의 모든 멤버변수는 멤버함수에 의해서만 변경되어야 함.
 [System.Serializable]
@@ -67,139 +69,169 @@ public class ScriptObject
 
     public ScriptObject()
     {
+        eventData = new(this);
+    }
 
+    public void SetVariable(ScriptDataKey key, string value)
+    {
+        switch(key)
+        {
+            case ScriptDataKey.ScriptID:
+                scriptID = int.Parse(value);
+                break;
+
+            case ScriptDataKey.CharacterName:
+                characterName = value;
+                break;
+
+            case ScriptDataKey.Text:
+                text = value;
+                break;
+
+            case ScriptDataKey.TextDuration:
+                {
+                    float outValue;
+                    if (float.TryParse(value, out outValue))
+                    {
+                        textDuration = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.Audio0:
+                audio[0] = value;
+                break;
+
+            case ScriptDataKey.Audio1:
+                audio[1] = value;
+                break;
+
+            case ScriptDataKey.SkipMethod:
+                {
+                    object outValue;
+
+                    if (Enum.TryParse(typeof(SkipMethod), value, out outValue))
+                    {
+                        skipMethod = (SkipMethod)outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.SkipDelay:
+                {
+                    float outValue;
+
+                    if (float.TryParse(value, out outValue))
+                    {
+                        skipDelay = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.LinkEvent:
+                {
+                    bool outValue;
+
+                    if (bool.TryParse(value, out outValue))
+                    {
+                        linkEvent = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.EventDelay:
+                {
+                    float outValue;
+
+                    if (float.TryParse(value, out outValue))
+                    {
+                        eventData.eventDelay = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.DurationTurn:
+                {
+                    int outValue;
+
+                    if (int.TryParse(value, out outValue))
+                    {
+                        eventData.durationTurn = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.EventDuration:
+                {
+                    float outValue;
+
+                    if (float.TryParse(value, out outValue))
+                    {
+                        eventData.eventDuration = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.LoopCount:
+                {
+                    int outValue;
+
+                    if (int.TryParse(value, out outValue))
+                    {
+                        eventData.loopCount = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.LoopDelay:
+                {
+                    float outValue;
+
+                    if (float.TryParse(value, out outValue))
+                    {
+                        eventData.loopDelay = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.EventParam0:
+                eventData.eventParam[0] = value;
+                break;
+
+            case ScriptDataKey.EventParam1:
+                eventData.eventParam[1] = value;
+                break;
+
+            case ScriptDataKey.EventParam2:
+                eventData.eventParam[2] = value;
+                break;
+
+            case ScriptDataKey.EventParam3:
+                eventData.eventParam[3] = value;
+                break;
+
+            case ScriptDataKey.EventParam4:
+                eventData.eventParam[4] = value;
+                break;
+
+            case ScriptDataKey.EventParam5:
+                eventData.eventParam[5] = value;
+                break;
+
+            case ScriptDataKey.EventParam6:
+                eventData.eventParam[6] = value;
+                break;
+
+        }
     }
 
     public ScriptObject(string[] param)
     {
         eventData = new(this);
 
-        scriptID = int.Parse(param[(int)KEY_SCRIPT_DATA.ScriptID]);
-
-        characterName = param[(int)KEY_SCRIPT_DATA.CharacterName];
-
-        text = param[(int)KEY_SCRIPT_DATA.Text].Replace("<br>", "\n");
-
-        //TextDuration
+        for(int i = 0; i < param.Length; ++i)
         {
-            float outValue;
-            if (float.TryParse(param[(int)KEY_SCRIPT_DATA.TextDuration], out outValue))
-            {
-                textDuration = outValue;
-            }
-        }
-
-        audio[0] = param[(int)KEY_SCRIPT_DATA.Audio0];
-        audio[1] = param[(int)KEY_SCRIPT_DATA.Audio1];
-
-        //SkipMethod
-        {
-            object outValue;
-
-            if (Enum.TryParse(typeof(SkipMethod), param[(int)KEY_SCRIPT_DATA.SkipMethod], out outValue))
-            {
-                skipMethod = (SkipMethod)outValue;
-            }
-        }
-
-        //SkipDelay
-        {
-            float outValue;
-
-            if (float.TryParse(param[(int)KEY_SCRIPT_DATA.SkipDelay], out outValue))
-            {
-                skipDelay = outValue;
-            }
-        }
-
-        //LinkEvent
-        {
-            bool outValue;
-
-            if(bool.TryParse(param[(int)KEY_SCRIPT_DATA.LinkEvent], out outValue))
-            {
-                linkEvent = outValue;
-            }
-        }
-
-        //eventDelay
-        {
-            float outValue;
-
-            if (float.TryParse(param[(int)KEY_SCRIPT_DATA.EventDelay], out outValue))
-            {
-                eventData.eventDelay = outValue;
-            }
-        }
-
-        //eventType
-        {
-            object outValue;
-
-            if (Enum.TryParse(typeof(EventType), param[(int)KEY_SCRIPT_DATA.Event], out outValue))
-            {
-                eventData.eventType = (EventType)outValue;
-            }
-        }
-
-        //durationTurn
-        {
-            int outValue;
-
-            if (int.TryParse(param[(int)KEY_SCRIPT_DATA.DurationTurn], out outValue))
-            {
-                eventData.durationTurn = outValue;
-            }
-        }
-
-        //eventDuration
-        {
-            float outValue;
-
-            if (float.TryParse(param[(int)KEY_SCRIPT_DATA.EventDuration], out outValue))
-            {
-                eventData.eventDuration = outValue;
-            }
-        }
-
-        //loopCount
-        {
-            int outValue;
-
-            if (int.TryParse(param[(int)KEY_SCRIPT_DATA.LoopCount], out outValue))
-            {
-                eventData.loopCount = outValue;
-            }
-        }
-
-        //loopType
-        {
-            object outValue;
-
-            if(Enum.TryParse(typeof(LoopType), param[(int)KEY_SCRIPT_DATA.LoopType], out outValue))
-            {
-                eventData.loopType = (LoopType)outValue;
-            }
-        }
-        
-        //loopDelay
-        {
-            float outValue;
-
-            if (float.TryParse(param[(int)KEY_SCRIPT_DATA.LoopDelay], out outValue))
-            {
-                eventData.loopDelay = outValue;
-            }
-        }
-
-        //eventParam
-        {
-            int startValue = (int)KEY_SCRIPT_DATA.LoopDelay + 1;
-
-            for (int i = startValue; i < param.Length; ++i)
-            {
-                eventData.eventParam.Add(param[i]);
-            }
+            SetVariable((ScriptDataKey)i, param[i]);
         }
     }
 }
