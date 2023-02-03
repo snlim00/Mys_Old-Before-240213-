@@ -29,8 +29,11 @@ public class EditorManager : MonoBehaviour
         if (instance != null)
         {
             Destroy(this.gameObject);
+            return;
         }
         instance = this;
+
+        EventInfo.Init();
 
         graphPref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Graph");
     }
@@ -48,13 +51,15 @@ public class EditorManager : MonoBehaviour
         string path = Application.dataPath + "/Resources/Prefabs/ScriptGraph/" + fileName + ".prefab";
         bool isExists = File.Exists(path);
 
-        (path + " : " + isExists).Log();
+        //(path + " : " + isExists).Log();
 
         if(isExists)
         {
             GameObject pref = Resources.Load<GameObject>("Prefabs/ScriptGraph/" + fileName);
 
             nodeGraph = Instantiate(pref).GetComponent<NodeGraph>();
+
+            nodeGraph.SelectNode(nodeGraph.selectedNode);
         }
         else
         {

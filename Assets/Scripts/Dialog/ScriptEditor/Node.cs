@@ -6,16 +6,23 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.UI.Extensions;
 
-public enum NodeType
-{
-    Text,
-    Event,
-}
 
 public class Node : MonoBehaviour
 {
+    public enum ScriptType
+    {
+        Text,
+        Event,
+    }
+
+    public enum NodeType
+    {
+        Normal,
+        Branch,
+        Return,
+    }
+
     public readonly Color selectedColor = new Color32(114, 134, 211, 255);
     public readonly Color subSelectedColor = new Color32(142, 162, 233, 255);
     public const float interval = -30;
@@ -25,14 +32,14 @@ public class Node : MonoBehaviour
     [SerializeField] private Button button;
     [SerializeField] private Image buttonImage;
     [SerializeField] private Text text;
-    [SerializeField] private UILineRenderer lineRdr;
 
     public Node prevNode = null;
     public Node nextNode = null;
 
     public ScriptObject script = new();
 
-    public NodeType nodeType = NodeType.Text;
+    public NodeType nodeType = NodeType.Normal;
+    public ScriptType scriptType = ScriptType.Text;
 
     private void Start()
     {

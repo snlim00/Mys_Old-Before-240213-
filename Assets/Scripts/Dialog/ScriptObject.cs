@@ -25,7 +25,7 @@ public class EventData
     public int loopCount = DEFAULT_LOOP_COUNT;
     public LoopType loopType = DEFAULT_LOOP_TYPE;
     public float loopDelay = DEFAULT_LOOP_DELAY;
-    public Dictionary<int, string> eventParam = new();
+    public List<string> eventParam = new();
 
     public ScriptObject script = null;
 
@@ -49,6 +49,8 @@ public class ScriptObject
     
     public int scriptID = UNVALID_ID;
 
+    public bool isEvent = false;
+
     public string characterName = null;
 
     public string text = null;
@@ -62,22 +64,141 @@ public class ScriptObject
     public bool linkEvent = DEFAULT_LINK_EVENT;
     public EventData eventData;
 
-    public bool isEvent
-    {
-        get { return eventData.eventType != EventType.None; }
-    }
-
     public ScriptObject()
     {
         eventData = new(this);
     }
 
+    public string GetVariableFromKey(ScriptDataKey key)
+    {
+        if(eventData.eventParam.Count == 0)
+        {
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+        }
+
+        switch (key)
+        {
+            case ScriptDataKey.ScriptID:
+                return scriptID.ToString();
+
+            case ScriptDataKey.IsEvent:
+                return isEvent.ToString();
+
+            case ScriptDataKey.CharacterName:
+                return characterName;
+
+            case ScriptDataKey.Text:
+                return text;
+
+            case ScriptDataKey.TextDuration:
+                return textDuration.ToString();
+
+            case ScriptDataKey.Audio0:
+                return audio[0];
+
+            case ScriptDataKey.Audio1:
+                return audio[1];
+
+            case ScriptDataKey.SkipMethod:
+                return Enum.GetName(typeof(SkipMethod), skipMethod);
+
+            case ScriptDataKey.SkipDelay:
+                return skipDelay.ToString();
+
+            case ScriptDataKey.LinkEvent:
+                return linkEvent.ToString();
+
+            case ScriptDataKey.Event:
+                return Enum.GetName(typeof(EventType), eventData.eventType);
+
+            case ScriptDataKey.EventDelay:
+                return eventData.eventDelay.ToString();
+
+            case ScriptDataKey.DurationTurn:
+                return eventData.durationTurn.ToString();
+
+            case ScriptDataKey.EventDuration:
+                return eventData.eventDuration.ToString();
+
+            case ScriptDataKey.LoopCount:
+                return eventData.loopCount.ToString();
+
+            case ScriptDataKey.LoopDelay:
+                return eventData.loopDelay.ToString();
+
+            case ScriptDataKey.EventParam0:
+                try
+                {
+                    return eventData.eventParam[0];
+                }
+                catch
+                {
+                    return null;
+                }
+
+            case ScriptDataKey.EventParam1:
+                try
+                {
+                    return eventData.eventParam[1];
+                }
+                catch
+                {
+                    return null;
+                }
+
+            case ScriptDataKey.EventParam2:
+                return eventData.eventParam[2];
+
+            case ScriptDataKey.EventParam3:
+                return eventData.eventParam[3];
+
+            case ScriptDataKey.EventParam4:
+                return eventData.eventParam[4];
+
+            case ScriptDataKey.EventParam5:
+                return eventData.eventParam[5];
+
+            case ScriptDataKey.EventParam6:
+                return eventData.eventParam[6];
+
+        }
+
+        return null;
+    }
+
     public void SetVariable(ScriptDataKey key, string value)
     {
-        switch(key)
+        if (eventData.eventParam.Count == 0)
+        {
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+            eventData.eventParam.Add("");
+        }
+
+        switch (key)
         {
             case ScriptDataKey.ScriptID:
                 scriptID = int.Parse(value);
+                break;
+
+            case ScriptDataKey.IsEvent:
+                {
+                    bool outValue;
+                    if (bool.TryParse(value, out outValue))
+                    {
+                        isEvent = outValue;
+                    }
+                }
                 break;
 
             case ScriptDataKey.CharacterName:
@@ -135,6 +256,17 @@ public class ScriptObject
                     if (bool.TryParse(value, out outValue))
                     {
                         linkEvent = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.Event:
+                {
+                    object outValue;
+
+                    if (Enum.TryParse(typeof(EventType), value, out outValue))
+                    {
+                        eventData.eventType = (EventType)outValue;
                     }
                 }
                 break;

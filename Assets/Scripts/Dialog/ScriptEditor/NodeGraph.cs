@@ -5,6 +5,7 @@ using UniRx;
 using UniRx.Triggers;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NodeGraph : MonoBehaviour
 {
@@ -26,34 +27,53 @@ public class NodeGraph : MonoBehaviour
         if(instance != null)
         {
             Destroy(this.gameObject);
+            return;
         }
         instance = this;
 
         editorMgr = EditorManager.instance;
 
-        string prefPath = Application.dataPath + "/Resources/Prefabs/ScriptEditor/Node";
-        prefPath.Log();
         nodePref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Node");
         rect = GetComponent<RectTransform>();
     }
 
     private void Start()
     {
-        
-
         Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.C) && Input.GetMouseButtonDown(0))
             .Subscribe(_ => CreateNextNode());
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.S))
-            .Subscribe(_ =>
-            {
-                "Save".Log();
-                PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
-            });
+            .Subscribe(_ => Save());
+
+        Observable.EveryUpdate()
+           .Where(_ => Input.GetKey(KeyCode.E))
+           .Subscribe(_ =>
+           {
+               if(selectedNode.scriptType == Node.ScriptType.Text)
+               {
+                   selectedNode.scriptType = Node.ScriptType.Event;
+               }
+               else
+               {
+                   selectedNode.scriptType = Node.ScriptType.Text;
+               }
+
+               Save();
+           });
+
 
         SetContentSize();
+    }
+
+    public void Save()
+    {
+        ScriptInspector.instance.ApplyInspector();
+        PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
+        "Save".Log();
+
+        ScriptInspector.instance.SetInspector(selectedNode);
     }
 
     public void CreateGraph(EditorManager em)
@@ -160,11 +180,7 @@ public class NodeGraph : MonoBehaviour
 
         selectedNode = node;
         node.Select();
+        ScriptInspector.instance.SetInspector(node);
     }
-
-    private void ShowInspecter(Node node)
-    {
-
-    }    
     #endregion
 }

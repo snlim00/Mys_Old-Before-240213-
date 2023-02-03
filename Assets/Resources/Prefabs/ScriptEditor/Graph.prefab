@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firstNode: {fileID: 0}
   nodeList: []
+  nodePref: {fileID: 2864735544817659897, guid: 0391159a49574f044a1c96b729a05fc9, type: 3}
   selectedNode: {fileID: 0}
 --- !u!114 &5372954684624654970
 MonoBehaviour:
