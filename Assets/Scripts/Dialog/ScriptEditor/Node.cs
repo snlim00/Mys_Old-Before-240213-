@@ -20,7 +20,7 @@ public class Node : MonoBehaviour
     {
         Normal,
         Branch,
-        Return,
+        Goto,
     }
 
     public readonly Color selectedColor = new Color32(114, 134, 211, 255);
@@ -62,14 +62,18 @@ public class Node : MonoBehaviour
     public void SetNextNode(Node node)
     {
         Node oldNode = null;
-        if(nextNode != null)
+        if (nextNode != null)
         {
             oldNode = nextNode;
         }
 
         this.nextNode = node;
-        node.prevNode = this;
-        node.nextNode = oldNode;
+
+        if (node != null)
+        {
+            node.prevNode = this;
+            node.nextNode = oldNode;
+        }
 
         if(oldNode != null)
         {
@@ -80,14 +84,18 @@ public class Node : MonoBehaviour
     public void SetPrevNode(Node node)
     {
         Node oldNode = null;
-        if (nextNode != null)
+        if (prevNode != null)
         {
             oldNode = prevNode;
         }
 
         this.prevNode = node;
-        node.nextNode = this;
-        node.prevNode = oldNode;
+
+        if(node != null)
+        {
+            node.nextNode = this;
+            node.prevNode = oldNode;
+        }
 
         if(oldNode != null)
         {
