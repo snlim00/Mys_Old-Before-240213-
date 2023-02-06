@@ -2,6 +2,7 @@ using DG.Tweening.Plugins;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,10 +19,12 @@ public class Variable : MonoBehaviour
     [SerializeField] private InputField inputField;
     [SerializeField] private Dropdown dropdown;
 
-    private Node targetNode;
-    private ScriptDataKey targetKey;
+    public Node targetNode;
+    public ScriptDataKey targetKey;
 
     public VariableType type = VariableType.InputField;
+
+    public string prevValue;
 
     public void Init(VariableType type)
     {
@@ -36,6 +39,21 @@ public class Variable : MonoBehaviour
         transform.SetParent(ScriptInspector.instance.transform);
 
         transform.localScale = Vector3.one;
+
+        Observable.IntervalFrame(1)
+            .Subscribe(_ => {
+                dropdown.onValueChanged.AddListener(_ => OnValueChange());
+
+                inputField.onValueChanged.AddListener(_ => OnValueChange());
+            });
+    }
+
+    public void OnValueChange()
+    {
+        if (targetKey == ScriptDataKey.EventType)
+        {
+            "이벤트 타입 변경".로그();
+        }
     }
 
     public void SetDropdownOption(string[] options)

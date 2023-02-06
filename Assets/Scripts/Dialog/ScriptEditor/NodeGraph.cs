@@ -21,7 +21,8 @@ public class NodeGraph : MonoBehaviour
 
     private RectTransform rect;
 
-    private Stack<IEditorCommand> commands = new();
+    private Stack<EditorCommand> commands = new(); //실행된 커맨드
+    private Stack<EditorCommand> redoCommands = new(); //언도된 커맨드
 
     private void Awake()
     {
@@ -42,7 +43,29 @@ public class NodeGraph : MonoBehaviour
     {
         Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
-            .Subscribe(_ => "UNDO".Log());
+            .Subscribe(_ =>
+            {
+                EditorCommand cmd;
+                
+                if(commands.TryPop(out cmd) == true)
+                {
+                    cmd.Undo();
+                    redoCommands.Push(cmd);
+                }
+            });
+
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Y))
+            .Subscribe(_ =>
+            {
+                EditorCommand cmd;
+
+                if (redoCommands.TryPop(out cmd) == true)
+                {
+                    cmd.Execute();
+                    commands.Push(cmd);
+                }
+            });
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.C) && Input.GetMouseButtonDown(0))
@@ -73,16 +96,17 @@ public class NodeGraph : MonoBehaviour
            });
 
 
+        SetNodePosition();
         SetContentSize();
     }
 
     public void Save()
     {
         ScriptInspector.instance.ApplyInspector();
+        ScriptInspector.instance.SetInspector(selectedNode);
+
         PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
         "Save".Log();
-
-        ScriptInspector.instance.SetInspector(selectedNode);
     }
 
     public void CreateGraph()
@@ -121,15 +145,9 @@ public class NodeGraph : MonoBehaviour
         }
 
 
-        Node node = CreateNode();
-
-        selectedNode.SetNextNode(node);
-
-        SetNodePosition();
-
-        SetContentSize();
-
-        SelectNode(node);
+        EditorCommand command = new CreateNextNode();
+        command.Execute();
+        commands.Push(command);
     }
 
     public void RemoveNode()
@@ -141,43 +159,9 @@ public class NodeGraph : MonoBehaviour
             return;
         }
 
-        Node newSelectedNode;
-
-        if (selectedNode.nextNode != null)
-        {
-            newSelectedNode = selectedNode.nextNode;
-
-            if (selectedNode.prevNode != null)
-            {
-                selectedNode.prevNode.Log();
-
-                //여기서 다음 노드를 이렇게 할당할 수밖에 없나?
-                newSelectedNode.prevNode = selectedNode.prevNode;
-                selectedNode.prevNode.nextNode = newSelectedNode;
-            }
-        }
-        else
-        {
-            newSelectedNode = selectedNode.prevNode;
-
-            newSelectedNode.SetNextNode(null); //해당 코드는 다음 노드가 없을 때만 실행되므로 조건문이 필요하지 않음
-        }
-
-        if (selectedNode == firstNode)
-        {
-            "change first node".Log();
-            firstNode = newSelectedNode;
-        }
-
-        Destroy(selectedNode.gameObject);
-
-        SetNodePosition();
-
-        newSelectedNode.name.Log();
-
-        SetContentSize();
-
-        SelectNode(newSelectedNode);
+        EditorCommand command = new RemoveNode();
+        command.Execute();
+        commands.Push(command);
     }
 
     public int DoAllNode(bool includeBranch, Action<int, Node> action)
@@ -235,6 +219,8 @@ public class NodeGraph : MonoBehaviour
     #region 노드 선택
     public void SelectNode(Node node)
     {
+        //Save();
+
         if (selectedNode != null)
         {
             selectedNode.Deselect();

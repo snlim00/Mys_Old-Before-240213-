@@ -71,7 +71,7 @@ public class ScriptObject
 
     public string GetVariableFromKey(ScriptDataKey key)
     {
-        if(eventData.eventParam.Count == 0)
+        if(eventData.eventParam.Count < 7)
         {
             eventData.eventParam.Add("");
             eventData.eventParam.Add("");
@@ -114,7 +114,7 @@ public class ScriptObject
             case ScriptDataKey.LinkEvent:
                 return linkEvent.ToString();
 
-            case ScriptDataKey.Event:
+            case ScriptDataKey.EventType:
                 return Enum.GetName(typeof(EventType), eventData.eventType);
 
             case ScriptDataKey.EventDelay:
@@ -174,7 +174,7 @@ public class ScriptObject
 
     public void SetVariable(ScriptDataKey key, string value)
     {
-        if (eventData.eventParam.Count == 0)
+        if (eventData.eventParam.Count < 7)
         {
             eventData.eventParam.Add("");
             eventData.eventParam.Add("");
@@ -260,7 +260,7 @@ public class ScriptObject
                 }
                 break;
 
-            case ScriptDataKey.Event:
+            case ScriptDataKey.EventType:
                 {
                     object outValue;
 

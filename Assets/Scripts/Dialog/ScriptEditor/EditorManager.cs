@@ -65,7 +65,7 @@ public class EditorManager : MonoBehaviour
         {
             nodeGraph = Instantiate(graphPref).GetComponent<NodeGraph>();
 
-            nodeGraph.CreateGraph(this);
+            nodeGraph.CreateGraph();
         }
 
         nodeGraph.transform.SetParent(scrollViewContent.transform);

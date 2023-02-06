@@ -52,7 +52,7 @@ public enum ScriptDataKey
     LinkEvent,
     Audio0,
     Audio1,
-    Event,
+    EventType,
     DurationTurn,
     EventDelay,
     EventDuration,

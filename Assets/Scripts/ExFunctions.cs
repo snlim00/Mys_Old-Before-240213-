@@ -26,25 +26,10 @@ public static class ExFunctions
         Debug.Log(obj);
     }
 
-    public static void Log(this object[] obj)
+    public static void Log<T>(this T[] array)
     {
-        string msg = "{ ";
-
-        if(obj.Length > 1)
-        {
-            for(int i = 0; i < obj.Length - 1; ++i)
-            {
-                msg += obj[i] + ", ";
-            }
-            msg += obj[obj.Length - 2] + " }";
-        }
-        else
-        {
-            msg = "{ " + obj[0] + " }";
-        }
-
-
-        Debug.Log(msg);
+        string output = string.Join(", ", array);
+        Debug.Log(output);
     }
 
     public static void Log(this ScriptObject obj)

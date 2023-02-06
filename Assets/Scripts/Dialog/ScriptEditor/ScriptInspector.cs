@@ -49,7 +49,7 @@ public class ScriptInspector : MonoBehaviour
             EventType eventType = node.script.eventData.eventType;
             EventInfo eventInfo = EventInfo.GetEventInfo(eventType);
 
-            variableList.Add(CreateVariable(VariableType.Dropdown, "Event", node, ScriptDataKey.Event, Enum.GetNames(typeof(EventType))));
+            variableList.Add(CreateVariable(VariableType.Dropdown, "Event", node, ScriptDataKey.EventType, Enum.GetNames(typeof(EventType))));
             variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));
 
             if(eventInfo.canUseEventDuration == true)
@@ -93,6 +93,11 @@ public class ScriptInspector : MonoBehaviour
 
     public void ApplyInspector()
     {
+        if (variableList == null)
+        {
+            return;
+        }
+
         foreach (Variable var in variableList)
         {
             var.ApplyValue();
