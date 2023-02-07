@@ -20,6 +20,7 @@ public class Node : MonoBehaviour
     {
         Normal,
         Branch,
+        BranchEnd,
         Goto,
     }
 

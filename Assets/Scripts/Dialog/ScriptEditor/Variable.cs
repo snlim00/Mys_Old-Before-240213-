@@ -40,12 +40,8 @@ public class Variable : MonoBehaviour
 
         transform.localScale = Vector3.one;
 
-        Observable.IntervalFrame(1)
-            .Subscribe(_ => {
-                dropdown.onValueChanged.AddListener(_ => OnValueChange());
-
-                inputField.onValueChanged.AddListener(_ => OnValueChange());
-            });
+        dropdown.onValueChanged.AddListener(_ => OnValueChange());
+        inputField.onValueChanged.AddListener(_ => OnValueChange());
     }
 
     public void OnValueChange()
@@ -53,6 +49,7 @@ public class Variable : MonoBehaviour
         if (targetKey == ScriptDataKey.EventType)
         {
             "이벤트 타입 변경".로그();
+            ScriptInspector.instance.RefreshInspector(targetNode);
         }
     }
 
@@ -94,6 +91,7 @@ public class Variable : MonoBehaviour
 
     public void SetValue(string value)
     {
+
         if (type == VariableType.InputField)
         {
             inputField.text = value;
@@ -106,7 +104,7 @@ public class Variable : MonoBehaviour
             {
                 if (options[i].text == value)
                 {
-                    dropdown.value = i;
+                    dropdown.SetValueWithoutNotify(i);
 
                     break;
                 }

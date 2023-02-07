@@ -144,6 +144,10 @@ public class NodeGraph : MonoBehaviour
             return;
         }
 
+        if(selectedNode.nodeType == Node.NodeType.BranchEnd)
+        {
+            return;
+        }
 
         EditorCommand command = new CreateNextNode();
         command.Execute();
@@ -219,12 +223,13 @@ public class NodeGraph : MonoBehaviour
     #region 노드 선택
     public void SelectNode(Node node)
     {
-        //Save();
-
-        if (selectedNode != null)
+        if(node.nodeType == Node.NodeType.BranchEnd)
         {
-            selectedNode.Deselect();
+            "브랜치의 끝엔 노드를 추가할 수 없습니다.".Log();
+            return;
         }
+
+        selectedNode?.Deselect();
 
         selectedNode = node;
         node.Select();

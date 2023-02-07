@@ -26,6 +26,12 @@ public class ScriptInspector : MonoBehaviour
         variablePref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Variable");
     }
 
+    public void RefreshInspector(Node node)
+    {
+        ApplyInspector();
+        SetInspector(node);
+    }
+
     public void SetInspector(Node node)
     {
         transform.DestroyAllChildren();
