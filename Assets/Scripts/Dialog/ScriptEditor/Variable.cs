@@ -94,7 +94,7 @@ public class Variable : MonoBehaviour
 
         if (type == VariableType.InputField)
         {
-            inputField.text = value;
+            inputField.SetTextWithoutNotify(value);
         }
         else if (type == VariableType.Dropdown)
         {
@@ -114,20 +114,21 @@ public class Variable : MonoBehaviour
 
     public string GetValue()
     {
-        if(type == VariableType.InputField)
+        switch(type)
         {
-            return inputField.text;
+            case VariableType.InputField:
+                return inputField.text;
+
+            case VariableType.Dropdown:
+                var options = dropdown.options;
+
+                int value = dropdown.value;
+
+                return options[value].text;
+
+            default:
+                return null;
         }
-        else if(type == VariableType.Dropdown)
-        {
-            var options = dropdown.options;
-
-            int value = dropdown.value;
-
-            return options[value].text;
-        }
-
-        return null;
     }
 
     public void ApplyValue()

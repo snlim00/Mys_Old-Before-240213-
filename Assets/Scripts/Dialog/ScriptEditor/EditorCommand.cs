@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -60,6 +61,41 @@ public class CreateNextNode : EditorCommand
     }
 }
 
+public class CreateBranchNode : EditorCommand
+{
+    private Node createdNode;
+    private Node prevSelectedNode;
+
+    public override void Execute()
+    {
+        createdNode = nodeGrp.CreateNode();
+
+        int i;
+        for(i = 0; i < Node.maxBranchCount; ++i)
+        {
+            if(nodeGrp.selectedNode.branch.ContainsKey(i) == false)
+            {
+                break;
+            }
+        }
+
+        nodeGrp.selectedNode.branch[i] = createdNode;
+        createdNode.parent = nodeGrp.selectedNode;
+
+
+        prevSelectedNode = nodeGrp.selectedNode;
+
+        nodeGrp.SetNodePosition();
+        nodeGrp.SetContentSize();
+        nodeGrp.SelectNode(createdNode);
+    }
+
+    public override void Undo()
+    {
+        
+    }
+}
+
 public class RemoveNode : EditorCommand
 {
     private Node removedNode;
@@ -81,24 +117,28 @@ public class RemoveNode : EditorCommand
 
         if (removedNode.nextNode != null)
         {
-            if(removedNode.prevNode != null)
-            { 
-                removedNode.nextNode.prevNode = removedNode.prevNode;
-            }
+            removedNode.nextNode.prevNode = removedNode.prevNode ?? null;
         }
 
         if(removedNode.prevNode != null)
         {
-            if(removedNode.nextNode != null)
-            {
-                removedNode.prevNode.nextNode = removedNode.nextNode;
-            }
+            removedNode.prevNode.nextNode = removedNode.nextNode ?? null;
         }
 
-        if (removedNode == nodeGrp.firstNode)
+        if (removedNode.isHead == true)
         {
+            if(removedNode.parent == null)
+            {
+                nodeGrp.head = newSelectedNode;
+            }
+            else
+            {
+                int idx = removedNode.GetBranchIndex();
+
+                removedNode.parent.branch[idx] = newSelectedNode;
+            }
             "change first node".Log();
-            nodeGrp.firstNode = newSelectedNode;
+            
         }
 
         removedNode.transform.SetParent(null);
