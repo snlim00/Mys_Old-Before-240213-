@@ -44,6 +44,8 @@ public class NodeGraph : MonoBehaviour
 
     private void Start()
     {
+        transform.localPosition = new Vector2(-150, -50);
+
         Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
             .Subscribe(_ =>
@@ -158,6 +160,11 @@ public class NodeGraph : MonoBehaviour
             return;
         }
 
+        if (selectedNode.branch[Node.maxBranchCount - 1] != null)
+        {
+            return;
+        }
+
         EditorCommand command = new CreateBranchNode();
         command.Execute();
         commands.Push(command);
@@ -182,16 +189,25 @@ public class NodeGraph : MonoBehaviour
 
     public void RemoveNode()
     {
-        selectedNode.nextNode.Log();
-        selectedNode.prevNode.Log();
         if (selectedNode.nextNode == null && selectedNode.prevNode == null) //마지막 하나 남은 노드라면 지우지 않음
         {
             return;
         }
 
-        EditorCommand command = new RemoveNode();
-        command.Execute();
-        commands.Push(command);
+        if(selectedNode.parent != null)
+        {
+            EditorCommand command = new RemoveBranchNode();
+            command.Execute();
+            commands.Push(command);
+        }
+        else
+        {
+            EditorCommand command = new RemoveNode();
+            command.Execute();
+            commands.Push(command);
+        }
+
+
     }
     #endregion
 
@@ -205,27 +221,7 @@ public class NodeGraph : MonoBehaviour
     /// depth : 해당 브랜치에 속한 노드들만 나열했을 때, 해당 노드의 해당 브랜치에서의 번호. 부모가 없다면 null
     /// </param>
     /// <returns></returns>
-    public int DoAllNode(bool includeBranch, Action<int, int?, int?, Node> action)
-    {
-        Node node = head;
-        int index = 0;
-
-        while (node != null)
-        {
-            index++;
-
-            if (action != null)
-            {
-                action(index, null, null, node);
-            }
-
-            node = node.nextNode;
-        }
-
-        return index;
-    }
-
-    public int TraversalNode(Node head, Action<int, int?, int, Node> action, int index = 0)
+    public int TraversalNode(bool includeBranch, Node head, Action<int, int?, int, Node> action, int index = 0)
     {
         Node node = head;
         int? branchIndex = null;
@@ -242,11 +238,14 @@ public class NodeGraph : MonoBehaviour
                 action(index, branchIndex, depth, node);
             }
 
-            if (node.branch.Count > 0)
+            if(includeBranch == true)
             {
-                foreach (var branch in node.branch)
+                if (node.branch.Count > 0)
                 {
-                    index = TraversalNode(branch.Value, action, index);
+                    foreach (var branch in node.branch)
+                    {
+                        index = TraversalNode(true, branch, action, index);
+                    }
                 }
             }
 
@@ -256,21 +255,14 @@ public class NodeGraph : MonoBehaviour
         return index;
     }
 
-    public int TraversalBranch(in Node parent, in int index, Action<int, int?, int?, Node> action)
-    {
-        int count = 1;
-
-        return count;
-    }
-
     public int GetNodeCount()
     {
-        return DoAllNode(true, null);
+        return TraversalNode(false, head, null);
     }
 
     public void SetNodePosition()
     {
-        int loopCount = TraversalNode(head, (index, branchIndex, depth, node) =>
+        int loopCount = TraversalNode(true, head, (index, branchIndex, depth, node) =>
         {
             node.SetScriptID(index);
 
@@ -301,17 +293,20 @@ public class NodeGraph : MonoBehaviour
                 }
                 else if (branchIndex != null && node.isHead == true)
                 {
-                    Vector2 parentPos = node.parent.transform.localPosition;
-                    parentPos.y += Node.interval.y * 0.4f;
-                    parentPos.x += Node.interval.x;
+                    Vector2 pos = node.parent.transform.localPosition;
+                    pos.y += Node.interval.y;
+                    pos.x += (Node.interval.x * (branchIndex + 1) ?? 1) - Node.interval.x * 0.5f;
 
-                    node.transform.localPosition = parentPos;
+                    node.transform.localPosition = pos;
                 }
             }
             else if(node.prevNode != null)
             {
+
                 Vector2 pos = node.prevNode.transform.localPosition;
-                pos.y += Node.interval.y;
+
+                int childCount = node.prevNode.GetChildCount() + 1;
+                pos.y += Node.interval.y * childCount;
                 node.transform.localPosition = pos;
             }
         });

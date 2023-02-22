@@ -26,7 +26,7 @@ public class Node : MonoBehaviour
 
     public static readonly Color selectedColor = new Color32(114, 134, 211, 255);
     //public static readonly Color subSelectedColor = new Color32(142, 162, 233, 255);
-    public static readonly Vector2 interval = new Vector2(75, -30);
+    public static readonly Vector2 interval = new Vector2(67, -30);
     public const int maxBranchCount = 3;
 
     private NodeGraph nodeGrp;
@@ -40,11 +40,10 @@ public class Node : MonoBehaviour
 
     public ScriptObject script = new();
 
-    public NodeType nodeType = NodeType.Normal;
     public ScriptType scriptType = ScriptType.Text;
 
     public Node parent = null;
-    public Dictionary<int, Node> branch = new();
+    public List<Node> branch;
 
     public bool isHead
     {
@@ -61,10 +60,7 @@ public class Node : MonoBehaviour
             {
                 foreach(var branch in parent.branch)
                 {
-                    if(branch.Value == this)
-                    {
-                        return true;
-                    }
+                    if (branch == this) return true;
                 }
             }
 
@@ -72,9 +68,42 @@ public class Node : MonoBehaviour
         }
     }
 
+    public NodeType nodeType
+    {
+        get
+        {
+            if(scriptType == ScriptType.Text)
+            {
+                return NodeType.Normal;
+            }
+            else
+            {
+                switch (script.eventData.eventType)
+                {
+                    case EventType.Branch:
+                        return NodeType.Branch;
+
+                    case EventType.Goto:
+                        if(GetBranchIndex() == -1)
+                        {
+                            return NodeType.Goto;
+                        }
+                        else
+                        {
+                            return NodeType.BranchEnd;
+                        }
+                }
+            }
+
+            return NodeType.Normal;
+        }
+    }
+
     private void Awake()
     { 
         nodeGrp = NodeGraph.instance;
+
+        branch = new(new Node[maxBranchCount]);
     }
 
     private void Start()
@@ -141,6 +170,30 @@ public class Node : MonoBehaviour
         }
     }
 
+    public int GetChildCount()
+    {
+        int childCount = 0;
+
+        for(int i = 0; i < branch.Count; ++i)
+        {
+            if (branch == null) break;
+
+            int count = nodeGrp.TraversalNode(false, branch[i], null);
+
+            if (count > childCount)
+            {
+                childCount = count;
+            }
+        }
+
+
+        return childCount;
+    }
+
+    /// <summary>
+    /// 브랜치의 인덱스를 반환합니다. 브랜치에 속하지 않았다면 -1을 반환합니다.
+    /// </summary>
+    /// <returns></returns>
     public int GetBranchIndex()
     {
         if (isHead == false || parent == null)
@@ -148,11 +201,11 @@ public class Node : MonoBehaviour
             return -1;
         }
 
-        foreach (var branch in parent.branch)
+        for(int i = 0; i < parent.branch.Count; ++i)
         {
-            if (branch.Value == this)
+            if (parent.branch[i] == this)
             {
-                return branch.Key;
+                return i;
             }
         }
 

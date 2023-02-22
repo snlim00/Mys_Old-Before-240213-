@@ -27,10 +27,12 @@ public class CreateNextNode : EditorCommand
     {
         createdNode = nodeGrp.CreateNode();
 
+        createdNode.parent = nodeGrp.selectedNode.parent;
+
         nodeGrp.selectedNode.SetNextNode(createdNode);
 
-        prevSelectedNode = nodeGrp.selectedNode;
 
+        prevSelectedNode = nodeGrp.selectedNode;
         nodeGrp.SetNodePosition();
         nodeGrp.SetContentSize();
         nodeGrp.SelectNode(createdNode);
@@ -38,21 +40,7 @@ public class CreateNextNode : EditorCommand
 
     public override void Undo()
     {
-        if(prevSelectedNode != null)
-        {
-            nodeGrp.SelectNode(prevSelectedNode);
-        }
-        else
-        {
-            if(createdNode.prevNode != null)
-            {
-                nodeGrp.SelectNode(createdNode.prevNode);
-            }
-            else
-            {
-                nodeGrp.SelectNode(createdNode.nextNode);
-            }
-        }
+        nodeGrp.SelectNode(prevSelectedNode ?? nodeGrp.head);
 
         GameObject.Destroy(createdNode.gameObject);
 
@@ -73,7 +61,7 @@ public class CreateBranchNode : EditorCommand
         int i;
         for(i = 0; i < Node.maxBranchCount; ++i)
         {
-            if(nodeGrp.selectedNode.branch.ContainsKey(i) == false)
+            if(nodeGrp.selectedNode.branch[i] == null)
             {
                 break;
             }
@@ -84,15 +72,24 @@ public class CreateBranchNode : EditorCommand
 
 
         prevSelectedNode = nodeGrp.selectedNode;
-
         nodeGrp.SetNodePosition();
         nodeGrp.SetContentSize();
-        nodeGrp.SelectNode(createdNode);
+        //nodeGrp.SelectNode(createdNode);
     }
 
     public override void Undo()
     {
-        
+        nodeGrp.SelectNode(nodeGrp.head);
+
+        int branchIndex = createdNode.GetBranchIndex();
+
+        createdNode.parent.branch.RemoveAt(branchIndex);
+        createdNode.parent.branch.Add(null);
+
+        GameObject.Destroy(createdNode.gameObject);
+
+        nodeGrp.SetNodePosition();
+        nodeGrp.SetContentSize();
     }
 }
 
@@ -156,18 +153,31 @@ public class RemoveNode : EditorCommand
 
         if(removedNode.nextNode != null)
         {
-            "1".Log();
             removedNode.nextNode.prevNode = removedNode;
         }
 
         if(removedNode.prevNode != null)
         {
-            "2".Log();
             removedNode.prevNode.nextNode = removedNode;
         }
 
         nodeGrp.SetNodePosition();
         nodeGrp.SetContentSize();
         nodeGrp.SelectNode(removedNode);
+    }
+}
+
+public class RemoveBranchNode : EditorCommand
+{
+    private Node removedNode;
+
+    public override void Execute()
+    {
+
+    }
+
+    public override void Undo()
+    {
+
     }
 }
