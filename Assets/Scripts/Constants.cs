@@ -31,13 +31,13 @@ public enum SkipMethod
 public enum EventType
 {
     None,
+    SetBackground,
     CreateCharacter,
     RemoveCharacter,
     RemoveAllCharacter,
     AddLovePoint,
     Goto,
     Branch,
-    SetBackground,
 }
 
 public enum ScriptDataKey

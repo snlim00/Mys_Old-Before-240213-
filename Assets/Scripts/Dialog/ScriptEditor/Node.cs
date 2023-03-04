@@ -26,7 +26,7 @@ public class Node : MonoBehaviour
 
     public static readonly Color selectedColor = new Color32(114, 134, 211, 255);
     //public static readonly Color subSelectedColor = new Color32(142, 162, 233, 255);
-    public static readonly Vector2 interval = new Vector2(67, -30);
+    public static readonly Vector2 interval = new Vector2(82, -30);
     public const int maxBranchCount = 3;
 
     private NodeGraph nodeGrp;
@@ -34,13 +34,15 @@ public class Node : MonoBehaviour
     [SerializeField] private Button button;
     [SerializeField] private Image buttonImage;
     [SerializeField] private Text text;
+    [SerializeField] private Button addBranchBtn;
 
     public Node prevNode = null;
     public Node nextNode = null;
 
-    public ScriptObject script = new();
+    public ScriptObject script;
 
     public ScriptType scriptType = ScriptType.Text;
+    public NodeType nodeType;
 
     public Node parent = null;
     public List<Node> branch;
@@ -49,16 +51,16 @@ public class Node : MonoBehaviour
     {
         get
         {
-            if(parent == null)
+            if (parent == null)
             {
-                if(nodeGrp.head == this)
+                if (nodeGrp.head == this)
                 {
                     return true;
                 }
             }
             else
             {
-                foreach(var branch in parent.branch)
+                foreach (var branch in parent.branch)
                 {
                     if (branch == this) return true;
                 }
@@ -68,50 +70,38 @@ public class Node : MonoBehaviour
         }
     }
 
-    public NodeType nodeType
-    {
-        get
-        {
-            if(scriptType == ScriptType.Text)
-            {
-                return NodeType.Normal;
-            }
-            else
-            {
-                switch (script.eventData.eventType)
-                {
-                    case EventType.Branch:
-                        return NodeType.Branch;
-
-                    case EventType.Goto:
-                        if(GetBranchIndex() == -1)
-                        {
-                            return NodeType.Goto;
-                        }
-                        else
-                        {
-                            return NodeType.BranchEnd;
-                        }
-                }
-            }
-
-            return NodeType.Normal;
-        }
-    }
 
     private void Awake()
-    { 
+    {
         nodeGrp = NodeGraph.instance;
 
         branch = new(new Node[maxBranchCount]);
+
+        script = new();
     }
 
     private void Start()
     {
         button.onClick.AddListener(OnButtonClick);
+
+        addBranchBtn.onClick.AddListener(OnBranchBtnClick);
     }
 
     private void OnButtonClick()
+    {
+        Select();
+    }
+
+    private void OnBranchBtnClick()
+    {
+        Select();
+
+        nodeGrp.CreateBranch();
+
+        RefreshBranchBtnActive();
+    }
+
+    public void Select()
     {
         nodeGrp.SelectNode(this);
     }
@@ -121,9 +111,10 @@ public class Node : MonoBehaviour
         script.scriptID = EditorManager.instance.scriptGroupID * 10000 + id;
     }
 
-    public void SetText(string text)
+    public void SetName(string text)
     {
         this.text.text = text;
+        this.gameObject.name = text;
     }
 
     public void SetNextNode(Node node)
@@ -170,6 +161,49 @@ public class Node : MonoBehaviour
         }
     }
 
+    public void SetNodeType(NodeType nodeType)
+    {
+        this.nodeType = nodeType;
+
+        RefreshBranchBtnActive();
+
+        switch(nodeType)
+        {
+            case NodeType.Normal:
+                break;
+
+            case NodeType.Branch:
+                break;
+        }
+    }
+
+    private void ShowBranchBtn()
+    {
+        addBranchBtn.gameObject.SetActive(true);
+    }
+
+    private void HideBranchBtn()
+    {
+        addBranchBtn.gameObject.SetActive(false);
+    }
+
+    public void RefreshBranchBtnActive()
+    {
+        if(nodeType != Node.NodeType.Branch)
+        {
+            return;
+        }
+
+        if (GetBranchCount() >= maxBranchCount)
+        {
+            HideBranchBtn();
+        }
+        else
+        {
+            ShowBranchBtn();
+        }
+    }
+
     public int GetChildCount()
     {
         int childCount = 0;
@@ -186,8 +220,20 @@ public class Node : MonoBehaviour
             }
         }
 
-
         return childCount;
+    }
+
+    public int GetBranchCount()
+    {
+        for(int i = 0; i < branch.Count; ++i)
+        {
+            if (branch[i] == null)
+            {
+                return i;
+            }
+        }
+
+        return maxBranchCount;
     }
 
     /// <summary>
@@ -212,12 +258,12 @@ public class Node : MonoBehaviour
         return -1;
     }
 
-    public void Select()
+    public void SetColorSelect()
     {
         buttonImage.color = selectedColor;
     }
 
-    public void Deselect()
+    public void SetColorDeselect()
     {
         buttonImage.color = Color.white;
     }

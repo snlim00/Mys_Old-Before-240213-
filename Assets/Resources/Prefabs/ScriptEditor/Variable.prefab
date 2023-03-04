@@ -457,6 +457,8 @@ MonoBehaviour:
   varName: {fileID: 2259167265393922101}
   inputField: {fileID: 2259167267119100785}
   dropdown: {fileID: 2259167266320054564}
+  targetNode: {fileID: 0}
+  targetKey: 0
   type: 0
 --- !u!1 &2259167266171598462
 GameObject:
@@ -1206,7 +1208,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 2259167267169976550}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 2259167266471786705}

@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum VariableType
 {
     InputField,
     Dropdown,
+    //Character,
+    //Node,
 }
 
 public class Variable : MonoBehaviour
@@ -19,21 +22,33 @@ public class Variable : MonoBehaviour
     [SerializeField] private InputField inputField;
     [SerializeField] private Dropdown dropdown;
 
+    public EventParamInfo eventParamInfo = null;
+
     public Node targetNode;
     public ScriptDataKey targetKey;
 
     public VariableType type = VariableType.InputField;
 
-    public string prevValue;
-
     public void Init(VariableType type)
     {
-        if(type == VariableType.Dropdown)
-        {
-            inputField.gameObject.SetActive(false);
-            dropdown.gameObject.SetActive(true);
+        this.type = type;
 
-            this.type = VariableType.Dropdown;
+        switch(type)
+        {
+            case VariableType.Dropdown:
+                inputField.gameObject.SetActive(false);
+                dropdown.gameObject.SetActive(true);
+                break;
+
+            case VariableType.InputField:
+                inputField.gameObject.SetActive(true);
+                dropdown.gameObject.SetActive(false);
+                break;
+
+            //case VariableType.Character:
+            //    inputField.gameObject.SetActive(true);
+            //    dropdown.gameObject.SetActive(false);
+            //    break;
         }
 
         transform.SetParent(ScriptInspector.instance.transform);
@@ -44,12 +59,29 @@ public class Variable : MonoBehaviour
         inputField.onValueChanged.AddListener(_ => OnValueChange());
     }
 
+
     public void OnValueChange()
     {
         if (targetKey == ScriptDataKey.EventType)
         {
-            "이벤트 타입 변경".로그();
+            //"이벤트 타입 변경".로그();
             ScriptInspector.instance.RefreshInspector(targetNode);
+
+            string value = GetValue();
+            EventType eventType = (EventType)Enum.Parse(typeof(EventType), value);
+
+            if (eventType == EventType.Branch)
+            {
+                targetNode.SetNodeType(Node.NodeType.Branch);
+            }
+            else if (eventType == EventType.Goto)
+            {
+                targetNode.SetNodeType(Node.NodeType.Goto);
+            }
+            else
+            {
+                targetNode.SetNodeType(Node.NodeType.Normal);
+            }
         }
     }
 
@@ -121,7 +153,6 @@ public class Variable : MonoBehaviour
 
             case VariableType.Dropdown:
                 var options = dropdown.options;
-
                 int value = dropdown.value;
 
                 return options[value].text;

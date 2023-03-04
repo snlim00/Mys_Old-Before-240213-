@@ -67,6 +67,14 @@ public class ScriptObject
     public ScriptObject()
     {
         eventData = new(this);
+
+        eventData.eventParam.Add(null);
+        eventData.eventParam.Add(null);
+        eventData.eventParam.Add(null);
+        eventData.eventParam.Add(null);
+        eventData.eventParam.Add(null);
+        eventData.eventParam.Add(null);
+        eventData.eventParam.Add(null);
     }
 
     public string GetVariableFromKey(ScriptDataKey key)

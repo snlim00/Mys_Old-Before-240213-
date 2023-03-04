@@ -13,7 +13,7 @@ public class EventManager : MonoBehaviour
 
     public GameObject[] characterSet;
     private GameObject characterPref;
-    private Dictionary<int, Character> characterList;
+    private Dictionary<int, Object> characterList;
 
     [SerializeField] private Image background;
 
@@ -99,7 +99,7 @@ public class EventManager : MonoBehaviour
         
         Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
 
-        Character character = Instantiate(characterPref).GetComponent<Character>();
+        Object character = Instantiate(characterPref).GetComponent<Object>();
         characterList[index] = character;
 
         void CreateCharacter()
@@ -116,7 +116,7 @@ public class EventManager : MonoBehaviour
 
     public void RemoveCharacter(int index)
     {
-        Character character = characterList[index];
+        Object character = characterList[index];
 
         characterList.Remove(index);
 
@@ -133,7 +133,7 @@ public class EventManager : MonoBehaviour
         script.scriptID.Log();
         characterList.Count.Log();
 
-        Character character = characterList[index];
+        Object character = characterList[index];
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
         sequence.AppendCallback(() => RemoveCharacter(index));
@@ -141,7 +141,7 @@ public class EventManager : MonoBehaviour
 
     public void RemoveAllCharacter()
     {
-        Dictionary<int, Character>.KeyCollection keys = characterList.Keys;
+        Dictionary<int, Object>.KeyCollection keys = characterList.Keys;
 
         List<int> keyList = new();
 

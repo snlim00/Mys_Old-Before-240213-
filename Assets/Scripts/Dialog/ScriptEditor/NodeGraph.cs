@@ -3,12 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
-using UniRx.Triggers;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 public class NodeGraph : MonoBehaviour
 {
@@ -76,9 +73,9 @@ public class NodeGraph : MonoBehaviour
             .Where(_ => Input.GetKey(KeyCode.C) && Input.GetMouseButtonDown(0))
             .Subscribe(_ => CreateNextNode());
 
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.B))
-            .Subscribe(_ => CreateBranch());
+        //Observable.EveryUpdate()
+        //    .Where(_ => Input.GetKeyDown(KeyCode.B))
+        //    .Subscribe(_ => CreateBranch());
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.Delete))
@@ -105,7 +102,7 @@ public class NodeGraph : MonoBehaviour
            });
 
 
-        SetNodePosition();
+        RefreshAllNode();
         SetContentSize();
         SelectNode(selectedNode ?? head);
     }
@@ -115,7 +112,7 @@ public class NodeGraph : MonoBehaviour
         ScriptInspector.instance.ApplyInspector();
         ScriptInspector.instance.SetInspector(selectedNode);
 
-        PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
+        //PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
         "Save".Log();
     }
 
@@ -148,6 +145,12 @@ public class NodeGraph : MonoBehaviour
     }
 
     #region commands
+    public void ExecuteCommand(EditorCommand cmd)
+    {
+        cmd.Execute();
+        commands.Push(cmd);
+    }
+
     public void CreateBranch()
     {
         if (selectedNode.nodeType == Node.NodeType.Goto)
@@ -160,14 +163,13 @@ public class NodeGraph : MonoBehaviour
             return;
         }
 
-        if (selectedNode.branch[Node.maxBranchCount - 1] != null)
+        if (selectedNode.GetBranchCount() >= Node.maxBranchCount)
         {
             return;
         }
 
         EditorCommand command = new CreateBranchNode();
-        command.Execute();
-        commands.Push(command);
+        ExecuteCommand(command);
     }
 
     public void CreateNextNode()
@@ -183,28 +185,37 @@ public class NodeGraph : MonoBehaviour
         }
 
         EditorCommand command = new CreateNextNode();
-        command.Execute();
-        commands.Push(command);
+        ExecuteCommand(command);
     }
 
     public void RemoveNode()
     {
         if (selectedNode.nextNode == null && selectedNode.prevNode == null) //마지막 하나 남은 노드라면 지우지 않음
         {
+            "마지막 하나 남은 노드는 삭제할 수 없습니다".LogWarning();
             return;
         }
 
-        if(selectedNode.parent != null)
+        if (selectedNode.prevNode != null && selectedNode.prevNode.nodeType == Node.NodeType.Branch)
         {
+            "브랜치의 다음 노드는 항상 존재해야 합니다.".LogWarning();
+            return;
+        }
+
+        if(selectedNode.parent != null && selectedNode.isHead == true)
+        {
+            if (selectedNode.prevNode == null && selectedNode.nextNode.nodeType == Node.NodeType.BranchEnd)
+            {
+                "브랜치의 마지막 하나 남은 노드는 삭제할 수 없습니다.".LogWarning();
+                return;
+            }
             EditorCommand command = new RemoveBranchNode();
-            command.Execute();
-            commands.Push(command);
+            ExecuteCommand(command);
         }
         else
         {
             EditorCommand command = new RemoveNode();
-            command.Execute();
-            commands.Push(command);
+            ExecuteCommand(command);
         }
 
 
@@ -257,57 +268,86 @@ public class NodeGraph : MonoBehaviour
 
     public int GetNodeCount()
     {
-        return TraversalNode(false, head, null);
+        return TraversalNode(true, head, null);
     }
 
-    public void SetNodePosition()
+    public void RefreshAllNode()
     {
         int loopCount = TraversalNode(true, head, (index, branchIndex, depth, node) =>
         {
             node.SetScriptID(index);
 
-            string name = "";
-
-            if(node.parent == null)
+            //노드 이름 설정
             {
-                name += depth.ToString();
-            }
-            else
-            {
-                if (branchIndex != null)
-                {
-                    name += node.parent.name;
-                    name += " : " + branchIndex;
-                    name += " - " + depth;
-                }
-            }
-            
-            node.name = name;
-            node.SetText(name);
-
-            if (node.isHead == true)
-            {
+                string name = "";
+                
                 if (node.parent == null)
                 {
-                    node.transform.localPosition = Vector2.zero;
+                    name += depth.ToString();
                 }
-                else if (branchIndex != null && node.isHead == true)
+                else
                 {
-                    Vector2 pos = node.parent.transform.localPosition;
-                    pos.y += Node.interval.y;
-                    pos.x += (Node.interval.x * (branchIndex + 1) ?? 1) - Node.interval.x * 0.5f;
+                    if (branchIndex != null)
+                    {
+                        name += node.parent.name;
+                        name += " : " + branchIndex;
+                        name += " - " + depth;
+                    }
+                    else
+                    {
+                        name += depth;
+                    }
+                }
 
+                node.SetName(name);
+            }
+
+            //노드 포지션 설정
+            {
+                if (node.isHead == true)
+                {
+                    if (node.parent == null)
+                    {
+                        node.transform.localPosition = Vector2.zero;
+                    }
+                    else if (branchIndex != null && node.isHead == true)
+                    {
+                        Vector2 pos = node.parent.transform.localPosition;
+                        pos.y += Node.interval.y;
+                        pos.x += (Node.interval.x * (branchIndex + 1) ?? 1) - Node.interval.x * 0.5f;
+
+                        node.transform.localPosition = pos;
+                    }
+                }
+                else if (node.prevNode != null)
+                {
+
+                    Vector2 pos = node.prevNode.transform.localPosition;
+
+                    int childCount = node.prevNode.GetChildCount() + 1;
+                    pos.y += Node.interval.y * childCount;
                     node.transform.localPosition = pos;
                 }
             }
-            else if(node.prevNode != null)
+
+            //노드 리프레시
             {
+                node.RefreshBranchBtnActive();
 
-                Vector2 pos = node.prevNode.transform.localPosition;
+                //BranchEnd 이름 설정
+                if (node.nodeType == Node.NodeType.BranchEnd)
+                {
+                    node.SetName("-");
 
-                int childCount = node.prevNode.GetChildCount() + 1;
-                pos.y += Node.interval.y * childCount;
-                node.transform.localPosition = pos;
+                    try
+                    {
+                        node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString();
+                    }
+                    catch
+                    {
+                        "Branch는 항상 다음 노드를 가지고 있어야 합니다.".LogWarning();
+                    }
+                }
             }
         });
     }
@@ -326,16 +366,18 @@ public class NodeGraph : MonoBehaviour
     #region 노드 선택
     public void SelectNode(Node node)
     {
-        if(node.nodeType == Node.NodeType.BranchEnd)
+        if (node.nodeType == Node.NodeType.BranchEnd)
         {
-            "브랜치의 끝엔 노드를 추가할 수 없습니다.".Log();
+            "브랜치의 끝은 수정할 수 없습니다".Log();
+
+            SelectNode(node.prevNode ?? head);
             return;
         }
 
-        selectedNode?.Deselect();
+        selectedNode?.SetColorDeselect();
 
         selectedNode = node;
-        node.Select();
+        node.SetColorSelect();
         ScriptInspector.instance.SetInspector(node);
     }
     #endregion

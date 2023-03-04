@@ -94,7 +94,11 @@ public class ScriptInspector : MonoBehaviour
 
     public Variable CreateVariable(EventParamInfo eventInfo, Node targetNode, InputField.ContentType contentType = InputField.ContentType.Standard)
     {
-        return CreateVariable(eventInfo.varType, eventInfo.paramName, targetNode, eventInfo.targetKey, eventInfo.options, eventInfo.explain, contentType);
+        Variable var = CreateVariable(eventInfo.varType, eventInfo.paramName, targetNode, eventInfo.targetKey, eventInfo.options, eventInfo.explain, contentType);
+
+        var.eventParamInfo = eventInfo;
+
+        return var;
     }
 
     public void ApplyInspector()

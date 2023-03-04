@@ -33,7 +33,7 @@ public class CreateNextNode : EditorCommand
 
 
         prevSelectedNode = nodeGrp.selectedNode;
-        nodeGrp.SetNodePosition();
+        nodeGrp.RefreshAllNode();
         nodeGrp.SetContentSize();
         nodeGrp.SelectNode(createdNode);
     }
@@ -44,7 +44,7 @@ public class CreateNextNode : EditorCommand
 
         GameObject.Destroy(createdNode.gameObject);
 
-        nodeGrp.SetNodePosition();
+        nodeGrp.RefreshAllNode();
         nodeGrp.SetContentSize();
     }
 }
@@ -52,29 +52,56 @@ public class CreateNextNode : EditorCommand
 public class CreateBranchNode : EditorCommand
 {
     private Node createdNode;
-    private Node prevSelectedNode;
+    private Node branchEnd;
 
     public override void Execute()
     {
-        createdNode = nodeGrp.CreateNode();
-
-        int i;
-        for(i = 0; i < Node.maxBranchCount; ++i)
+        //다음 노드가 없다면 노드 생성
+        if(nodeGrp.selectedNode.nextNode == null)
         {
-            if(nodeGrp.selectedNode.branch[i] == null)
-            {
-                break;
-            }
+            Node prevSelectedNode = nodeGrp.selectedNode;
+
+            nodeGrp.CreateNextNode();
+            EditorCommand command = new CreateNextNode();
+
+            nodeGrp.ExecuteCommand(command);
+
+            nodeGrp.SelectNode(prevSelectedNode);
         }
 
-        nodeGrp.selectedNode.branch[i] = createdNode;
-        createdNode.parent = nodeGrp.selectedNode;
+        //노드 생성
+        {
+            createdNode = nodeGrp.CreateNode();
+
+            int i;
+            for (i = 0; i < Node.maxBranchCount; ++i)
+            {
+                if (nodeGrp.selectedNode.branch[i] == null)
+                {
+                    break;
+                }
+            }
+
+            nodeGrp.selectedNode.branch[i] = createdNode;
+            createdNode.parent = nodeGrp.selectedNode;
+        }
+        
+
+        //BranchEnd 생성
+        {
+            branchEnd = nodeGrp.CreateNode();
+            branchEnd.SetPrevNode(createdNode);
+            branchEnd.SetNodeType(Node.NodeType.BranchEnd);
+
+            branchEnd.parent = createdNode.parent;
+
+            branchEnd.scriptType = Node.ScriptType.Event;
+            branchEnd.script.eventData.eventType = EventType.Goto;
+        }
 
 
-        prevSelectedNode = nodeGrp.selectedNode;
-        nodeGrp.SetNodePosition();
+        nodeGrp.RefreshAllNode();
         nodeGrp.SetContentSize();
-        //nodeGrp.SelectNode(createdNode);
     }
 
     public override void Undo()
@@ -87,8 +114,9 @@ public class CreateBranchNode : EditorCommand
         createdNode.parent.branch.Add(null);
 
         GameObject.Destroy(createdNode.gameObject);
+        GameObject.Destroy(branchEnd.gameObject);
 
-        nodeGrp.SetNodePosition();
+        nodeGrp.RefreshAllNode();
         nodeGrp.SetContentSize();
     }
 }
@@ -140,7 +168,7 @@ public class RemoveNode : EditorCommand
 
         removedNode.transform.SetParent(null);
 
-        nodeGrp.SetNodePosition();
+        nodeGrp.RefreshAllNode();
 
         nodeGrp.SetContentSize();
 
@@ -161,7 +189,7 @@ public class RemoveNode : EditorCommand
             removedNode.prevNode.nextNode = removedNode;
         }
 
-        nodeGrp.SetNodePosition();
+        nodeGrp.RefreshAllNode();
         nodeGrp.SetContentSize();
         nodeGrp.SelectNode(removedNode);
     }

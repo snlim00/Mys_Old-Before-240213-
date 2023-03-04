@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +31,7 @@ public class EventInfo
 {
     public static Dictionary<EventType, EventInfo> infos = new();
 
-    public string explain;
+    public string explain = null;
     public bool canUseEventDuration = false;
 
     public List<EventParamInfo> paramInfo = new();
@@ -49,11 +50,23 @@ public class EventInfo
 
     public static void Init()
     {
+        string[] characterNames = { CharacterName.Jihyae, CharacterName.Yunha, CharacterName.Seeun };
+
         //None
         {
             EventInfo info = new();
             info.canUseEventDuration = false;
             infos.Add(EventType.None, info);
+        }
+
+        //SetBackground
+        {
+            EventInfo info = new();
+
+            info.canUseEventDuration = true;
+            infos.Add(EventType.SetBackground, info);
+
+            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Background/\" 이후의 경로만 입력)"));
         }
 
         //CreateCharacter
@@ -63,9 +76,52 @@ public class EventInfo
             info.canUseEventDuration = true;
             infos.Add(EventType.CreateCharacter, info);
 
-            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "캐릭터의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/\" 이후의 경로만 입력)"));
+            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Character/\" 이후의 경로만 입력)"));
             string[] options = { "0", "1", "2", "3", "4" };
-            info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam1, options, "캐릭터의 위치를 정해주세요."));
+            info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam1, options, "오브젝트의 위치를 정해주세요."));
+        }
+
+        //RemoveCharacter
+        {
+            EventInfo info = new();
+            info.canUseEventDuration = false;
+            infos.Add(EventType.RemoveCharacter, info);
+
+            info.paramInfo.Add(new(VariableType.InputField, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
+        }
+
+        //RemoveAllCharacter
+        {
+
+        }
+
+        //Branch
+        {
+            EventInfo info = new();
+            info.canUseEventDuration = false;
+            infos.Add(EventType.Branch, info);
+
+            info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
+        }
+
+        //AddLovePoint
+        {
+            EventInfo info = new();
+
+            info.canUseEventDuration = false;
+            infos.Add(EventType.AddLovePoint, info);
+
+            info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Point Amount", ScriptDataKey.EventParam1, null, "호감도의 양을 적어주세요.", InputField.ContentType.IntegerNumber));
+        }
+
+        //Goto
+        {     
+            EventInfo info = new();
+            info.canUseEventDuration = false;
+            infos.Add(EventType.Goto, info);
+
+            info.paramInfo.Add(new(VariableType.InputField, "Script", ScriptDataKey.EventParam0, null, "이동할 스크립트를 선택해주세요."));
         }
     }
 }
