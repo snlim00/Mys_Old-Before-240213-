@@ -8,7 +8,7 @@ public static class ExFunctions
 {
     public static void Log(this object obj)
     {
-        Debug.Log(obj);
+        Debug.Log(obj); 
     }
 
     public static void LogError(this object obj)

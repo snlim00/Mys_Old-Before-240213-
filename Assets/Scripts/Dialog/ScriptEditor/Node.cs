@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks.Sources;
 using UniRx;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
@@ -174,6 +172,10 @@ public class Node : MonoBehaviour
 
             case NodeType.Branch:
                 break;
+
+            case NodeType.BranchEnd:
+                //button.interactable = false;
+                break;
         }
     }
 
@@ -239,17 +241,31 @@ public class Node : MonoBehaviour
     /// <summary>
     /// 브랜치의 인덱스를 반환합니다. 브랜치에 속하지 않았다면 -1을 반환합니다.
     /// </summary>
-    /// <returns></returns>
     public int GetBranchIndex()
     {
-        if (isHead == false || parent == null)
+        if (parent == null)
         {
             return -1;
         }
 
-        for(int i = 0; i < parent.branch.Count; ++i)
+        Node head = null;
+        Node node = this;
+
+        while(node != null)
         {
-            if (parent.branch[i] == this)
+            head = node;
+
+            node = node.prevNode;
+        }
+
+        if(head == null)
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < parent.branch.Count; ++i)
+        {
+            if (parent.branch[i] == head)
             {
                 return i;
             }

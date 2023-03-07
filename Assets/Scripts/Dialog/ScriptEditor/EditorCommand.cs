@@ -34,7 +34,6 @@ public class CreateNextNode : EditorCommand
 
         prevSelectedNode = nodeGrp.selectedNode;
         nodeGrp.RefreshAllNode();
-        nodeGrp.SetContentSize();
         nodeGrp.SelectNode(createdNode);
     }
 
@@ -45,7 +44,6 @@ public class CreateNextNode : EditorCommand
         GameObject.Destroy(createdNode.gameObject);
 
         nodeGrp.RefreshAllNode();
-        nodeGrp.SetContentSize();
     }
 }
 
@@ -61,7 +59,6 @@ public class CreateBranchNode : EditorCommand
         {
             Node prevSelectedNode = nodeGrp.selectedNode;
 
-            nodeGrp.CreateNextNode();
             EditorCommand command = new CreateNextNode();
 
             nodeGrp.ExecuteCommand(command);
@@ -81,7 +78,7 @@ public class CreateBranchNode : EditorCommand
                     break;
                 }
             }
-
+            
             nodeGrp.selectedNode.branch[i] = createdNode;
             createdNode.parent = nodeGrp.selectedNode;
         }
@@ -101,7 +98,6 @@ public class CreateBranchNode : EditorCommand
 
 
         nodeGrp.RefreshAllNode();
-        nodeGrp.SetContentSize();
     }
 
     public override void Undo()
@@ -117,7 +113,6 @@ public class CreateBranchNode : EditorCommand
         GameObject.Destroy(branchEnd.gameObject);
 
         nodeGrp.RefreshAllNode();
-        nodeGrp.SetContentSize();
     }
 }
 
@@ -170,8 +165,6 @@ public class RemoveNode : EditorCommand
 
         nodeGrp.RefreshAllNode();
 
-        nodeGrp.SetContentSize();
-
         nodeGrp.SelectNode(newSelectedNode);
     }
 
@@ -190,18 +183,32 @@ public class RemoveNode : EditorCommand
         }
 
         nodeGrp.RefreshAllNode();
-        nodeGrp.SetContentSize();
         nodeGrp.SelectNode(removedNode);
     }
 }
 
-public class RemoveBranchNode : EditorCommand
+public class RemoveBranch : EditorCommand
 {
-    private Node removedNode;
+    int index;
+    private List<Node> removedBranch;
 
     public override void Execute()
     {
+        removedBranch = new();
 
+        Node parent = nodeGrp.selectedNode.parent;
+        index = nodeGrp.selectedNode.GetBranchIndex();
+
+        nodeGrp.TraversalNode(false, parent.branch[index], (index, branchIndex, depth, node) =>
+        {
+            removedBranch.Add(node);
+            node.transform.SetParent(null);
+        });
+
+        parent.branch.RemoveAt(index);
+        parent.branch.Add(null);
+
+        nodeGrp.RefreshAllNode();
     }
 
     public override void Undo()

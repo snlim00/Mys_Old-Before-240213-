@@ -70,7 +70,7 @@ public class NodeGraph : MonoBehaviour
             });
 
         Observable.EveryUpdate()
-            .Where(_ => Input.GetKey(KeyCode.C) && Input.GetMouseButtonDown(0))
+            .Where(_ => Input.GetKeyDown(KeyCode.C))
             .Subscribe(_ => CreateNextNode());
 
         //Observable.EveryUpdate()
@@ -103,7 +103,7 @@ public class NodeGraph : MonoBehaviour
 
 
         RefreshAllNode();
-        SetContentSize();
+        RefreshContentSize();
         SelectNode(selectedNode ?? head);
     }
 
@@ -202,23 +202,23 @@ public class NodeGraph : MonoBehaviour
             return;
         }
 
-        if(selectedNode.parent != null && selectedNode.isHead == true)
+        if(selectedNode.parent != null)
         {
             if (selectedNode.prevNode == null && selectedNode.nextNode.nodeType == Node.NodeType.BranchEnd)
             {
                 "브랜치의 마지막 하나 남은 노드는 삭제할 수 없습니다.".LogWarning();
                 return;
             }
-            EditorCommand command = new RemoveBranchNode();
-            ExecuteCommand(command);
-        }
-        else
-        {
-            EditorCommand command = new RemoveNode();
-            ExecuteCommand(command);
+            else if(selectedNode.nodeType == Node.NodeType.BranchEnd)
+            {
+                EditorCommand cmd = new RemoveBranch();
+                ExecuteCommand(cmd);
+                return;
+            }
         }
 
-
+        EditorCommand command = new RemoveNode();
+        ExecuteCommand(command);
     }
     #endregion
 
@@ -228,8 +228,8 @@ public class NodeGraph : MonoBehaviour
     /// <param name="includeBranch"></param>
     /// <param name="action">index, branchIndex, depth, Node<br></br><br></br>
     /// index : 부모가 없는 노드들만 나열했을 때, 해당 노드의 번호<br></br>
-    /// branchIndex : 해당 브랜치가 속한 부모의 branch의 index null<br></br>
-    /// depth : 해당 브랜치에 속한 노드들만 나열했을 때, 해당 노드의 해당 브랜치에서의 번호. 부모가 없다면 null
+    /// branchIndex : 해당 브랜치가 속한 부모의 branch의 index. 부모가 없다면 null<br></br>
+    /// depth : 해당 브랜치에 속한 노드들만 나열했을 때, 해당 노드의 해당 브랜치에서의 번호.
     /// </param>
     /// <returns></returns>
     public int TraversalNode(bool includeBranch, Node head, Action<int, int?, int, Node> action, int index = 0)
@@ -242,6 +242,7 @@ public class NodeGraph : MonoBehaviour
         {
             ++index;
             ++depth;
+
             branchIndex = node.GetBranchIndex() != -1 ? node.GetBranchIndex() : null;
 
             if (action != null)
@@ -287,11 +288,10 @@ public class NodeGraph : MonoBehaviour
                 }
                 else
                 {
-                    if (branchIndex != null)
+                    if (node.isHead == true)
                     {
                         name += node.parent.name;
-                        name += " : " + branchIndex;
-                        name += " - " + depth;
+                        name += " - " + branchIndex;
                     }
                     else
                     {
@@ -310,7 +310,7 @@ public class NodeGraph : MonoBehaviour
                     {
                         node.transform.localPosition = Vector2.zero;
                     }
-                    else if (branchIndex != null && node.isHead == true)
+                    else
                     {
                         Vector2 pos = node.parent.transform.localPosition;
                         pos.y += Node.interval.y;
@@ -350,9 +350,11 @@ public class NodeGraph : MonoBehaviour
                 }
             }
         });
+
+        RefreshContentSize();
     }
 
-    public void SetContentSize()
+    public void RefreshContentSize()
     {
         int nodeCount = GetNodeCount();
 
@@ -366,13 +368,17 @@ public class NodeGraph : MonoBehaviour
     #region 노드 선택
     public void SelectNode(Node node)
     {
-        if (node.nodeType == Node.NodeType.BranchEnd)
+        if(node == selectedNode)
         {
-            "브랜치의 끝은 수정할 수 없습니다".Log();
-
-            SelectNode(node.prevNode ?? head);
             return;
         }
+        //if (node.nodeType == Node.NodeType.BranchEnd)
+        //{
+        //    "브랜치의 끝은 수정할 수 없습니다".Log();
+
+        //    SelectNode(node.prevNode ?? head);
+        //    return;
+        //}
 
         selectedNode?.SetColorDeselect();
 

@@ -37,6 +37,7 @@ public class EditorManager : MonoBehaviour
 
         graphPref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Graph");
     }
+
     private void Start()
     {
         //test code
