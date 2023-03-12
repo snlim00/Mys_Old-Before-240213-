@@ -5,14 +5,9 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class Node : MonoBehaviour
 {
-    public enum ScriptType
-    {
-        Text,
-        Event,
-    }
+
 
     public enum NodeType
     {
@@ -39,7 +34,6 @@ public class Node : MonoBehaviour
 
     public ScriptObject script;
 
-    public ScriptType scriptType = ScriptType.Text;
     public NodeType nodeType;
 
     public Node parent = null;

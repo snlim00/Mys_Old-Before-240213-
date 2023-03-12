@@ -92,7 +92,7 @@ public class CreateBranchNode : EditorCommand
 
             branchEnd.parent = createdNode.parent;
 
-            branchEnd.scriptType = Node.ScriptType.Event;
+            branchEnd.script.scriptType = ScriptType.Event;
             branchEnd.script.eventData.eventType = EventType.Goto;
         }
 

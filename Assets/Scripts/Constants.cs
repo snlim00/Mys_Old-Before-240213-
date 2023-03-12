@@ -43,7 +43,7 @@ public enum EventType
 public enum ScriptDataKey
 {
     ScriptID,
-    IsEvent,
+    ScriptType,
     CharacterName,
     Text,
     TextDuration,

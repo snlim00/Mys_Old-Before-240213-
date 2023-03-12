@@ -24,7 +24,7 @@ public class TweenObject
 
     public void Skip(bool completeInfinityLoop = false, bool ignoreRemainingTurn = false)
     {
-        if (script.isEvent == false)
+        if (script.scriptType == ScriptType.Text)
         {
             Complete(completeInfinityLoop);
             return;

@@ -86,7 +86,7 @@ public class DialogManager : MonoBehaviour
     {
         //("ExecuteScript : " + script.scriptID).Log();
 
-        if (script.isEvent == true)
+        if (script.scriptType == ScriptType.Event)
         {
             if(script.eventData.eventType == EventType.Goto) //이 코드를 여기에 둬도 되나?? 230111
             {
@@ -96,7 +96,7 @@ public class DialogManager : MonoBehaviour
 
             tweenList.Add(CreateEventSequence(script));
         }
-        else
+        else if(script.scriptType == ScriptType.Text)
         {
             tweenList.Add(CreateTextSequence(script));
 
@@ -127,7 +127,7 @@ public class DialogManager : MonoBehaviour
 
         ScriptObject nextScript = ScriptManager.GetNextScript();
 
-        if(nextScript.isEvent == false)
+        if(nextScript.scriptType == ScriptType.Text)
         {
             return;
         }
@@ -310,7 +310,7 @@ public class DialogManager : MonoBehaviour
         float orgTextDuration = script.textDuration;
         script.textDuration = 0;
 
-        if (script.isEvent == true)
+        if (script.scriptType == ScriptType.Text)
         {
             if (script.eventData.eventType == EventType.Goto)
             {

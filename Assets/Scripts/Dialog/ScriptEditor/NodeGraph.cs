@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using UniRx;
 using UnityEditor;
@@ -42,6 +43,25 @@ public class NodeGraph : MonoBehaviour
     private void Start()
     {
         transform.localPosition = new Vector2(-150, -50);
+
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.T))
+            .Subscribe(_ =>
+            {
+                int width = 0;
+
+                TraversalNode(true, selectedNode, (index, branchIndex, depth, node) =>
+                {
+                    int branchCount = node.GetBranchCount();
+
+                    if (branchCount != 0)
+                    {
+                        width += branchCount;
+                    }
+                });
+
+                width.Log();
+            });
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
@@ -89,31 +109,83 @@ public class NodeGraph : MonoBehaviour
            .Where(_ => Input.GetKeyDown(KeyCode.E))
            .Subscribe(_ =>
            {
-               if (selectedNode.scriptType == Node.ScriptType.Text)
+               if(selectedNode.nodeType == Node.NodeType.BranchEnd)
                {
-                   selectedNode.scriptType = Node.ScriptType.Event;
+                   return;
+               }
+
+               if (selectedNode.script.scriptType == ScriptType.Text)
+               {
+                   selectedNode.script.scriptType = ScriptType.Event;
                }
                else
                {
-                   selectedNode.scriptType = Node.ScriptType.Text;
+                   selectedNode.script.scriptType = ScriptType.Text;
                }
 
-               Save();
+               RefreshInspector();
            });
 
 
         RefreshAllNode();
         RefreshContentSize();
-        SelectNode(selectedNode ?? head);
+        SelectNode(head);
+    }
+
+    public void RefreshInspector()
+    {
+        ScriptInspector.instance.ApplyInspector();
+        ScriptInspector.instance.SetInspector(selectedNode);
     }
 
     public void Save()
     {
-        ScriptInspector.instance.ApplyInspector();
-        ScriptInspector.instance.SetInspector(selectedNode);
+        RefreshInspector();
 
-        //PrefabUtility.SaveAsPrefabAsset(this.gameObject, Application.dataPath + "/Resources/Prefabs/ScriptGraph/ScriptGraph" + editorMgr.scriptGroupID + ".prefab");
+        ScriptExport();
         "Save".Log();
+    }
+
+    private void ScriptExport()
+    {
+        RefreshAllNode();
+
+        string path = (Application.dataPath + "/Data/ScriptTable" + editorMgr.scriptGroupID + ".CSV");
+
+        using (var writer = new CsvFileWriter(path))
+        {
+            List<string> colums = new List<string>();
+            string[] keys = Enum.GetNames(typeof(ScriptDataKey));
+
+            colums.AddRange(keys);
+            writer.WriteRow(colums);
+            colums.Clear();
+
+            TraversalNode(true, this.head, (index, branchIndex, depth, node) =>
+            {
+                //branch 파라미터 처리
+                if(node.script.eventData.eventType == EventType.Branch)
+                {
+                    for(int i = 0; i < Node.maxBranchCount; ++i)
+                    {
+                        if (node.branch[i] == null) break;
+
+                        node.script.eventData.eventParam[i * 2 + 1] = node.branch[i].script.scriptID.ToString();
+                    }
+                }
+
+                //값 등록
+                foreach (ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
+                {
+                    string value = node.script.GetVariableFromKey(key) ?? "";
+
+                    colums.Add(value);
+                }
+
+                writer.WriteRow(colums);
+                colums.Clear();
+            });
+        } 
     }
 
     public void CreateGraph()
@@ -196,7 +268,8 @@ public class NodeGraph : MonoBehaviour
             return;
         }
 
-        if (selectedNode.prevNode != null && selectedNode.prevNode.nodeType == Node.NodeType.Branch)
+        //이전 노드가 Branch이며 해당 노드의 다음 노드가 없다면 삭제할 수 없음.
+        if (selectedNode.prevNode != null && selectedNode.prevNode.nodeType == Node.NodeType.Branch && selectedNode.nextNode == null)
         {
             "브랜치의 다음 노드는 항상 존재해야 합니다.".LogWarning();
             return;
@@ -219,6 +292,7 @@ public class NodeGraph : MonoBehaviour
 
         EditorCommand command = new RemoveNode();
         ExecuteCommand(command);
+        "RemoveNode".Log();
     }
     #endregion
 
@@ -272,12 +346,20 @@ public class NodeGraph : MonoBehaviour
         return TraversalNode(true, head, null);
     }
 
-    public void RefreshAllNode()
+    public void SetScriptID()
     {
-        int loopCount = TraversalNode(true, head, (index, branchIndex, depth, node) =>
+        TraversalNode(true, head, (index, branchIndex, depth, node) =>
         {
             node.SetScriptID(index);
+        });
+    }
 
+    public void RefreshAllNode()
+    {
+        SetScriptID();
+
+        int loopCount = TraversalNode(true, head, (index, branchIndex, depth, node) =>
+        {
             //노드 이름 설정
             {
                 string name = "";
@@ -334,19 +416,13 @@ public class NodeGraph : MonoBehaviour
             {
                 node.RefreshBranchBtnActive();
 
-                //BranchEnd 이름 설정
+                //BranchEnd 처리
                 if (node.nodeType == Node.NodeType.BranchEnd)
                 {
                     node.SetName("-");
 
-                    try
-                    {
-                        node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString();
-                    }
-                    catch
-                    {
-                        "Branch는 항상 다음 노드를 가지고 있어야 합니다.".LogWarning();
-                    }
+                    "Refresh BranchEnd".Log();
+                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString(); //다음 노드의 ScriptID가 refresh 되기 전임.. ScriptID를 다른 시점에서 처리해야 할 듯
                 }
             }
         });

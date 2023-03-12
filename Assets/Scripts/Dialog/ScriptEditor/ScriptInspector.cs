@@ -43,14 +43,14 @@ public class ScriptInspector : MonoBehaviour
         variableList.Add(CreateVariable(VariableType.Dropdown, "SkipMethod", node, ScriptDataKey.SkipMethod, Enum.GetNames(typeof(SkipMethod))));
         variableList.Add(CreateVariable(VariableType.InputField, "SkipDelay", node, ScriptDataKey.SkipDelay, null, null, InputField.ContentType.DecimalNumber));
 
-        if (node.scriptType == Node.ScriptType.Text)
+        if (node.script.scriptType == ScriptType.Text)
         {
             variableList.Add(CreateVariable(VariableType.InputField, "Text", node, ScriptDataKey.Text));
             variableList.Add(CreateVariable(VariableType.InputField, "TextDuration", node, ScriptDataKey.TextDuration, null, null, InputField.ContentType.DecimalNumber));
             variableList.Add(CreateVariable(VariableType.InputField, "Audio 0", node, ScriptDataKey.Audio0));
             variableList.Add(CreateVariable(VariableType.InputField, "Audio 1", node, ScriptDataKey.Audio1));
         }
-        else if (node.scriptType == Node.ScriptType.Event)
+        else if (node.script.scriptType == ScriptType.Event)
         {
             EventType eventType = node.script.eventData.eventType;
             EventInfo eventInfo = EventInfo.GetEventInfo(eventType);
@@ -61,6 +61,11 @@ public class ScriptInspector : MonoBehaviour
             if(eventInfo.canUseEventDuration == true)
             {
                 variableList.Add(CreateVariable(VariableType.InputField, "DurationTurn", node, ScriptDataKey.DurationTurn, null, null, InputField.ContentType.IntegerNumber));
+            }
+
+            if(node.nodeType == Node.NodeType.BranchEnd)
+            {
+                return;
             }
 
             for (int i = 0; i < eventInfo.paramInfo.Count; ++i)

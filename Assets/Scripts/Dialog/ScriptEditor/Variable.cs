@@ -22,12 +22,21 @@ public class Variable : MonoBehaviour
     [SerializeField] private InputField inputField;
     [SerializeField] private Dropdown dropdown;
 
+    private NodeGraph nodeGrp;
+    private ScriptInspector inspector;
+
     public EventParamInfo eventParamInfo = null;
 
     public Node targetNode;
     public ScriptDataKey targetKey;
 
     public VariableType type = VariableType.InputField;
+
+    private void Awake()
+    {
+        nodeGrp = NodeGraph.instance;
+        inspector = ScriptInspector.instance;
+    }
 
     public void Init(VariableType type)
     {
@@ -51,7 +60,7 @@ public class Variable : MonoBehaviour
             //    break;
         }
 
-        transform.SetParent(ScriptInspector.instance.transform);
+        transform.SetParent(inspector.transform);
 
         transform.localScale = Vector3.one;
 
@@ -65,7 +74,7 @@ public class Variable : MonoBehaviour
         if (targetKey == ScriptDataKey.EventType)
         {
             //"이벤트 타입 변경".로그();
-            ScriptInspector.instance.RefreshInspector(targetNode);
+            inspector.RefreshInspector(targetNode);
 
             string value = GetValue();
             EventType eventType = (EventType)Enum.Parse(typeof(EventType), value);
@@ -83,6 +92,8 @@ public class Variable : MonoBehaviour
                 targetNode.SetNodeType(Node.NodeType.Normal);
             }
         }
+
+        nodeGrp.Save();
     }
 
     public void SetDropdownOption(string[] options)

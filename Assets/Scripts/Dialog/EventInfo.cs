@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.U2D.Animation;
@@ -102,6 +103,9 @@ public class EventInfo
             infos.Add(EventType.Branch, info);
 
             info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Point Amount 1", ScriptDataKey.EventParam0, null, "호감도 요구 조건을 적어주세요.", InputField.ContentType.IntegerNumber));
+            info.paramInfo.Add(new(VariableType.InputField, "Point Amount 2", ScriptDataKey.EventParam2, null, "호감도 요구 조건을 적어주세요.", InputField.ContentType.IntegerNumber));
+            info.paramInfo.Add(new(VariableType.InputField, "Point Amount 3", ScriptDataKey.EventParam4, null, "호감도 요구 조건을 적어주세요.", InputField.ContentType.IntegerNumber));
         }
 
         //AddLovePoint
