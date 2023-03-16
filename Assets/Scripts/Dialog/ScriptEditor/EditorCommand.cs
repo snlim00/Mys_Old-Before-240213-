@@ -39,9 +39,28 @@ public class CreateNextNode : EditorCommand
 
     public override void Undo()
     {
-        nodeGrp.SelectNode(prevSelectedNode ?? nodeGrp.head);
+        if (createdNode.nextNode != null)
+        {
+            prevSelectedNode = createdNode.nextNode;
+        }
+        else
+        {
+            prevSelectedNode = createdNode.prevNode;
+        }
 
-        GameObject.Destroy(createdNode.gameObject);
+        if (createdNode.nextNode != null)
+        {
+            createdNode.nextNode.prevNode = createdNode.prevNode ?? null;
+        }
+
+        if (createdNode.prevNode != null)
+        {
+            createdNode.prevNode.nextNode = createdNode.nextNode ?? null;
+        }
+
+        nodeGrp.SelectNode(this.prevSelectedNode ?? nodeGrp.head);
+
+        GameObject.Destroy(this.createdNode.gameObject);
 
         nodeGrp.RefreshAllNode();
     }
@@ -190,6 +209,7 @@ public class RemoveNode : EditorCommand
 public class RemoveBranch : EditorCommand
 {
     int index;
+    private Node removedBranchHead;
     private List<Node> removedBranch;
 
     public override void Execute()
@@ -199,7 +219,9 @@ public class RemoveBranch : EditorCommand
         Node parent = nodeGrp.selectedNode.parent;
         index = nodeGrp.selectedNode.GetBranchIndex();
 
-        nodeGrp.TraversalNode(false, parent.branch[index], (index, branchIndex, depth, node) =>
+        removedBranchHead = parent.branch[index];
+
+        nodeGrp.TraversalNode(false, removedBranchHead, (index, branchIndex, depth, node) =>
         {
             removedBranch.Add(node);
             node.transform.SetParent(null);
@@ -209,10 +231,19 @@ public class RemoveBranch : EditorCommand
         parent.branch.Add(null);
 
         nodeGrp.RefreshAllNode();
+        nodeGrp.SelectNode(removedBranchHead.parent);
     }
 
     public override void Undo()
     {
+        removedBranchHead.parent.branch.Insert(index, removedBranchHead);
+        removedBranchHead.parent.branch.RemoveAt(Node.maxBranchCount);
 
+        foreach(Node node in removedBranch)
+        {
+            node.transform.SetParent(nodeGrp.transform);
+        }
+
+        nodeGrp.RefreshAllNode();
     }
 }

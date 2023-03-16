@@ -45,22 +45,10 @@ public class NodeGraph : MonoBehaviour
         transform.localPosition = new Vector2(-150, -50);
 
         Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.T))
+            .Where(_ => Input.GetKeyDown(KeyCode.R))
             .Subscribe(_ =>
             {
-                int width = 0;
-
-                TraversalNode(true, selectedNode, (index, branchIndex, depth, node) =>
-                {
-                    int branchCount = node.GetBranchCount();
-
-                    if (branchCount != 0)
-                    {
-                        width += branchCount;
-                    }
-                });
-
-                width.Log();
+                RefreshAllNode();
             });
 
         Observable.EveryUpdate()
@@ -292,7 +280,6 @@ public class NodeGraph : MonoBehaviour
 
         EditorCommand command = new RemoveNode();
         ExecuteCommand(command);
-        "RemoveNode".Log();
     }
     #endregion
 
