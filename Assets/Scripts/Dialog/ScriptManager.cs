@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Reflection;
 
+//얘를 정적 클래스로 만들지 말자.
 public static class ScriptManager
 {
-    public static List<ScriptObject> scripts = new List<ScriptObject>();
+    public static List<ScriptObject> scripts = new();
 
     public static int currentIndex { get; private set; } = 0;
     public static ScriptObject currentScript
@@ -21,7 +23,22 @@ public static class ScriptManager
     /// </summary>
     public static void ReadScript()
     {
-        scripts = CSVReader.ReadScript("Data/ScriptTable.CSV");
+        string path = Application.dataPath + "/Data";
+        var di = new System.IO.DirectoryInfo(path); // Assets/Data의 모든 파일 불러오기
+
+        foreach(var file in di.GetFiles())
+        {
+            string name = file.Name;
+
+            if(name.Contains(".CSV") && name.Contains(".meta") == false) //.CSV확장자의 파일 모두 불러오기 (.meta 파일은 제외)
+            {
+                var script = CSVReader.ReadScript(name);
+
+                scripts.AddRange(script);
+
+                name.Log();
+            }
+        }
     }
 
     public static void SetCurrentScript(ScriptObject script)
