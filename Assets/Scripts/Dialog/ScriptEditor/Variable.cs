@@ -60,12 +60,15 @@ public class Variable : MonoBehaviour
             //    break;
         }
 
-        transform.SetParent(inspector.transform);
+        transform.SetParent(inspector.transform); 
 
         transform.localScale = Vector3.one;
 
         dropdown.onValueChanged.AddListener(_ => OnValueChange());
+        dropdown.onValueChanged.AddListener(_ => nodeGrp.Save());
+        
         inputField.onValueChanged.AddListener(_ => OnValueChange());
+        inputField.onEndEdit.AddListener(_ => nodeGrp.Save());
     }
 
 
@@ -92,7 +95,10 @@ public class Variable : MonoBehaviour
                 targetNode.SetNodeType(Node.NodeType.Normal);
             }
         }
+    }
 
+    public void OnEndEdit()
+    {
         nodeGrp.Save();
     }
 

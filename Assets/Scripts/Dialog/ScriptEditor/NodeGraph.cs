@@ -52,6 +52,51 @@ public class NodeGraph : MonoBehaviour
             });
 
         Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.B))
+            .Subscribe(_ =>
+            {
+                var eventData = selectedNode.script.eventData;
+
+                List<int> requiredValue = new();
+                List<int> targetScriptID = new();
+
+                for (int i = 1; i < eventData.eventParam.Count; ++i)
+                {
+                    (i + " " + eventData.eventParam[i]).Log();  
+                    //eventData.eventParam.Count.Log();
+                    //if (i % 2 == 0)
+                    //{
+                    //    int value;
+                    //    if (int.TryParse(eventData.eventParam[i], out value))
+                    //    {
+                    //        targetScriptID.Add(value);
+                    //    }
+                    //    else
+                    //    {
+                    //        i.Log();
+                    //        break;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    int value;
+                    //    if (int.TryParse(eventData.eventParam[i], out value))
+                    //    {
+                    //        requiredValue.Add(value);
+                    //    }
+                    //    else
+                    //    {
+                    //        i.Log();
+                    //        break;
+                    //    }
+                    //}
+                }
+
+                requiredValue.Count();
+            });
+
+
+        Observable.EveryUpdate()
             .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
             .Subscribe(_ =>
             {
@@ -158,7 +203,7 @@ public class NodeGraph : MonoBehaviour
                     {
                         if (node.branch[i] == null) break;
 
-                        node.script.eventData.eventParam[i * 2 + 1] = node.branch[i].script.scriptID.ToString();
+                        node.script.eventData.eventParam[i * 2 + 2] = node.branch[i].script.scriptID.ToString();
                     }
                 }
 

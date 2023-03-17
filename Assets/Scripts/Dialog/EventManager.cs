@@ -201,13 +201,29 @@ public class EventManager : MonoBehaviour
         {
             if(i % 2 == 0)
             {
-                int param = int.Parse(eventData.eventParam[i]);
-                targetScriptID.Add(param);
+                int value;
+
+                if(int.TryParse(eventData.eventParam[i], out value))
+                {
+                    targetScriptID.Add(value);
+                }
+                else
+                {
+                    break;
+                }
             }
             else
             {
-                int param = int.Parse(eventData.eventParam[i]);
-                requiredValue.Add(param);
+                int value;
+
+                if (int.TryParse(eventData.eventParam[i], out value))
+                {
+                    requiredValue.Add(value);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 

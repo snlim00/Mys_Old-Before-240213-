@@ -7,10 +7,50 @@ using UnityEngine;
 public abstract class EditorCommand
 {
     protected NodeGraph nodeGrp;
+    protected ScriptObject script = null;
 
     public EditorCommand()
     {
         this.nodeGrp = NodeGraph.instance;
+    }
+
+    //SetScript를 통해 Execute전에 스크립트를 설정, 설정한 스크립트가 있다면 Execute내에서 스크립트를 적용(ApplyScript)하도록 설정.
+    public void SetScript(ScriptObject script)
+    {
+        this.script = script;
+    }
+
+    protected void ApplyScript(Node node)
+    {
+        if(script == null)
+        {
+            return;
+        }
+
+        node.script = script;
+
+        if(script.scriptType == ScriptType.Event)
+        {
+            if(script.eventData.eventType == EventType.Branch)
+            {
+                node.SetNodeType(Node.NodeType.Branch);
+            }
+            else if(script.eventData.eventType == EventType.Goto)
+            {
+                if(node.parent == null)
+                {
+                    node.SetNodeType(Node.NodeType.Goto);
+                }
+                else
+                {
+                    node.SetNodeType(Node.NodeType.BranchEnd);
+                }
+            }
+        }
+        else
+        {
+            node.SetNodeType(Node.NodeType.Normal);
+        }
     }
 
     public abstract void Execute();
@@ -33,6 +73,8 @@ public class CreateNextNode : EditorCommand
 
 
         prevSelectedNode = nodeGrp.selectedNode;
+
+        ApplyScript(createdNode);
         nodeGrp.RefreshAllNode();
         nodeGrp.SelectNode(createdNode);
     }
@@ -115,8 +157,9 @@ public class CreateBranchNode : EditorCommand
             branchEnd.script.eventData.eventType = EventType.Goto;
         }
 
-
+        ApplyScript(createdNode);
         nodeGrp.RefreshAllNode();
+        nodeGrp.SelectNode(createdNode);
     }
 
     public override void Undo()

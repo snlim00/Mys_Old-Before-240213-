@@ -118,20 +118,4 @@ public class ScriptInspector : MonoBehaviour
             var.ApplyValue();
         }
     }
-
-    public List<EventParamInfo> GetEventInfo(EventType eventType)
-    {
-        List<EventParamInfo> list = new();
-
-        switch(eventType)
-        {
-            case EventType.CreateCharacter:
-                list.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "캐릭터의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/\" 이후의 경로만 입력)"));
-                string[] options = { "0", "1", "2", "3", "4" };
-                list.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam0, options, "캐릭터의 위치를 정해주세요."));
-                break;
-        }
-
-        return list;
-    }
 }

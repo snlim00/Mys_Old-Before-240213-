@@ -8,7 +8,7 @@ using TMPro;
 
 public class DialogManager : MonoBehaviour
 {
-    public static DialogManager instance = null;
+    public static DialogManager instance { get; private set; } = null;
 
     private Sequence autoSkipSequence = null;
     private IDisposable skipStream = null;

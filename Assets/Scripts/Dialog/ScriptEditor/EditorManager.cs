@@ -1,13 +1,10 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using UniRx;
 using System.IO;
 using System;
-using UnityEditor.SceneManagement;
 
 public class EditorManager : MonoBehaviour
 {
@@ -15,10 +12,7 @@ public class EditorManager : MonoBehaviour
 
     private GameObject graphPref;
 
-    private DialogManager dialogMgr;
-    private EventManager eventMgr;
-
-    private NodeGraph nodeGraph;
+    private NodeGraph nodeGrp;
 
     public RectTransform scrollViewContent;
 
@@ -48,29 +42,58 @@ public class EditorManager : MonoBehaviour
     {
         this.scriptGroupID = scriptGroupID;
 
-        string fileName = "ScriptGraph" + scriptGroupID;
-        string path = Application.dataPath + "/Resources/Prefabs/ScriptGraph/" + fileName + ".prefab";
+        string path = Application.dataPath + "/Data/ScriptTable/" + scriptGroupID + ".CSV";
         bool isExists = File.Exists(path);
 
-        //(path + " : " + isExists).Log();
+        nodeGrp = Instantiate(graphPref).GetComponent<NodeGraph>();
 
         if(isExists)
         {
-            GameObject pref = Resources.Load<GameObject>("Prefabs/ScriptGraph/" + fileName);
-
-            nodeGraph = Instantiate(pref).GetComponent<NodeGraph>();
-
-            nodeGraph.SelectNode(nodeGraph.selectedNode);
+            LoadScript(path);
         }
-        else
+
+        nodeGrp.CreateGraph();
+
+        nodeGrp.transform.SetParent(scrollViewContent.transform);
+        nodeGrp.transform.localScale = Vector3.one;
+        nodeGrp.transform.localPosition = new Vector2(0, -50);
+    }
+
+    private void LoadScript(string path)
+    {
+        var scripts = CSVReader.ReadScript(path);
+
+        void Branch(int index)
         {
-            nodeGraph = Instantiate(graphPref).GetComponent<NodeGraph>();
+            var parent = scripts[index];
 
-            nodeGraph.CreateGraph();
+
         }
 
-        nodeGraph.transform.SetParent(scrollViewContent.transform);
-        nodeGraph.transform.localScale = Vector3.one;
-        nodeGraph.transform.localPosition = new Vector2(0, -50);
+        for(int i = 0; i < scripts.Count; ++i)
+        {
+            var script = scripts[i];
+            var nextScript = scripts?[i + 1];
+
+            EditorCommand command = null;
+
+            if (script.scriptType == ScriptType.Event)
+            {
+                if(script.eventData.eventType == EventType.Branch)
+                {
+                    
+                }
+            }
+            else if(script.scriptType == ScriptType.Text)
+            {
+                command = new CreateNextNode();
+            }
+
+            if(command != null)
+            {
+                command.SetScript(script);
+                command.Execute();
+            }
+        }
     }
 }

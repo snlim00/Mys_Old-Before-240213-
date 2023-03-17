@@ -133,10 +133,10 @@ public static class CSVReader
 
     public static List<ScriptObject> ReadScript(string path)
     {
-        string filePath = Application.dataPath + '/' + path;
-
+        string filePath = Application.dataPath + "/Data/" + path;
+        
         StreamReader file = new StreamReader(filePath);
-        path.Log();
+        //path.Log();
 
         var list = new List<ScriptObject>();
 
