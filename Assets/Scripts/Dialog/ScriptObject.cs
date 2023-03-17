@@ -70,6 +70,69 @@ public class ScriptObject
     public bool linkEvent = DEFAULT_LINK_EVENT;
     public EventData eventData;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>requiredValue와 targetScriptID를 튜플로 담은 리스트</returns>
+    public List<(int, int)> ParseBranch()
+    {
+        if(scriptType != ScriptType.Event || eventData.eventType != EventType.Branch)
+        {
+            "ParseBranch - 해당 스크립트는 브랜치가 아닙니다.".LogError();
+            return null;
+        }
+
+        List<(int, int)> list = new();
+
+        List<int> requiredValue = new();
+        List<int> targetScriptID = new();
+
+        for (int i = 1; i < eventData.eventParam.Count; ++i)
+        {
+            if (i % 2 == 0)
+            {
+                int value;
+                if (int.TryParse(eventData.eventParam[i], out value))
+                {
+                    targetScriptID.Add(value);
+                }
+                else
+                {
+                    i.Log();
+                    break;
+                }
+            }
+            else
+            {
+                int value;
+                if (int.TryParse(eventData.eventParam[i], out value))
+                {
+                    requiredValue.Add(value);
+                }
+                else
+                {
+                    i.Log();
+                    break;
+                }
+            }
+        }
+
+        for(int i = 0; i < targetScriptID.Count; ++i)
+        {
+            list.Add((requiredValue[i], targetScriptID[i]));
+        }
+
+        return list;
+    }
+
+    public int GetBranchCount
+    {
+        get
+        {
+            return ParseBranch().Count;
+        }
+    }
+
     public ScriptObject()
     {
         eventData = new(this);
@@ -142,6 +205,9 @@ public class ScriptObject
 
             case ScriptDataKey.LoopCount:
                 return eventData.loopCount.ToString();
+
+            case ScriptDataKey.LoopType:
+                return Enum.GetName(typeof(LoopType), eventData.loopType);
 
             case ScriptDataKey.LoopDelay:
                 return eventData.loopDelay.ToString();
@@ -326,6 +392,17 @@ public class ScriptObject
                     if (int.TryParse(value, out outValue))
                     {
                         eventData.loopCount = outValue;
+                    }
+                }
+                break;
+
+            case ScriptDataKey.LoopType:
+                {
+                    object outValue;
+
+                    if (Enum.TryParse(typeof(LoopType), value, out outValue))
+                    {
+                        eventData.loopType = (LoopType)outValue;
                     }
                 }
                 break;

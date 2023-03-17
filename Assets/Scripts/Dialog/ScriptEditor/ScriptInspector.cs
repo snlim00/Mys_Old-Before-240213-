@@ -32,6 +32,7 @@ public class ScriptInspector : MonoBehaviour
         SetInspector(node);
     }
 
+    //여기서 현재 선택중인 노드랑 같은 노드라면 안 해야 할듯. (OnEndEdit에서 호출되는 SetInspector가 너무 불쾌함.)
     public void SetInspector(Node node)
     {
         transform.DestroyAllChildren();
@@ -61,6 +62,13 @@ public class ScriptInspector : MonoBehaviour
             if(eventInfo.canUseEventDuration == true)
             {
                 variableList.Add(CreateVariable(VariableType.InputField, "DurationTurn", node, ScriptDataKey.DurationTurn, null, null, InputField.ContentType.IntegerNumber));
+            }
+
+            if(eventInfo.canUseLoop == true)
+            {
+                variableList.Add(CreateVariable(VariableType.InputField, "LoopCount", node, ScriptDataKey.LoopCount, null, null, InputField.ContentType.IntegerNumber));
+                variableList.Add(CreateVariable(VariableType.Dropdown, "LoopType", node, ScriptDataKey.LoopType, Enum.GetNames(typeof(DG.Tweening.LoopType))));
+                variableList.Add(CreateVariable(VariableType.InputField, "LoopDelay", node, ScriptDataKey.LoopDelay, null, null, InputField.ContentType.DecimalNumber));
             }
 
             if(node.nodeType == Node.NodeType.BranchEnd)
