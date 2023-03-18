@@ -4,12 +4,12 @@ using UnityEngine;
 using System.Reflection;
 
 //얘를 정적 클래스로 만들지 말자.
-public static class ScriptManager
+public class ScriptManager
 {
-    public static List<ScriptObject> scripts = new();
+    public List<ScriptObject> scripts = new();
 
-    public static int currentIndex { get; private set; } = 0;
-    public static ScriptObject currentScript
+    public int currentIndex { get; private set; } = 0;
+    public ScriptObject currentScript
     {
         get
         {
@@ -21,7 +21,7 @@ public static class ScriptManager
     /// Data/ScriptTable.CSV 파일을 읽어옴.<br/>
     /// 전체 게임 내에서 한 번만 호출.
     /// </summary>
-    public static void ReadScript()
+    public void ReadAllScript()
     {
         string path = Application.dataPath + "/Data";
         var di = new System.IO.DirectoryInfo(path); // Assets/Data의 모든 파일 불러오기
@@ -32,16 +32,21 @@ public static class ScriptManager
 
             if(name.Contains(".CSV") && name.Contains(".meta") == false) //.CSV확장자의 파일 모두 불러오기 (.meta 파일은 제외)
             {
-                var script = CSVReader.ReadScript(name);
-
-                scripts.AddRange(script);
-
-                name.Log();
+                ReadScript(name);
             }
         }
     }
 
-    public static void SetCurrentScript(ScriptObject script)
+    public void ReadScript(string path)
+    {
+        var script = CSVReader.ReadScript(path);
+
+        scripts.AddRange(script);
+
+        scripts.Sort(delegate (ScriptObject a, ScriptObject b) { return a.scriptID.CompareTo(b.scriptID); });
+    }
+
+    public void SetCurrentScript(ScriptObject script)
     {
         int index = scripts.IndexOf(script);
 
@@ -54,14 +59,14 @@ public static class ScriptManager
         currentIndex = index;
     }
 
-    public static void SetCurrentScript(int scriptID)
+    public void SetCurrentScript(int scriptID)
     {
         ScriptObject script = GetScriptFromID(scriptID);
 
         SetCurrentScript(script);
     }
 
-    public static ScriptObject Next()
+    public ScriptObject Next()
     {
         ScriptObject nextScript = GetNextScript();
 
@@ -70,7 +75,7 @@ public static class ScriptManager
         return nextScript;
     }
 
-    public static ScriptObject GetNextScript()
+    public ScriptObject GetNextScript()
     {
         int currID = currentScript.scriptID;
         int nextID = currentScript.scriptID + 1;
@@ -91,7 +96,7 @@ public static class ScriptManager
         return nextScript;
     }
 
-    public static ScriptObject GetPrevScript()
+    public ScriptObject GetPrevScript()
     {
         int currID = currentScript.scriptID;
         int prevID = currID - 1;
@@ -107,7 +112,7 @@ public static class ScriptManager
         return prevScript;
     }
 
-    public static ScriptObject GetPrevScriptFromID(int scriptID)
+    public ScriptObject GetPrevScriptFromID(int scriptID)
     {
         int currID = scriptID;
         int prevID = currID - 1;
@@ -123,7 +128,7 @@ public static class ScriptManager
         return prevScript;
     }
 
-    public static ScriptObject GetScriptFromID(int id)
+    public ScriptObject GetScriptFromID(int id)
     {
         foreach(var script in scripts)
         {

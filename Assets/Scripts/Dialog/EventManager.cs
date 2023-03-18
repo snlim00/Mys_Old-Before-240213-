@@ -197,34 +197,14 @@ public class EventManager : MonoBehaviour
         List<int> requiredValue = new();
         List<int> targetScriptID = new();
 
-        for(int i = 1; i < eventData.eventParam.Count; ++i)
+        var list = script.ParseBranch();
+
+        for(int i = 0; i < list.Count; ++i)
         {
-            if(i % 2 == 0)
-            {
-                int value;
+            var (value, id) = list[i];
 
-                if(int.TryParse(eventData.eventParam[i], out value))
-                {
-                    targetScriptID.Add(value);
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                int value;
-
-                if (int.TryParse(eventData.eventParam[i], out value))
-                {
-                    requiredValue.Add(value);
-                }
-                else
-                {
-                    break;
-                }
-            }
+            requiredValue.Add(value);
+            targetScriptID.Add(id);
         }
 
         int branch = -1;

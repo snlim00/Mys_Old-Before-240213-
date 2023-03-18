@@ -1,8 +1,0 @@
-﻿Event,Explain,EventDuration,Param0,Param1,Param2,Param3,Param4,Param5,Param6
-CreateCharacter,캐릭터를 생성합니다.,TRUE,"Path;캐릭터 리소스의 경로를 입력하세요. (""Assets/Resources/Image/"" 이후의 경로만 입력)",Int;캐릭터가 나타날 위치를 입력하세요. (0~4),,,,,
-RemoveCharacter,,TRUE,Int;삭제할 캐릭터의 위치를 입력하세요. (0~4),,,,,,
-RemoveAllCharacter,,FALSE,,,,,,,
-AddLovePoint,,FALSE,Name;등장 인물을 선택해주세요,Int,,,,,
-Goto,,FALSE,ScriptID,,,,,,
-Branch,,FALSE,Name,ScriptID,ScriptID,ScriptID,ScriptID,ScriptID,ScriptID
-SetBackground,,TRUE,Path,,,,,,

@@ -61,39 +61,67 @@ public class EditorManager : MonoBehaviour
 
     private void LoadScript(string path)
     {
-        var scripts = CSVReader.ReadScript(path);
+        var scriptMgr = new ScriptManager();
 
-        void Branch(int index)
+        scriptMgr.ReadScript(path);
+
+        //시작 스크립트 설정
+        int firstScriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
+        ScriptObject firstScript = scriptMgr.GetScriptFromID(firstScriptID);
+        scriptMgr.SetCurrentScript(firstScript);
+
+        while(true)
         {
-            var parent = scripts[index];
+            var currentScript = scriptMgr.currentScript;
 
+            CreateNode(ref scriptMgr);
 
+            scriptMgr.Next();
+        }
+    }
+
+    private void CreateNode(ref ScriptManager scriptMgr)
+    {
+        var script = scriptMgr.currentScript;
+
+        EditorCommand command = null;
+
+        if (script.scriptType == ScriptType.Text)
+        {
+            command = new CreateNextNode();
+        }
+        else if(script.scriptType == ScriptType.Event)
+        {
+            if(script.eventData.eventType == EventType.Branch)
+            {
+                Branch(ref scriptMgr);
+            }
         }
 
-        for(int i = 0; i < scripts.Count; ++i)
+        if (command != null)
         {
-            var script = scripts[i];
-            var nextScript = scripts?[i + 1];
+            command.SetScript(script);
+            command.Execute();
+        }
+    }
 
-            EditorCommand command = null;
+    private void Branch(ref ScriptManager scriptMgr)
+    {
+        var parent = scriptMgr.currentScript;
 
-            if (script.scriptType == ScriptType.Event)
-            {
-                if(script.eventData.eventType == EventType.Branch)
-                {
-                    
-                }
-            }
-            else if(script.scriptType == ScriptType.Text)
-            {
-                command = new CreateNextNode();
-            }
+        int branchCount = parent.GetBranchCount;
 
-            if(command != null)
-            {
-                command.SetScript(script);
-                command.Execute();
-            }
+        for(int i = 0; i < branchCount; ++i)
+        {
+            //TraversalBranch();
+        }
+    }
+
+    private void TraversalBranch(ref ScriptManager scriptMgr, ScriptObject script)
+    {
+        while(scriptMgr.currentScript.scriptType != ScriptType.Event && scriptMgr.currentScript.eventData.eventType != EventType.Goto)
+        {
+            scriptMgr.Next();
         }
     }
 }

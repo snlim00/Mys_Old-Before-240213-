@@ -1,13 +1,15 @@
 using System.Collections.Generic;
-using UnityEditor.Tilemaps;
+using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 
-[CreateAssetMenu(fileName = "Test", menuName = "Scriptable Object/Test Data", order = int.MaxValue)]
-public class Test : ScriptableObject
+public class Test : MonoBehaviour
 {
-    public int a;
-    public float b;
-    public string c;
+    [SerializeField] InputField inputField;
 
-    [SerializeField] public List<Vector2> list;
+    private void Start()
+    {
+        inputField.onValueChanged.AddListener(_ => {
+            });
+    }
 }

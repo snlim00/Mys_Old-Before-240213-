@@ -18,6 +18,8 @@ public class DialogManager : MonoBehaviour
 
     public List<TweenObject> tweenList = new();
 
+    public ScriptManager scriptMgr = new();
+
     private void Awake()
     {
         if(instance != null)
@@ -32,14 +34,14 @@ public class DialogManager : MonoBehaviour
 
     private void Start()
     {
-        ScriptManager.ReadScript();
+        scriptMgr.ReadAllScript();
     }
 
     public void DialogStart(int scriptID)
     {
-        ScriptObject script = ScriptManager.GetScriptFromID(scriptID);
+        ScriptObject script = scriptMgr.GetScriptFromID(scriptID);
 
-        ScriptManager.SetCurrentScript(script);
+        scriptMgr.SetCurrentScript(script);
 
         ExecuteScript(script);
     }
@@ -125,7 +127,7 @@ public class DialogManager : MonoBehaviour
             return;
         }
 
-        ScriptObject nextScript = ScriptManager.GetNextScript();
+        ScriptObject nextScript = scriptMgr.GetNextScript();
 
         if(nextScript.scriptType == ScriptType.Text)
         {
@@ -136,7 +138,7 @@ public class DialogManager : MonoBehaviour
 
         tweenList.Add(nextEvent);
 
-        ScriptManager.SetCurrentScript(nextScript);
+        scriptMgr.SetCurrentScript(nextScript);
 
         AppendLinkEvent(nextScript);
     }
@@ -247,14 +249,14 @@ public class DialogManager : MonoBehaviour
 
     private void ExecuteNextScript()
     {
-        ScriptManager.Next();
+        scriptMgr.Next();
 
         if(skipStream != null)
         {
             skipStream.Dispose();
         }
 
-        ExecuteScript(ScriptManager.currentScript);
+        ExecuteScript(scriptMgr.currentScript);
     }
     #endregion
 
@@ -288,8 +290,8 @@ public class DialogManager : MonoBehaviour
 
         int groupID = ScriptManager.GetGroupID(targetID);
         int startID = ScriptManager.GetFirstScriptIDFromGroupID(groupID);
-        ScriptObject script = ScriptManager.GetScriptFromID(startID);
-        ScriptManager.SetCurrentScript(script);
+        ScriptObject script = scriptMgr.GetScriptFromID(startID);
+        scriptMgr.SetCurrentScript(script);
 
         MoveTo(script, targetID, moveCB);
     }
@@ -338,7 +340,7 @@ public class DialogManager : MonoBehaviour
             tweenObj.isSkipped = false;
         });
 
-        MoveTo(ScriptManager.Next(), targetID, moveCB);
+        MoveTo(scriptMgr.Next(), targetID, moveCB);
     }
     #endregion
 }

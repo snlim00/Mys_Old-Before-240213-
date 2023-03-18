@@ -55,44 +55,12 @@ public class NodeGraph : MonoBehaviour
             .Where(_ => Input.GetKeyDown(KeyCode.B))
             .Subscribe(_ =>
             {
-                var eventData = selectedNode.script.eventData;
+                var list = selectedNode.script.ParseBranch();
 
-                List<int> requiredValue = new();
-                List<int> targetScriptID = new();
-
-                for (int i = 1; i < eventData.eventParam.Count; ++i)
+                foreach(var value in list)
                 {
-                    (i + " " + eventData.eventParam[i]).Log();  
-                    //eventData.eventParam.Count.Log();
-                    //if (i % 2 == 0)
-                    //{
-                    //    int value;
-                    //    if (int.TryParse(eventData.eventParam[i], out value))
-                    //    {
-                    //        targetScriptID.Add(value);
-                    //    }
-                    //    else
-                    //    {
-                    //        i.Log();
-                    //        break;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    int value;
-                    //    if (int.TryParse(eventData.eventParam[i], out value))
-                    //    {
-                    //        requiredValue.Add(value);
-                    //    }
-                    //    else
-                    //    {
-                    //        i.Log();
-                    //        break;
-                    //    }
-                    //}
+                    value.Log();
                 }
-
-                requiredValue.Count();
             });
 
 
@@ -201,7 +169,17 @@ public class NodeGraph : MonoBehaviour
                 {
                     for(int i = 0; i < Node.maxBranchCount; ++i)
                     {
-                        if (node.branch[i] == null) break;
+                        //브랜치가 없으면 해당 부분의 eventParam 비우기
+                        if (node.branch[i] == null)
+                        {
+                            for(int j = i; j < Node.maxBranchCount; ++j)
+                            {
+                                node.script.eventData.eventParam[i * 2 + 1] = null;
+                                node.script.eventData.eventParam[i * 2 + 2] = null;
+                            }
+
+                            break;
+                        }
 
                         node.script.eventData.eventParam[i * 2 + 2] = node.branch[i].script.scriptID.ToString();
                     }
@@ -454,7 +432,9 @@ public class NodeGraph : MonoBehaviour
                     node.SetName("-");
 
                     "Refresh BranchEnd".Log();
-                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString(); //다음 노드의 ScriptID가 refresh 되기 전임.. ScriptID를 다른 시점에서 처리해야 할 듯
+                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString(); 
+                    //다음 노드의 ScriptID가 refresh 되기 전임.. ScriptID를 다른 시점에서 처리해야 할 듯
+                    //SetScriptID 함수를 따로 만들어서 이전에 실행하도록 하여 해결 230316
                 }
             }
         });

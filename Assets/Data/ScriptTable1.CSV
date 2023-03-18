@@ -1,0 +1,11 @@
+ScriptID,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6
+10001,Event,,,0.1,Skipable,0.5,False,,,Branch,0,0,0.5,0,Restart,0,Jihyae,,10002,,10004,,10006
+10002,Event,,,0.1,Skipable,0.5,False,,,CreateCharacter,0,0,0.5,0,Restart,0,,0,,,,,
+10003,Event,,,0.1,Skipable,0.5,False,,,Goto,0,0,0.5,0,Restart,0,10010,,,,,,
+10004,Text,,,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
+10005,Event,,,0.1,Skipable,0.5,False,,,Goto,0,0,0.5,0,Restart,0,10010,,,,,,
+10006,Text,,,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
+10007,Text,,,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
+10008,Event,,,0.1,Skipable,0.5,False,,,Branch,0,0,0.5,0,Restart,0,Jihyae,,,,,,
+10009,Event,,,0.1,Skipable,0.5,False,,,Goto,0,0,0.5,0,Restart,0,10010,,,,,,
+10010,Text,,,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,

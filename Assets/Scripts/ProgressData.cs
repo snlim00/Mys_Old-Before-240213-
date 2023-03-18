@@ -8,7 +8,7 @@ public static class ProgressData
 {
     public static int scriptID;
 
-    public static int lovePoint_Jihyae { get; private set; } = 60;
+    public static int lovePoint_Jihyae { get; private set; }
     public static int lovePoint_Yunha { get; private set; }
     public static int lovePoint_Seeun { get; private set; }
 
