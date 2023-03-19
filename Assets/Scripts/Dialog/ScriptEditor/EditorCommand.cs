@@ -1,6 +1,8 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -17,27 +19,35 @@ public abstract class EditorCommand
     //SetScript를 통해 Execute전에 스크립트를 설정, 설정한 스크립트가 있다면 Execute내에서 스크립트를 적용(ApplyScript)하도록 설정.
     public void SetScript(ScriptObject script)
     {
-        this.script = script;
+        //this.script = script;
+        this.script = new();
+
+        foreach(ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
+        {
+            string value = script.GetVariableFromKey(key);
+
+            this.script.SetVariable(key, value);
+        }
     }
 
     protected void ApplyScript(Node node)
     {
-        if(script == null)
+        if (script == null)
         {
             return;
         }
 
         node.script = script;
 
-        if(script.scriptType == ScriptType.Event)
+        if (script.scriptType == ScriptType.Event)
         {
-            if(script.eventData.eventType == EventType.Branch)
+            if (script.eventData.eventType == EventType.Branch)
             {
                 node.SetNodeType(Node.NodeType.Branch);
             }
-            else if(script.eventData.eventType == EventType.Goto)
+            else if (script.eventData.eventType == EventType.Goto)
             {
-                if(node.parent == null)
+                if (node.parent == null)
                 {
                     node.SetNodeType(Node.NodeType.Goto);
                 }
@@ -182,6 +192,32 @@ public class RemoveNode : EditorCommand
 {
     private Node removedNode;
 
+    ~RemoveNode() //Destroy가 안됨 ,. . . . . ..ㅠㅠㅠㅠ
+    {
+        "소멸".로그();
+
+        try
+        {
+            GameObject.Destroy(removedNode.gameObject);
+        }
+        catch
+        {
+            "오류가 나긴 났음".로그();
+        }
+
+        //Observable.IntervalFrame(5)
+        //    .Subscribe(_ => {
+        //        try
+        //        {
+        //            GameObject.Destroy(removedNode.gameObject);
+        //        }
+        //        catch
+        //        {
+        //            "오류가 나긴 났음".로그();
+        //        }
+        //    });
+    }
+
     public override void Execute()
     {
         Node newSelectedNode;
@@ -219,7 +255,7 @@ public class RemoveNode : EditorCommand
 
                 removedNode.parent.branch[idx] = newSelectedNode;
             }
-            "change first node".Log();
+            //"change first node".Log();
             
         }
 
