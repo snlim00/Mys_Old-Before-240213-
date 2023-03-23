@@ -194,24 +194,13 @@ public class EventManager : MonoBehaviour
         string target = eventData.eventParam[0];
         int lovePoint = ProgressData.GetLovePointFromCharacter(script, target);
 
-        List<int> requiredValue = new();
-        List<int> targetScriptID = new();
-
-        var list = script.ParseBranch();
-
-        for(int i = 0; i < list.Count; ++i)
-        {
-            var (value, id) = list[i];
-
-            requiredValue.Add(value);
-            targetScriptID.Add(id);
-        }
+        BranchInfo branchInfo = script.GetBranchInfo();
 
         int branch = -1;
 
-        for(int i = requiredValue.Count - 1; i >= 0; --i)
+        for(int i = branchInfo.Count - 1; i >= 0; --i)
         {
-            if (requiredValue[i] <= lovePoint)
+            if (branchInfo.requiredValue[i] <= lovePoint)
             {
                 branch = i;
                 break;
@@ -224,7 +213,7 @@ public class EventManager : MonoBehaviour
             return;
         }
 
-        int scriptID = targetScriptID[branch];
+        int scriptID = branchInfo.targetID[branch];
 
         sequence.AppendCallback(() => Goto(scriptID));
     }
@@ -237,6 +226,8 @@ public class EventManager : MonoBehaviour
 
         Sprite sprite = Resources.Load<Sprite>("Images/Background/" + resource);
 
+        ("Images/Background/" + resource).Log();
+
         void SetBackground()
         {
             background.sprite = sprite;
@@ -244,6 +235,7 @@ public class EventManager : MonoBehaviour
 
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
         sequence.AppendCallback(SetBackground);
+        //sequence.AppendCallback(() => background.SetAlpha(1));
         sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
     }
 }

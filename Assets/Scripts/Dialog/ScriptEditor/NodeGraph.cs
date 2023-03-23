@@ -42,8 +42,6 @@ public class NodeGraph : MonoBehaviour
 
     private void Start()
     {
-        transform.localPosition = new Vector2(-150, -50);
-
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.R))
             .Subscribe(_ =>
@@ -52,15 +50,10 @@ public class NodeGraph : MonoBehaviour
             });
 
         Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.B))
+            .Where(_ => Input.GetKeyDown(KeyCode.L))
             .Subscribe(_ =>
             {
-                var list = selectedNode.script.ParseBranch();
-
-                foreach(var value in list)
-                {
-                    value.Log();
-                }
+                SelectLastNode();
             });
 
 
@@ -125,12 +118,8 @@ public class NodeGraph : MonoBehaviour
                }
 
                RefreshInspector();
+               selectedNode.RefreshNodeType();
            });
-
-
-        RefreshAllNode();
-        RefreshContentSize();
-        SelectNode(head);
     }
 
     public void RefreshInspector()
@@ -215,6 +204,8 @@ public class NodeGraph : MonoBehaviour
         {
             SelectNode(node);
         }
+
+        RefreshAllNode();
     }
 
     public Node CreateNode()
@@ -424,14 +415,13 @@ public class NodeGraph : MonoBehaviour
 
             //노드 리프레시
             {
-                node.RefreshBranchBtnActive();
+                node.Refresh();
 
                 //BranchEnd 처리
                 if (node.nodeType == Node.NodeType.BranchEnd)
                 {
                     node.SetName("-");
 
-                    "Refresh BranchEnd".Log();
                     node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString(); 
                     //다음 노드의 ScriptID가 refresh 되기 전임.. ScriptID를 다른 시점에서 처리해야 할 듯
                     //SetScriptID 함수를 따로 만들어서 이전에 실행하도록 하여 해결 230316
@@ -473,6 +463,18 @@ public class NodeGraph : MonoBehaviour
         selectedNode = node;
         node.SetColorSelect();
         ScriptInspector.instance.SetInspector(node);
+    }
+
+    public void SelectLastNode()
+    {
+        Node lastNode = head;
+
+        TraversalNode(false, head, (_, _, _, node) =>
+        {
+            lastNode = node;
+        });
+
+        SelectNode(lastNode);
     }
     #endregion
 }

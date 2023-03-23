@@ -19,15 +19,7 @@ public abstract class EditorCommand
     //SetScript를 통해 Execute전에 스크립트를 설정, 설정한 스크립트가 있다면 Execute내에서 스크립트를 적용(ApplyScript)하도록 설정.
     public void SetScript(ScriptObject script)
     {
-        //this.script = script;
-        this.script = new();
-
-        foreach(ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
-        {
-            string value = script.GetVariableFromKey(key);
-
-            this.script.SetVariable(key, value);
-        }
+        this.script = (ScriptObject)script.Clone();
     }
 
     protected void ApplyScript(Node node)
@@ -39,28 +31,7 @@ public abstract class EditorCommand
 
         node.script = script;
 
-        if (script.scriptType == ScriptType.Event)
-        {
-            if (script.eventData.eventType == EventType.Branch)
-            {
-                node.SetNodeType(Node.NodeType.Branch);
-            }
-            else if (script.eventData.eventType == EventType.Goto)
-            {
-                if (node.parent == null)
-                {
-                    node.SetNodeType(Node.NodeType.Goto);
-                }
-                else
-                {
-                    node.SetNodeType(Node.NodeType.BranchEnd);
-                }
-            }
-        }
-        else
-        {
-            node.SetNodeType(Node.NodeType.Normal);
-        }
+        node.RefreshNodeType();
     }
 
     public abstract void Execute();
@@ -70,7 +41,7 @@ public abstract class EditorCommand
 
 public class CreateNextNode : EditorCommand
 {
-    private Node createdNode;
+    private Node createdNode = null;
     private Node prevSelectedNode;
 
     public override void Execute()
@@ -115,6 +86,11 @@ public class CreateNextNode : EditorCommand
         GameObject.Destroy(this.createdNode.gameObject);
 
         nodeGrp.RefreshAllNode();
+    }
+
+    public Node GetCreatedNode()
+    {
+        return createdNode;
     }
 }
 
@@ -204,18 +180,6 @@ public class RemoveNode : EditorCommand
         {
             "오류가 나긴 났음".로그();
         }
-
-        //Observable.IntervalFrame(5)
-        //    .Subscribe(_ => {
-        //        try
-        //        {
-        //            GameObject.Destroy(removedNode.gameObject);
-        //        }
-        //        catch
-        //        {
-        //            "오류가 나긴 났음".로그();
-        //        }
-        //    });
     }
 
     public override void Execute()

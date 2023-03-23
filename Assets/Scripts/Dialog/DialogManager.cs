@@ -35,6 +35,7 @@ public class DialogManager : MonoBehaviour
     private void Start()
     {
         scriptMgr.ReadAllScript();
+        "Start".Log();
     }
 
     public void DialogStart(int scriptID)
@@ -44,6 +45,7 @@ public class DialogManager : MonoBehaviour
         scriptMgr.SetCurrentScript(script);
 
         ExecuteScript(script);
+        "DialogStart".Log();
     }
 
     public void RemoveTween(TweenObject tweenObj)
@@ -86,6 +88,7 @@ public class DialogManager : MonoBehaviour
     #region ExecuteScript
     private void ExecuteScript(ScriptObject script)
     {
+        script.scriptID.Log("ExecuteScript");
         //("ExecuteScript : " + script.scriptID).Log();
 
         if (script.scriptType == ScriptType.Event)
@@ -207,7 +210,7 @@ public class DialogManager : MonoBehaviour
             Sequence skipSeq = DOTween.Sequence();
             autoSkipSequence = skipSeq;
 
-            //가장 큰 duration 뽑기
+            //가장 큰 duration 뽑기 (추후 오디오의 duration도 고려)
             float duration = tweenList[0].tween.Duration() - tweenList[0].tween.position;
 
             for (int i = 1; i < tweenList.Count; ++i)
@@ -298,7 +301,8 @@ public class DialogManager : MonoBehaviour
 
     private void MoveTo(ScriptObject script, int targetID, Action<int> moveCB)
     {
-        if(script.scriptID > targetID)
+        //여기 부등호 >= 또는 >로 바꿔서 해당 스크립트 전까지 이동 or 해당 스크립트가 완료된 상태로 이동 설정 가능
+        if(script.scriptID >= targetID)
         {
             moveCB(script.scriptID);
             return;
@@ -312,7 +316,7 @@ public class DialogManager : MonoBehaviour
         float orgTextDuration = script.textDuration;
         script.textDuration = 0;
 
-        if (script.scriptType == ScriptType.Text)
+        if (script.scriptType == ScriptType.Event)
         {
             if (script.eventData.eventType == EventType.Goto)
             {

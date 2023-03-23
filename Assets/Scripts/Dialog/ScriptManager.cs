@@ -52,7 +52,7 @@ public class ScriptManager
 
         if(index == -1)
         {
-            ("스크립트를 찾을 수 없습니다. ScriptID : " + script.scriptID).Log();
+            ("스크립트를 찾을 수 없습니다. ScriptID : " + script.scriptID ?? "Null").LogWarning();
             return;
         }
 

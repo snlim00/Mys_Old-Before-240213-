@@ -66,7 +66,7 @@ public class Variable : MonoBehaviour
 
         dropdown.onValueChanged.AddListener(_ => OnValueChange());
         dropdown.onValueChanged.AddListener(_ => nodeGrp.Save());
-        
+
         inputField.onValueChanged.AddListener(_ => OnValueChange());
         inputField.onEndEdit.AddListener(_ => nodeGrp.Save());
     }
@@ -82,18 +82,20 @@ public class Variable : MonoBehaviour
             string value = GetValue();
             EventType eventType = (EventType)Enum.Parse(typeof(EventType), value);
 
-            if (eventType == EventType.Branch)
-            {
-                targetNode.SetNodeType(Node.NodeType.Branch);
-            }
-            else if (eventType == EventType.Goto)
-            {
-                targetNode.SetNodeType(Node.NodeType.Goto);
-            }
-            else
-            {
-                targetNode.SetNodeType(Node.NodeType.Normal);
-            }
+            targetNode.Refresh();
+
+            //if (eventType == EventType.Branch)
+            //{
+            //    targetNode.SetNodeType(Node.NodeType.Branch);
+            //}
+            //else if (eventType == EventType.Goto)
+            //{
+            //    targetNode.SetNodeType(Node.NodeType.Goto);
+            //}
+            //else
+            //{
+            //    targetNode.SetNodeType(Node.NodeType.Normal);
+            //}
         }
     }
 

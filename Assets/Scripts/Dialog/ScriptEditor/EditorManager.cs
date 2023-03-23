@@ -35,93 +35,132 @@ public class EditorManager : MonoBehaviour
     private void Start()
     {
         //test code
-        EditorStart(1);
+        //EditorStart(1);
     }
 
     public void EditorStart(int scriptGroupID)
     {
         this.scriptGroupID = scriptGroupID;
 
-        string path = Application.dataPath + "/Data/ScriptTable/" + scriptGroupID + ".CSV";
+        string path = Application.dataPath + "/Data/ScriptTable" + scriptGroupID + ".CSV";
         bool isExists = File.Exists(path);
 
         nodeGrp = Instantiate(graphPref).GetComponent<NodeGraph>();
-
-        if(isExists)
-        {
-            LoadScript(path);
-        }
 
         nodeGrp.CreateGraph();
 
         nodeGrp.transform.SetParent(scrollViewContent.transform);
         nodeGrp.transform.localScale = Vector3.one;
-        nodeGrp.transform.localPosition = new Vector2(0, -50);
+        //nodeGrp.transform.localPosition = new Vector2(-150, -50);
+        nodeGrp.transform.localPosition = new Vector2(50, -50);
+
+        if (isExists)
+        {
+            LoadScript(path);
+        }
     }
+
+    private ScriptManager scriptMgr = new();
 
     private void LoadScript(string path)
     {
-        var scriptMgr = new ScriptManager();
+        "Load Script".Log();
+        scriptMgr = new();
 
-        scriptMgr.ReadScript(path);
+        scriptMgr.ReadScript("ScriptTable" + scriptGroupID + ".CSV");
 
         //시작 스크립트 설정
         int firstScriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
-        ScriptObject firstScript = scriptMgr.GetScriptFromID(firstScriptID);
-        scriptMgr.SetCurrentScript(firstScript);
 
-        while(true)
+        bool hasBranch = false;
+
+        while(scriptMgr.currentScript != null)
         {
-            var currentScript = scriptMgr.currentScript;
-
-            CreateNode(ref scriptMgr);
-
-            scriptMgr.Next();
-        }
-    }
-
-    private void CreateNode(ref ScriptManager scriptMgr)
-    {
-        var script = scriptMgr.currentScript;
-
-        EditorCommand command = null;
-
-        if (script.scriptType == ScriptType.Text)
-        {
-            command = new CreateNextNode();
-        }
-        else if(script.scriptType == ScriptType.Event)
-        {
-            if(script.eventData.eventType == EventType.Branch)
+            if(scriptMgr.currentScript.scriptType == ScriptType.Event && scriptMgr.currentScript.eventData.eventType == EventType.Branch)
             {
-                Branch(ref scriptMgr);
+                hasBranch = true;
+                CreateBranch();
+            }
+            else
+            {
+                CreateNode(scriptMgr.currentScript);
+            }
+
+            if(scriptMgr.GetNextScript() != null)
+            {
+                scriptMgr.Next();
+            }
+            else
+            {
+                break;
             }
         }
 
-        if (command != null)
+        //브랜치 생성 시 다음 노드가 자동 생성되므로 해당 노드 제거.
+        if(hasBranch == true)
         {
-            command.SetScript(script);
-            command.Execute();
+            nodeGrp.SelectLastNode();
+            new RemoveNode().Execute();
         }
+
+        //그래프 생성 시 첫 노드가 자동 생성되므로 해당 노드 제거.
+        nodeGrp.SelectNode(nodeGrp.head);
+        new RemoveNode().Execute();
     }
 
-    private void Branch(ref ScriptManager scriptMgr)
+    private Node CreateNode(ScriptObject script)
     {
-        var parent = scriptMgr.currentScript;
+        var command = new CreateNextNode();
+        command.SetScript(script);
+        command.Execute();
 
-        int branchCount = parent.GetBranchCount;
+        script.scriptID.Log("CreateNode");
 
-        for(int i = 0; i < branchCount; ++i)
-        {
-            //TraversalBranch();
-        }
+        return command.GetCreatedNode();
     }
 
-    private void TraversalBranch(ref ScriptManager scriptMgr, ScriptObject script)
+    private void CreateBranch()
     {
-        while(scriptMgr.currentScript.scriptType != ScriptType.Event && scriptMgr.currentScript.eventData.eventType != EventType.Goto)
+        scriptMgr.currentScript.scriptID.Log("CreateBranch");
+        ScriptObject parentScript = scriptMgr.currentScript;
+        Node parent = CreateNode(scriptMgr.currentScript);
+
+        parentScript.scriptID.Log("Parent");
+
+        BranchInfo branchInfo = parentScript.GetBranchInfo();
+
+        for(int i = 0; i < branchInfo.Count; ++i)
         {
+            scriptMgr.SetCurrentScript(branchInfo.targetID[i]);
+
+            nodeGrp.SelectNode(parent);
+
+            var createBranch = new CreateBranchNode();
+            createBranch.SetScript(scriptMgr.currentScript);
+            createBranch.Execute();
+
             scriptMgr.Next();
+
+            while (true)
+            {
+                if(scriptMgr.currentScript.scriptType == ScriptType.Event && scriptMgr.currentScript.eventData.eventType == EventType.Goto)
+                {
+                    break;
+                }
+
+                if (scriptMgr.currentScript.scriptType == ScriptType.Event && scriptMgr.currentScript.eventData.eventType == EventType.Branch)
+                {
+                    CreateBranch();
+                }
+                else
+                {
+                    CreateNode(scriptMgr.currentScript);
+                }
+
+                scriptMgr.Next();
+            }
         }
+
+        nodeGrp.SelectNode(parent);
     }
 }

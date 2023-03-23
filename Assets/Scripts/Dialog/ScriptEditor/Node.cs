@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -157,8 +158,6 @@ public class Node : MonoBehaviour
     {
         this.nodeType = nodeType;
 
-        RefreshBranchBtnActive();
-
         switch(nodeType)
         {
             case NodeType.Normal:
@@ -168,25 +167,53 @@ public class Node : MonoBehaviour
                 break;
 
             case NodeType.BranchEnd:
-                //button.interactable = false;
                 break;
         }
+
+        RefreshBranchBtnActive();
     }
 
-    private void ShowBranchBtn()
+    public void Refresh()
     {
-        addBranchBtn.gameObject.SetActive(true);
+        RefreshNodeType();
+        RefreshBranchBtnActive();
     }
 
-    private void HideBranchBtn()
+    public void RefreshNodeType()
     {
-        addBranchBtn.gameObject.SetActive(false);
+        if (script.scriptType == ScriptType.Event)
+        {
+            if (script.eventData.eventType == EventType.Branch)
+            {
+                SetNodeType(NodeType.Branch);
+            }
+            else if (script.eventData.eventType == EventType.Goto)
+            {
+                if (parent == null)
+                {
+                    SetNodeType(NodeType.Goto);
+                }
+                else
+                {
+                    SetNodeType(NodeType.BranchEnd);
+                }
+            }
+            else
+            {
+                SetNodeType(NodeType.Normal);
+            }
+        }
+        else
+        {
+            SetNodeType(NodeType.Normal);
+        }
     }
 
     public void RefreshBranchBtnActive()
     {
-        if(nodeType != Node.NodeType.Branch)
+        if (nodeType != Node.NodeType.Branch)
         {
+            HideBranchBtn();
             return;
         }
 
@@ -198,6 +225,16 @@ public class Node : MonoBehaviour
         {
             ShowBranchBtn();
         }
+    }
+
+    private void ShowBranchBtn()
+    {
+        addBranchBtn.gameObject.SetActive(true);
+    }
+
+    private void HideBranchBtn()
+    {
+        addBranchBtn.gameObject.SetActive(false);
     }
 
     public int GetChildCount()

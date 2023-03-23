@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,9 +7,16 @@ using UnityEngine.UI;
 
 public static class ExFunctions
 {
-    public static void Log(this object obj)
+    public static void Log(this object obj, object info = null)
     {
-        Debug.Log(obj); 
+        if(info == null)
+        {
+            Debug.Log(obj); 
+        }
+        else
+        {
+            Debug.Log(info + " : " + obj);
+        }
     }
 
     public static void LogError(this object obj)
@@ -34,7 +42,16 @@ public static class ExFunctions
 
     public static void Log(this ScriptObject obj)
     {
-        //Debug.Log("{ " + obj.scriptID + ", " + obj.characterName+ ", " + obj.text + ", " + obj.textDuration + ", " + obj.skipMethod + ", " + obj.skipDelay + ", " + obj.eventType + ", " + obj.eventDuration + " }");
+        string message = "";
+
+        foreach(ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
+        {
+            var value = obj.GetVariableFromKey(key);
+
+            message += value + " | ";
+        }
+
+        Debug.Log(message);
     }
 
     //테스트를 위해 추가했던 함수. 사용하지 않음
