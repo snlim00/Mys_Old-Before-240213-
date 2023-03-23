@@ -9,25 +9,32 @@ public class TestDialogStarter : MonoBehaviour
 {
     [SerializeField] private InputField inputField;
 
+    public int scriptGroupID = -1;
+
     private void Awake()
     {
         inputField.contentType = InputField.ContentType.IntegerNumber;
         inputField.onEndEdit.AddListener(text => {
             int scriptID = int.Parse(text);
 
+            scriptGroupID = ScriptManager.GetGroupID(scriptID);
+            scriptGroupID.Log();
+
             SceneManager.LoadScene("DialogScene");
 
             if (GameConstants.isEditorMode == true)
             {
                 Observable.TimerFrame(1).Subscribe(_ =>
-                    EditorManager.instance.EditorStart(ScriptManager.GetGroupID(scriptID))
+                    EditorManager.instance.EditorStart(scriptGroupID)
                 );
             }
             else
             {
                 Observable.TimerFrame(1).Subscribe(_ =>
-                    DialogManager.instance.ExecuteMoveTo(scriptID, DialogManager.instance.DialogStart)
-                );
+                {
+                    DialogManager.instance.ReadScript(scriptGroupID);
+                    DialogManager.instance.ExecuteMoveTo(scriptID, DialogManager.instance.DialogStart);
+                });
             }
         });
     }

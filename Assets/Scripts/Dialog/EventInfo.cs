@@ -34,8 +34,9 @@ public class EventInfo
 
     public string explain = null;
 
-    public bool canUseEventDuration = false;
+    public bool canUseDurationTurn = false;
     public bool canUseLoop = false;
+    public bool canUseLinkEvent = true;
 
     public List<EventParamInfo> paramInfo = new();
 
@@ -58,8 +59,9 @@ public class EventInfo
         //None
         {
             EventInfo info = new();
-            info.canUseEventDuration = false;
+            info.canUseDurationTurn = false;
             info.canUseLoop = false;
+            info.canUseLinkEvent = false;
             infos.Add(EventType.None, info);
         }
 
@@ -67,8 +69,9 @@ public class EventInfo
         {
             EventInfo info = new();
 
-            info.canUseEventDuration = true;
+            info.canUseDurationTurn = true;
             info.canUseLoop = false;
+            info.canUseLinkEvent = true;
             infos.Add(EventType.SetBackground, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Background/\" 이후의 경로만 입력)"));
@@ -78,8 +81,9 @@ public class EventInfo
         {
             EventInfo info = new();
 
-            info.canUseEventDuration = true;
+            info.canUseDurationTurn = true;
             info.canUseLoop = false;
+            info.canUseLinkEvent = true;
             infos.Add(EventType.CreateCharacter, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Character/\" 이후의 경로만 입력)"));
@@ -90,8 +94,9 @@ public class EventInfo
         //RemoveCharacter
         {
             EventInfo info = new();
-            info.canUseEventDuration = false;
+            info.canUseDurationTurn = false;
             info.canUseLoop = false;
+            info.canUseLinkEvent = true;
             infos.Add(EventType.RemoveCharacter, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
@@ -99,14 +104,19 @@ public class EventInfo
 
         //RemoveAllCharacter
         {
-
+            EventInfo info = new();
+            info.canUseDurationTurn = false;
+            info.canUseLoop = false;
+            info.canUseLinkEvent = true;
+            infos.Add(EventType.RemoveAllCharacter, info);
         }
 
         //Branch
         {
             EventInfo info = new();
-            info.canUseEventDuration = false;
+            info.canUseDurationTurn = false;
             info.canUseLoop = false;
+            info.canUseLinkEvent = false;
             infos.Add(EventType.Branch, info);
 
             info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
@@ -119,8 +129,9 @@ public class EventInfo
         {
             EventInfo info = new();
 
-            info.canUseEventDuration = false;
+            info.canUseDurationTurn = false;
             info.canUseLoop = false;
+            info.canUseLinkEvent = true;
             infos.Add(EventType.AddLovePoint, info);
 
             info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
@@ -130,8 +141,9 @@ public class EventInfo
         //Goto
         {     
             EventInfo info = new();
-            info.canUseEventDuration = false;
+            info.canUseDurationTurn = false;
             info.canUseLoop = false;
+            info.canUseLinkEvent = false;
             infos.Add(EventType.Goto, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Script", ScriptDataKey.EventParam0, null, "이동할 스크립트를 선택해주세요."));

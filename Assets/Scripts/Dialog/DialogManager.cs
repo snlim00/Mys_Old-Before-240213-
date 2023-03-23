@@ -32,10 +32,10 @@ public class DialogManager : MonoBehaviour
         eventMgr = FindObjectOfType<EventManager>();
     }
 
-    private void Start()
+    public void ReadScript(int scriptGroupID)
     {
-        scriptMgr.ReadAllScript();
-        "Start".Log();
+        scriptMgr = new();
+        scriptMgr.ReadScript("ScriptTable" + scriptGroupID + ".CSV");
     }
 
     public void DialogStart(int scriptID)
@@ -252,6 +252,12 @@ public class DialogManager : MonoBehaviour
 
     private void ExecuteNextScript()
     {
+        if(scriptMgr.GetNextScript() == null)
+        {
+            "모든 스크립트가 종료되었습니다.".LogError();
+            return;
+        }
+
         scriptMgr.Next();
 
         if(skipStream != null)
@@ -263,20 +269,30 @@ public class DialogManager : MonoBehaviour
     }
     #endregion
 
-    #region Goto / MoveTo
-    public void Goto(int scriptID)
+    public void StopDialog()
+    {
+        StopAllSequence();
+    }
+
+    private void StopAllSequence()
     {
         //진행 중인 시퀀스, 스트림 모두 중지
-        if(skipStream != null)
+        if (skipStream != null)
         {
             "Dispose".Log();
             skipStream.Dispose();
         }
 
-        if(autoSkipSequence.IsActive() == true)
+        if (autoSkipSequence.IsActive() == true)
         {
             autoSkipSequence.Kill(false);
         }
+    }
+
+    #region Goto / MoveTo
+    public void Goto(int scriptID)
+    {
+        StopAllSequence();
 
         DoAllTweens(tween =>
         {
@@ -289,6 +305,8 @@ public class DialogManager : MonoBehaviour
 
     public void ExecuteMoveTo(int targetID, Action<int> moveCB)
     {
+        StopAllSequence();
+
         eventMgr.RemoveAllCharacter();
 
         int groupID = ScriptManager.GetGroupID(targetID);
@@ -299,6 +317,7 @@ public class DialogManager : MonoBehaviour
         MoveTo(script, targetID, moveCB);
     }
 
+    //moveCB의 인자는 scriptID
     private void MoveTo(ScriptObject script, int targetID, Action<int> moveCB)
     {
         //여기 부등호 >= 또는 >로 바꿔서 해당 스크립트 전까지 이동 or 해당 스크립트가 완료된 상태로 이동 설정 가능
