@@ -46,6 +46,7 @@ public class ScriptInspector : MonoBehaviour
 
         if (node.script.scriptType == ScriptType.Text)
         {
+            variableList.Add(CreateVariable(VariableType.InputField, "CharacterName", node, ScriptDataKey.CharacterName));
             variableList.Add(CreateVariable(VariableType.InputField, "Text", node, ScriptDataKey.Text));
             variableList.Add(CreateVariable(VariableType.InputField, "TextDuration", node, ScriptDataKey.TextDuration, null, null, InputField.ContentType.DecimalNumber));
             variableList.Add(CreateVariable(VariableType.InputField, "Audio 0", node, ScriptDataKey.Audio0));
@@ -59,7 +60,7 @@ public class ScriptInspector : MonoBehaviour
             variableList.Add(CreateVariable(VariableType.Dropdown, "Event", node, ScriptDataKey.EventType, Enum.GetNames(typeof(EventType))));
             variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));
 
-            if(eventInfo.canUseEventDuration == true)
+            if(eventInfo.canUseDurationTurn == true)
             {
                 variableList.Add(CreateVariable(VariableType.InputField, "DurationTurn", node, ScriptDataKey.DurationTurn, null, null, InputField.ContentType.IntegerNumber));
             }

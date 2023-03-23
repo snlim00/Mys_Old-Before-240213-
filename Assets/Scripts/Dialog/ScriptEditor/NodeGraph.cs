@@ -43,6 +43,44 @@ public class NodeGraph : MonoBehaviour
     private void Start()
     {
         Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.H))
+            .Subscribe(_ =>
+            {
+                if(ScriptInspector.instance.gameObject.activeSelf == true)
+                {
+                    ScriptInspector.instance.gameObject.SetActive(false);
+                    editorMgr.grpahPanel.SetActive(false);
+                }
+                else
+                {
+                    ScriptInspector.instance.gameObject.SetActive(true);
+                    editorMgr.grpahPanel.SetActive(true);
+                }
+            });
+
+        Observable.EveryUpdate()
+            .Where(_ => Input.GetKeyDown(KeyCode.P))
+            .Subscribe(_ =>
+            {
+                if (ScriptInspector.instance.gameObject.activeSelf == true)
+                {
+                    ScriptInspector.instance.gameObject.SetActive(false);
+                    editorMgr.grpahPanel.SetActive(false);
+
+                    Save();
+                    DialogManager.instance.ReadScript(editorMgr.scriptGroupID);
+                    DialogManager.instance.ExecuteMoveTo(selectedNode.script.scriptID, DialogManager.instance.DialogStart);
+                }
+                else
+                {
+                    ScriptInspector.instance.gameObject.SetActive(true);
+                    editorMgr.grpahPanel.SetActive(true);
+
+                    DialogManager.instance.StopDialog();
+                }
+            });
+        
+        Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.R))
             .Subscribe(_ =>
             {
@@ -200,10 +238,7 @@ public class NodeGraph : MonoBehaviour
 
         head = node;
 
-        if (selectedNode == null)
-        {
-            SelectNode(node);
-        }
+        SelectNode(node);
 
         RefreshAllNode();
     }
@@ -450,13 +485,6 @@ public class NodeGraph : MonoBehaviour
         {
             return;
         }
-        //if (node.nodeType == Node.NodeType.BranchEnd)
-        //{
-        //    "브랜치의 끝은 수정할 수 없습니다".Log();
-
-        //    SelectNode(node.prevNode ?? head);
-        //    return;
-        //}
 
         selectedNode?.SetColorDeselect();
 

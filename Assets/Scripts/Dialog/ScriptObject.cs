@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
+
 public enum ScriptType
 {
     Text,
@@ -40,10 +42,41 @@ public class EventData
     }
 }
 
+public struct BranchInfo
+{
+    public List<int> requiredValue;
+    public List<int> targetID;
+    
+    public int Count
+    {
+        get
+        {
+            return Mathf.Min(requiredValue.Count, targetID.Count);
+        }
+    }
+
+    public BranchInfo(List<int> requiredValue, List<int> targetID)
+    {
+        this.requiredValue = requiredValue;
+        this.targetID = targetID;
+    }
+
+    public void Log()
+    {
+        string message = "";
+
+        for(int i = 0; i < this.Count; ++i)
+        {
+            message += (requiredValue[i] + " | " + targetID[i] + "\n");
+        }
+
+        message.Log();
+    }
+}
 
 //해당 클래스의 모든 멤버변수는 멤버함수에 의해서만 변경되어야 함.
 [System.Serializable]
-public class ScriptObject
+public class ScriptObject : ICloneable
 {
     public static readonly int UNVALID_ID = -1;
     public static readonly ScriptType DEFAULT_SCRIPT_TYPE = ScriptType.Text;
@@ -70,19 +103,32 @@ public class ScriptObject
     public bool linkEvent = DEFAULT_LINK_EVENT;
     public EventData eventData;
 
+    public object Clone()
+    {
+        ScriptObject clone = new();
+
+        foreach (ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
+        {
+            string value = GetVariableFromKey(key);
+
+            clone.SetVariable(key, value);
+        }
+
+        return clone;
+    }
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns>requiredValue와 targetScriptID를 튜플로 담은 리스트</returns>
-    public List<(int, int)> ParseBranch()
+    public BranchInfo GetBranchInfo()
     {
         if(scriptType != ScriptType.Event || eventData.eventType != EventType.Branch)
         {
+            this.Log();
             "ParseBranch - 해당 스크립트는 브랜치가 아닙니다.".LogError();
-            return null;
+            return new BranchInfo(null, null);
         }
-
-        List<(int, int)> list = new();
 
         List<int> requiredValue = new();
         List<int> targetScriptID = new();
@@ -98,7 +144,6 @@ public class ScriptObject
                 }
                 else
                 {
-                    i.Log();
                     break;
                 }
             }
@@ -111,25 +156,21 @@ public class ScriptObject
                 }
                 else
                 {
-                    i.Log();
                     break;
                 }
             }
         }
 
-        for(int i = 0; i < targetScriptID.Count; ++i)
-        {
-            list.Add((requiredValue[i], targetScriptID[i]));
-        }
+        BranchInfo branchInfo = new(requiredValue, targetScriptID);
 
-        return list;
+        return branchInfo;
     }
 
     public int GetBranchCount
     {
         get
         {
-            return ParseBranch().Count;
+            return GetBranchInfo().Count;
         }
     }
 

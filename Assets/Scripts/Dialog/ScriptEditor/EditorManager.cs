@@ -16,6 +16,8 @@ public class EditorManager : MonoBehaviour
 
     public RectTransform scrollViewContent;
 
+    public GameObject grpahPanel;
+
     public int scriptGroupID = -1;
 
     private void Awake()
@@ -40,6 +42,7 @@ public class EditorManager : MonoBehaviour
 
     public void EditorStart(int scriptGroupID)
     {
+        "EDITOR START".Log();
         this.scriptGroupID = scriptGroupID;
 
         string path = Application.dataPath + "/Data/ScriptTable" + scriptGroupID + ".CSV";
@@ -51,7 +54,6 @@ public class EditorManager : MonoBehaviour
 
         nodeGrp.transform.SetParent(scrollViewContent.transform);
         nodeGrp.transform.localScale = Vector3.one;
-        //nodeGrp.transform.localPosition = new Vector2(-150, -50);
         nodeGrp.transform.localPosition = new Vector2(50, -50);
 
         if (isExists)
