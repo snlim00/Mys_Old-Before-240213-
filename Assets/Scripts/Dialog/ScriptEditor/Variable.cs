@@ -12,6 +12,7 @@ public enum VariableType
 {
     InputField,
     Dropdown,
+    Text,
     //Character,
     //Node,
 }
@@ -52,6 +53,15 @@ public class Variable : MonoBehaviour
             case VariableType.InputField:
                 inputField.gameObject.SetActive(true);
                 dropdown.gameObject.SetActive(false);
+                break;
+
+            case VariableType.Text:
+                inputField.gameObject.SetActive(true);
+                dropdown.gameObject.SetActive(false);
+
+                GetComponent<RectTransform>().sizeDelta += new Vector2(0, 70);
+                inputField.GetComponent<RectTransform>().sizeDelta += new Vector2(435, 70);
+                inputField.transform.localPosition += new Vector3(435 / 2, 0);
                 break;
 
             //case VariableType.Character:
@@ -142,8 +152,7 @@ public class Variable : MonoBehaviour
 
     public void SetValue(string value)
     {
-
-        if (type == VariableType.InputField)
+        if (type == VariableType.InputField || type == VariableType.Text)
         {
             inputField.SetTextWithoutNotify(value);
         }
@@ -168,6 +177,7 @@ public class Variable : MonoBehaviour
         switch(type)
         {
             case VariableType.InputField:
+            case VariableType.Text:
                 return inputField.text;
 
             case VariableType.Dropdown:

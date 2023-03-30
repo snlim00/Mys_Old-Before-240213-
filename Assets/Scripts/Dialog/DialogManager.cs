@@ -178,7 +178,7 @@ public class DialogManager : MonoBehaviour
             tweenObj.Skip(true);
         });
 
-        skipStream.Dispose();
+        skipStream?.Dispose();
 
         ExecuteNextScript();
     }
@@ -289,6 +289,12 @@ public class DialogManager : MonoBehaviour
         }
     }
 
+    public void ResetAll()
+    {
+        eventMgr.SetBackground(null);
+        eventMgr.RemoveAllCharacter();
+    }
+
     #region Goto / MoveTo
     public void Goto(int scriptID)
     {
@@ -306,6 +312,7 @@ public class DialogManager : MonoBehaviour
     public void ExecuteMoveTo(int targetID, Action<int> moveCB)
     {
         StopAllSequence();
+        ResetAll();
 
         eventMgr.RemoveAllCharacter();
 

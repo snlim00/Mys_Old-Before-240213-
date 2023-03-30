@@ -42,6 +42,7 @@ public class NodeGraph : MonoBehaviour
 
     private void Start()
     {
+        //HideInspector
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.H))
             .Subscribe(_ =>
@@ -58,6 +59,7 @@ public class NodeGraph : MonoBehaviour
                 }
             });
 
+        //Play
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.P))
             .Subscribe(_ =>
@@ -78,20 +80,6 @@ public class NodeGraph : MonoBehaviour
 
                     DialogManager.instance.StopDialog();
                 }
-            });
-        
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.R))
-            .Subscribe(_ =>
-            {
-                RefreshAllNode();
-            });
-
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.L))
-            .Subscribe(_ =>
-            {
-                SelectLastNode();
             });
 
 
@@ -122,23 +110,19 @@ public class NodeGraph : MonoBehaviour
             });
 
         Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.C))
+            .Where(_ => Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftControl))
             .Subscribe(_ => CreateNextNode());
-
-        //Observable.EveryUpdate()
-        //    .Where(_ => Input.GetKeyDown(KeyCode.B))
-        //    .Subscribe(_ => CreateBranch());
 
         Observable.EveryUpdate()
             .Where(_ => Input.GetKeyDown(KeyCode.Delete))
             .Subscribe(_ => RemoveNode());
 
         Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.S))
+            .Where(_ => Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.LeftShift))
             .Subscribe(_ => Save());
 
         Observable.EveryUpdate()
-           .Where(_ => Input.GetKeyDown(KeyCode.E))
+           .Where(_ => Input.GetKeyDown(KeyCode.E) && Input.GetKey(KeyCode.LeftControl))
            .Subscribe(_ =>
            {
                if(selectedNode.nodeType == Node.NodeType.BranchEnd)
@@ -163,7 +147,7 @@ public class NodeGraph : MonoBehaviour
     public void RefreshInspector()
     {
         ScriptInspector.instance.ApplyInspector();
-        ScriptInspector.instance.SetInspector(selectedNode);
+        ScriptInspector.instance.SetInspector(selectedNode);  
     }
 
     public void Save()

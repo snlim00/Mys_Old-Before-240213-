@@ -40,26 +40,38 @@ public class ScriptInspector : MonoBehaviour
         variableList = new();
 
         string[] linkEvent = { "True", "False" };
-        variableList.Add(CreateVariable(VariableType.Dropdown, "LinkEvent", node, ScriptDataKey.LinkEvent, linkEvent));
-        variableList.Add(CreateVariable(VariableType.Dropdown, "SkipMethod", node, ScriptDataKey.SkipMethod, Enum.GetNames(typeof(SkipMethod))));
-        variableList.Add(CreateVariable(VariableType.InputField, "SkipDelay", node, ScriptDataKey.SkipDelay, null, null, InputField.ContentType.DecimalNumber));
 
         if (node.script.scriptType == ScriptType.Text)
         {
+            variableList.Add(CreateVariable(VariableType.Dropdown, "LinkEvent", node, ScriptDataKey.LinkEvent, linkEvent));
+            variableList.Add(CreateVariable(VariableType.Dropdown, "SkipMethod", node, ScriptDataKey.SkipMethod, Enum.GetNames(typeof(SkipMethod))));
+            variableList.Add(CreateVariable(VariableType.InputField, "SkipDelay", node, ScriptDataKey.SkipDelay, null, null, InputField.ContentType.DecimalNumber));
+
             variableList.Add(CreateVariable(VariableType.InputField, "CharacterName", node, ScriptDataKey.CharacterName));
-            variableList.Add(CreateVariable(VariableType.InputField, "Text", node, ScriptDataKey.Text));
             variableList.Add(CreateVariable(VariableType.InputField, "TextDuration", node, ScriptDataKey.TextDuration, null, null, InputField.ContentType.DecimalNumber));
             variableList.Add(CreateVariable(VariableType.InputField, "Audio 0", node, ScriptDataKey.Audio0));
             variableList.Add(CreateVariable(VariableType.InputField, "Audio 1", node, ScriptDataKey.Audio1));
+            variableList.Add(CreateVariable(VariableType.Text, "Text", node, ScriptDataKey.Text));
         }
         else if (node.script.scriptType == ScriptType.Event)
         {
             EventType eventType = node.script.eventData.eventType;
             EventInfo eventInfo = EventInfo.GetEventInfo(eventType);
 
+            if (eventInfo.canUseLinkEvent == true)
+            {
+                variableList.Add(CreateVariable(VariableType.Dropdown, "LinkEvent", node, ScriptDataKey.LinkEvent, linkEvent));
+            }
+
+            variableList.Add(CreateVariable(VariableType.Dropdown, "SkipMethod", node, ScriptDataKey.SkipMethod, Enum.GetNames(typeof(SkipMethod))));
+            variableList.Add(CreateVariable(VariableType.InputField, "SkipDelay", node, ScriptDataKey.SkipDelay, null, null, InputField.ContentType.DecimalNumber));
+
+
+            variableList.Add(CreateVariable(VariableType.InputField, "EventDelay", node, ScriptDataKey.EventDelay, null, null, InputField.ContentType.DecimalNumber));
             variableList.Add(CreateVariable(VariableType.Dropdown, "Event", node, ScriptDataKey.EventType, Enum.GetNames(typeof(EventType))));
             variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));
 
+       
             if(eventInfo.canUseDurationTurn == true)
             {
                 variableList.Add(CreateVariable(VariableType.InputField, "DurationTurn", node, ScriptDataKey.DurationTurn, null, null, InputField.ContentType.IntegerNumber));
@@ -102,6 +114,8 @@ public class ScriptInspector : MonoBehaviour
         var.SetValue(targetNode.script.GetVariableFromKey(targetKey));
 
         var.SetContentType(contentType);
+
+        var.name = name;
 
         return var;
     }

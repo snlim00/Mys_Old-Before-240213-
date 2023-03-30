@@ -59,6 +59,7 @@ public class EventInfo
         //None
         {
             EventInfo info = new();
+
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = false;

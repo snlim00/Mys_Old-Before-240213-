@@ -17,7 +17,14 @@ public class TestDialogStarter : MonoBehaviour
         inputField.onEndEdit.AddListener(text => {
             int scriptID = int.Parse(text);
 
-            scriptGroupID = ScriptManager.GetGroupID(scriptID);
+            if(GameConstants.isEditorMode == false)
+            {
+                scriptGroupID = ScriptManager.GetGroupID(scriptID);
+            }
+            else
+            {
+                scriptGroupID = scriptID;
+            }
             scriptGroupID.Log();
 
             SceneManager.LoadScene("DialogScene");

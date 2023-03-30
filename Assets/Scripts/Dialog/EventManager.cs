@@ -13,9 +13,11 @@ public class EventManager : MonoBehaviour
 
     public GameObject[] characterSet;
     private GameObject characterPref;
-    private Dictionary<int, Object> characterList;
+    private Dictionary<int, MysObject> characterList;
 
     [SerializeField] private Image background;
+
+    [SerializeField] private Sprite defaultBG;
 
     private void Awake()
     {
@@ -99,7 +101,7 @@ public class EventManager : MonoBehaviour
         
         Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
 
-        Object character = Instantiate(characterPref).GetComponent<Object>();
+        MysObject character = Instantiate(characterPref).GetComponent<MysObject>();
         characterList[index] = character;
 
         void CreateCharacter()
@@ -116,7 +118,7 @@ public class EventManager : MonoBehaviour
 
     public void RemoveCharacter(int index)
     {
-        Object character = characterList[index];
+        MysObject character = characterList[index];
 
         characterList.Remove(index);
 
@@ -133,7 +135,7 @@ public class EventManager : MonoBehaviour
         script.scriptID.Log();
         characterList.Count.Log();
 
-        Object character = characterList[index];
+        MysObject character = characterList[index];
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
         sequence.AppendCallback(() => RemoveCharacter(index));
@@ -141,7 +143,7 @@ public class EventManager : MonoBehaviour
 
     public void RemoveAllCharacter()
     {
-        Dictionary<int, Object>.KeyCollection keys = characterList.Keys;
+        Dictionary<int, MysObject>.KeyCollection keys = characterList.Keys;
 
         List<int> keyList = new();
 
@@ -218,6 +220,18 @@ public class EventManager : MonoBehaviour
         sequence.AppendCallback(() => Goto(scriptID));
     }
 
+    public void SetBackground(Sprite sprite)
+    {
+        if(sprite != null)
+        {
+            background.sprite = sprite;
+        }
+        else
+        {
+            background.sprite = defaultBG;
+        }
+    }
+
     public void Event_SetBackground(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
@@ -228,14 +242,8 @@ public class EventManager : MonoBehaviour
 
         ("Images/Background/" + resource).Log();
 
-        void SetBackground()
-        {
-            background.sprite = sprite;
-        }
-
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
-        sequence.AppendCallback(SetBackground);
-        //sequence.AppendCallback(() => background.SetAlpha(1));
+        sequence.AppendCallback(() => SetBackground(sprite));
         sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
     }
 }

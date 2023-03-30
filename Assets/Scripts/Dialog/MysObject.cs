@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Object : MonoBehaviour
+public class MysObject : MonoBehaviour
 {
     private EventManager eventMgr;
 
