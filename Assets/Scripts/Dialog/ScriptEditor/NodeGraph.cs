@@ -201,6 +201,39 @@ public class NodeGraph : MonoBehaviour
                 {
                     string value = node.script.GetVariableFromKey(key) ?? "";
 
+                    var script = node.script;
+                    var eventData = script.eventData;
+
+                    if(script.scriptType == ScriptType.Event)
+                    {
+                        EventInfo eventInfo = EventInfo.GetEventInfo(node.script.eventData.eventType);
+
+                        //불가능한 값 처리
+                        if (eventInfo.canUseLoop == false)
+                        {
+                            if (key == ScriptDataKey.LoopCount)
+                            {
+                                value = EventData.DEFAULT_LOOP_COUNT.ToString();
+                            }
+                        }
+
+                        if (eventInfo.canUseLinkEvent == false)
+                        {
+                            if (key == ScriptDataKey.LinkEvent)
+                            {
+                                value = ScriptObject.DEFAULT_LINK_EVENT.ToString();
+                            }
+                        }
+
+                        if (eventInfo.canUseDurationTurn == false)
+                        {
+                            if (key == ScriptDataKey.DurationTurn)
+                            {
+                                value = EventData.DEFAULT_DURATION_TURN.ToString();
+                            }
+                        }
+                    }
+
                     colums.Add(value);
                 }
 
