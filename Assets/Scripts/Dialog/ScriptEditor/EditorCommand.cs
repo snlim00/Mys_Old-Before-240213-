@@ -132,7 +132,6 @@ public class CreateBranchNode : EditorCommand
             createdNode.parent = nodeGrp.selectedNode;
         }
         
-
         //BranchEnd »ý¼º
         {
             branchEnd = nodeGrp.CreateNode();

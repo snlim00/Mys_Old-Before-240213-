@@ -22,6 +22,8 @@ public static class Constants //해당 프로젝트에서는 사용되지 않음. 221217
 public static class Tag
 {
     public static string Node = "Node";
+    public static string Variable = "Variable";
+    public static string CharacterList = "CharacterList";
 }
 
 #region Script
@@ -36,9 +38,9 @@ public enum EventType
 {
     None,
     SetBackground,
-    CreateCharacter,
-    RemoveCharacter,
-    RemoveAllCharacter,
+    CreateObject,
+    RemoveObject,
+    RemoveAllObject,
     AddLovePoint,
     Goto,
     Branch,

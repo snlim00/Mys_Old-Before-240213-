@@ -8,8 +8,6 @@ using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
-
-
     public enum NodeType
     {
         Normal,

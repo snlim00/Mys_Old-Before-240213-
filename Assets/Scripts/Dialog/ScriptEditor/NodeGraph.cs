@@ -9,12 +9,15 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class NodeGraph : MonoBehaviour
 {
     public static NodeGraph instance = null;
 
     private EditorManager editorMgr;
+
+    private ObjectList objectList;
 
     public Node head;
 
@@ -40,6 +43,7 @@ public class NodeGraph : MonoBehaviour
 
         nodePref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Node");
         rect = GetComponent<RectTransform>();
+        objectList = FindObjectOfType<ObjectList>();
     }
 
     private void Start()
@@ -133,11 +137,13 @@ public class NodeGraph : MonoBehaviour
         {
             ScriptInspector.instance.gameObject.SetActive(false);
             editorMgr.grpahPanel.SetActive(false);
+            objectList.gameObject.SetActive(false);
         }
         else
         {
             ScriptInspector.instance.gameObject.SetActive(true);
             editorMgr.grpahPanel.SetActive(true);
+            objectList.gameObject.SetActive(true);
         }
     }
 
@@ -454,7 +460,7 @@ public class NodeGraph : MonoBehaviour
         return TraversalNode(true, head, null);
     }
 
-    public void SetScriptID()
+    private void SetScriptID()
     {
         TraversalNode(true, head, (index, branchIndex, depth, node) =>
         {
@@ -537,9 +543,28 @@ public class NodeGraph : MonoBehaviour
         });
 
         RefreshContentSize();
+
+        RefreshObjectList();
     }
 
-    public void RefreshContentSize()
+    private void RefreshObjectList()
+    {
+        List<string> objectList = new();
+
+        TraversalNode(true, head, (_, _, _, node) =>
+        {
+            "순회".로그();
+            if(node.script.scriptType == ScriptType.Event && node.script.eventData.eventType == EventType.CreateObject)
+            {
+                "해당".로그();
+                objectList.Add(node.script.eventData.eventParam[1]);
+            }
+        });
+
+        this.objectList.RefreshList(objectList);
+    }
+
+    private void RefreshContentSize()
     {
         int nodeCount = GetNodeCount();
 

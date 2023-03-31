@@ -100,4 +100,28 @@ public static class ExFunctions
             }
         }
     }
+
+    public static void SetButtonText(this Button button, string text)
+    {
+        Text outValue = null;
+
+        if (button == null) return;
+
+        if(button?.transform.GetChild(0).TryGetComponent<Text>(out outValue) ?? false)
+        {
+            outValue.text = text;
+        }
+    }
+
+    public static string GetButtonText(this Button button)
+    {
+        Text outValue;
+
+        if (button.transform.GetChild(0).TryGetComponent<Text>(out outValue))
+        {
+            return outValue.text;
+        }
+
+        return null;
+    }
 }

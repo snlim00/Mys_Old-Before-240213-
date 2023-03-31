@@ -25,7 +25,6 @@ public class TestDialogStarter : MonoBehaviour
             {
                 scriptGroupID = scriptID;
             }
-            scriptGroupID.Log();
 
             SceneManager.LoadScene("DialogScene");
 

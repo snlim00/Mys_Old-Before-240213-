@@ -13,7 +13,7 @@ public enum VariableType
     InputField,
     Dropdown,
     Text,
-    //Character,
+    Object,
     //Node,
 }
 
@@ -22,6 +22,7 @@ public class Variable : MonoBehaviour
     [SerializeField] private Text varName;
     [SerializeField] private InputField inputField;
     [SerializeField] private Dropdown dropdown;
+    [SerializeField] private Button button;
 
     private NodeGraph nodeGrp;
     private ScriptInspector inspector;
@@ -46,28 +47,31 @@ public class Variable : MonoBehaviour
         switch(type)
         {
             case VariableType.Dropdown:
-                inputField.gameObject.SetActive(false);
                 dropdown.gameObject.SetActive(true);
                 break;
 
             case VariableType.InputField:
                 inputField.gameObject.SetActive(true);
-                dropdown.gameObject.SetActive(false);
                 break;
 
             case VariableType.Text:
                 inputField.gameObject.SetActive(true);
-                dropdown.gameObject.SetActive(false);
 
                 GetComponent<RectTransform>().sizeDelta += new Vector2(0, 70);
                 inputField.GetComponent<RectTransform>().sizeDelta += new Vector2(435, 70);
                 inputField.transform.localPosition += new Vector3(435 / 2, 0);
                 break;
 
-            //case VariableType.Character:
-            //    inputField.gameObject.SetActive(true);
-            //    dropdown.gameObject.SetActive(false);
-            //    break;
+            case VariableType.Object:
+                button.gameObject.SetActive(true);
+
+                var stream = Observable.EveryUpdate();
+                
+                button.onClick.AddListener(() =>
+                {
+                    OnClickObjectBtn();
+                });
+                break;
         }
 
         transform.SetParent(inspector.transform); 
@@ -81,37 +85,58 @@ public class Variable : MonoBehaviour
         inputField.onEndEdit.AddListener(_ => nodeGrp.Save());
     }
 
-
     public void OnValueChange()
     {
         if (targetKey == ScriptDataKey.EventType)
         {
-            //"이벤트 타입 변경".로그();
+            "이벤트 타입 변경".로그();
             inspector.RefreshInspector(targetNode);
 
             string value = GetValue();
             EventType eventType = (EventType)Enum.Parse(typeof(EventType), value);
 
             targetNode.Refresh();
-
-            //if (eventType == EventType.Branch)
-            //{
-            //    targetNode.SetNodeType(Node.NodeType.Branch);
-            //}
-            //else if (eventType == EventType.Goto)
-            //{
-            //    targetNode.SetNodeType(Node.NodeType.Goto);
-            //}
-            //else
-            //{
-            //    targetNode.SetNodeType(Node.NodeType.Normal);
-            //}
         }
     }
 
     public void OnEndEdit()
     {
         nodeGrp.Save();
+    }
+
+    private void OnClickObjectBtn()
+    {
+        button.image.color = Color.gray;
+
+        Observable.IntervalFrame(1).Take(1).Subscribe(_ =>
+        {
+            IDisposable stream = null;
+            stream = Observable.EveryUpdate()
+                .Select(_ => EventSystem.current.currentSelectedGameObject)
+                .DistinctUntilChanged()
+                .Subscribe(_ =>
+                {
+                    GameObject current = EventSystem.current.currentSelectedGameObject;
+
+                    if (current == button.gameObject)
+                    {
+                        return;
+                    }
+
+                    button.image.color = Color.white;
+
+                    if (current?.tag != Tag.CharacterList)
+                    {
+                        return;
+                    }
+
+                    SetValue(current.GetComponent<Button>().GetButtonText());
+
+                    nodeGrp.Save();
+
+                    stream.Dispose();
+                });
+        });
     }
 
     public void SetDropdownOption(string[] options)
@@ -170,6 +195,10 @@ public class Variable : MonoBehaviour
                 }
             }
         }
+        else if(type == VariableType.Object)
+        {
+            button.SetButtonText(value);
+        }
     }
 
     public string GetValue()
@@ -185,6 +214,9 @@ public class Variable : MonoBehaviour
                 int value = dropdown.value;
 
                 return options[value].text;
+
+            case VariableType.Object:
+                return button.GetButtonText();
 
             default:
                 return null;

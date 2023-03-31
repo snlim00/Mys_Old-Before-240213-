@@ -115,7 +115,7 @@ public class EditorManager : MonoBehaviour
         var command = new CreateNextNode();
         command.SetScript(script).Execute();
 
-        script.scriptID.Log("CreateNode");
+        //script.scriptID.Log("CreateNode");
 
         return command.GetCreatedNode();
     }
@@ -126,7 +126,7 @@ public class EditorManager : MonoBehaviour
         ScriptObject parentScript = scriptMgr.currentScript;
         Node parent = CreateNode(scriptMgr.currentScript);
 
-        parentScript.scriptID.Log("Parent");
+        //parentScript.scriptID.Log("Parent");
 
         BranchInfo branchInfo = parentScript.GetBranchInfo();
 

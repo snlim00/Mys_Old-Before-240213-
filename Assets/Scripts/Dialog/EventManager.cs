@@ -13,7 +13,7 @@ public class EventManager : MonoBehaviour
 
     public GameObject[] characterSet;
     private GameObject characterPref;
-    private Dictionary<int, MysObject> characterList;
+    private Dictionary<string, MysObject> characterList;
 
     [SerializeField] private Image background;
 
@@ -66,15 +66,15 @@ public class EventManager : MonoBehaviour
                 ("이벤트가 존재하지 않습니다. ScriptID : " + script.scriptID).LogError();
                 break;
 
-            case EventType.CreateCharacter:
+            case EventType.CreateObject:
                 Event_CreateCharacter(script, ref sequence);
                 break;
 
-            case EventType.RemoveCharacter:
+            case EventType.RemoveObject:
                 Event_RemoveCharacter(script, ref sequence);
                 break;
 
-            case EventType.RemoveAllCharacter:
+            case EventType.RemoveAllObject:
                 Event_RemoveAllCharacter(script, ref sequence);
                 break;
 
@@ -97,16 +97,17 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
 
         string resource = eventData.eventParam[0];
-        int index = int.Parse(eventData.eventParam[1]);
+        string name = eventData.eventParam[1].ToString();
+        int position = int.Parse(eventData.eventParam[2]);
         
         Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
 
         MysObject character = Instantiate(characterPref).GetComponent<MysObject>();
-        characterList[index] = character;
+        characterList[name] = character;
 
         void CreateCharacter()
         {
-            character.SetPosition(index);
+            character.SetPosition(position);
             character.image.sprite = sprite;
 
             character.image.SetAlpha(0);
@@ -116,11 +117,11 @@ public class EventManager : MonoBehaviour
         sequence.Append(character.image.DOFade(1, eventData.eventDuration));
     }
 
-    public void RemoveCharacter(int index)
+    public void RemoveCharacter(string name)
     {
-        MysObject character = characterList[index];
+        MysObject character = characterList[name];
 
-        characterList.Remove(index);
+        characterList.Remove(name);
 
         Destroy(character.gameObject);
     }
@@ -130,24 +131,24 @@ public class EventManager : MonoBehaviour
    
         EventData eventData = script.eventData;
 
-        int index = int.Parse(eventData.eventParam[0]);
+        string name = eventData.eventParam[0].ToString();
 
         script.scriptID.Log();
         characterList.Count.Log();
 
-        MysObject character = characterList[index];
+        MysObject character = characterList[name];
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
-        sequence.AppendCallback(() => RemoveCharacter(index));
+        sequence.AppendCallback(() => RemoveCharacter(name));
     }
 
     public void RemoveAllCharacter()
     {
-        Dictionary<int, MysObject>.KeyCollection keys = characterList.Keys;
+        Dictionary<string, MysObject>.KeyCollection keys = characterList.Keys;
 
-        List<int> keyList = new();
+        List<string> keyList = new();
 
-        foreach(int key in keys)
+        foreach(string key in keys)
         {
             keyList.Add(key);
         }

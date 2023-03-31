@@ -78,38 +78,39 @@ public class EventInfo
             info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Background/\" 이후의 경로만 입력)\n* 확장자는 입력하지 않음."));
         }
 
-        //CreateCharacter
+        //CreateObject
         {
             EventInfo info = new();
 
             info.canUseDurationTurn = true;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
-            infos.Add(EventType.CreateCharacter, info);
+            infos.Add(EventType.CreateObject, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Character/\" 이후의 경로만 입력)\n* 확장자는 입력하지 않음."));
+            info.paramInfo.Add(new(VariableType.InputField, "Name", ScriptDataKey.EventParam1, null, "오브젝트의 이름을 입력해주세요."));
             string[] options = { "0", "1", "2", "3", "4" };
-            info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam1, options, "오브젝트의 위치를 정해주세요."));
+            info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam2, options, "오브젝트의 위치를 정해주세요."));
         }
 
-        //RemoveCharacter
+        //RemoveObject
         {
             EventInfo info = new();
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
-            infos.Add(EventType.RemoveCharacter, info);
+            infos.Add(EventType.RemoveObject, info);
 
-            info.paramInfo.Add(new(VariableType.InputField, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
+            info.paramInfo.Add(new(VariableType.Object, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
         }
 
-        //RemoveAllCharacter
+        //RemoveAllObject
         {
             EventInfo info = new();
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
-            infos.Add(EventType.RemoveAllCharacter, info);
+            infos.Add(EventType.RemoveAllObject, info);
         }
 
         //Branch
