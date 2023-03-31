@@ -75,7 +75,7 @@ public class EventInfo
             info.canUseLinkEvent = true;
             infos.Add(EventType.SetBackground, info);
 
-            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Background/\" 이후의 경로만 입력)"));
+            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Background/\" 이후의 경로만 입력)\n* 확장자는 입력하지 않음."));
         }
 
         //CreateCharacter
@@ -87,7 +87,7 @@ public class EventInfo
             info.canUseLinkEvent = true;
             infos.Add(EventType.CreateCharacter, info);
 
-            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Character/\" 이후의 경로만 입력)"));
+            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Character/\" 이후의 경로만 입력)\n* 확장자는 입력하지 않음."));
             string[] options = { "0", "1", "2", "3", "4" };
             info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam1, options, "오브젝트의 위치를 정해주세요."));
         }

@@ -17,9 +17,11 @@ public abstract class EditorCommand
     }
 
     //SetScript를 통해 Execute전에 스크립트를 설정, 설정한 스크립트가 있다면 Execute내에서 스크립트를 적용(ApplyScript)하도록 설정.
-    public void SetScript(ScriptObject script)
+    public EditorCommand SetScript(ScriptObject script)
     {
         this.script = (ScriptObject)script.Clone();
+
+        return this;
     }
 
     protected void ApplyScript(Node node)

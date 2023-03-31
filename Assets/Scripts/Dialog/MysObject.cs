@@ -9,8 +9,6 @@ public class MysObject : MonoBehaviour
 
     public Image image;
 
-    public int position = 0;
-
     private void Awake()
     {
         eventMgr = FindObjectOfType<EventManager>();
@@ -19,12 +17,6 @@ public class MysObject : MonoBehaviour
     public void SetPosition(int position)
     {
         Transform parent = eventMgr.characterSet[position].transform;
-
-        if(parent.childCount > 0)
-        {
-            ("해당 위치에 이미 캐릭터가 있습니다 : " + position).Log();
-            parent.DestroyAllChildren();
-        }
 
         transform.SetParent(parent);
 

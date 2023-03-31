@@ -113,8 +113,7 @@ public class EditorManager : MonoBehaviour
     private Node CreateNode(ScriptObject script)
     {
         var command = new CreateNextNode();
-        command.SetScript(script);
-        command.Execute();
+        command.SetScript(script).Execute();
 
         script.scriptID.Log("CreateNode");
 
@@ -138,8 +137,7 @@ public class EditorManager : MonoBehaviour
             nodeGrp.SelectNode(parent);
 
             var createBranch = new CreateBranchNode();
-            createBranch.SetScript(scriptMgr.currentScript);
-            createBranch.Execute();
+            createBranch.SetScript(scriptMgr.currentScript).Execute();
 
             scriptMgr.Next();
 

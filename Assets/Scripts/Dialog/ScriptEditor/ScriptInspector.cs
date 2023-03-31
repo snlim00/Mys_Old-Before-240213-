@@ -66,7 +66,6 @@ public class ScriptInspector : MonoBehaviour
             variableList.Add(CreateVariable(VariableType.Dropdown, "SkipMethod", node, ScriptDataKey.SkipMethod, Enum.GetNames(typeof(SkipMethod))));
             variableList.Add(CreateVariable(VariableType.InputField, "SkipDelay", node, ScriptDataKey.SkipDelay, null, null, InputField.ContentType.DecimalNumber));
 
-
             variableList.Add(CreateVariable(VariableType.InputField, "EventDelay", node, ScriptDataKey.EventDelay, null, null, InputField.ContentType.DecimalNumber));
             variableList.Add(CreateVariable(VariableType.Dropdown, "Event", node, ScriptDataKey.EventType, Enum.GetNames(typeof(EventType))));
             variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));

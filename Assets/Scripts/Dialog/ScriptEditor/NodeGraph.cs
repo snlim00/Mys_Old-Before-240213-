@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using UniRx;
+using Unity.PlasticSCM.Editor.WebApi;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class NodeGraph : MonoBehaviour
@@ -42,107 +44,153 @@ public class NodeGraph : MonoBehaviour
 
     private void Start()
     {
-        //HideInspector
-        Observable.EveryUpdate()
+        var commandStream = Observable.EveryUpdate()
+            .Where(_ =>
+            {
+                GameObject current = EventSystem.current.currentSelectedGameObject;
+
+                if (current == null || current?.tag == Tag.Node)
+                {
+                    return true;
+                }
+
+                return false;
+            });
+
+        commandStream
             .Where(_ => Input.GetKeyDown(KeyCode.H))
             .Subscribe(_ =>
             {
-                if(ScriptInspector.instance.gameObject.activeSelf == true)
-                {
-                    ScriptInspector.instance.gameObject.SetActive(false);
-                    editorMgr.grpahPanel.SetActive(false);
-                }
-                else
-                {
-                    ScriptInspector.instance.gameObject.SetActive(true);
-                    editorMgr.grpahPanel.SetActive(true);
-                }
+                HideInspector();
             });
 
-        //Play
-        Observable.EveryUpdate()
+        commandStream
             .Where(_ => Input.GetKeyDown(KeyCode.P))
             .Subscribe(_ =>
             {
-                if (ScriptInspector.instance.gameObject.activeSelf == true)
-                {
-                    ScriptInspector.instance.gameObject.SetActive(false);
-                    editorMgr.grpahPanel.SetActive(false);
-
-                    Save();
-                    DialogManager.instance.ReadScript(editorMgr.scriptGroupID);
-                    DialogManager.instance.ExecuteMoveTo(selectedNode.script.scriptID, DialogManager.instance.DialogStart);
-                }
-                else
-                {
-                    ScriptInspector.instance.gameObject.SetActive(true);
-                    editorMgr.grpahPanel.SetActive(true);
-
-                    DialogManager.instance.StopDialog();
-                }
+                DialogPlay();
             });
 
 
-        Observable.EveryUpdate()
+        commandStream
             .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
             .Subscribe(_ =>
             {
-                EditorCommand cmd;
-                
-                if(commands.TryPop(out cmd) == true)
-                {
-                    cmd.Undo();
-                    redoCommands.Push(cmd);
-                }
+                Undo();
             });
 
-        Observable.EveryUpdate()
+        commandStream
             .Where(_ => Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Y))
             .Subscribe(_ =>
             {
-                EditorCommand cmd;
-
-                if (redoCommands.TryPop(out cmd) == true)
-                {
-                    cmd.Execute();
-                    commands.Push(cmd);
-                }
+                Redo();
             });
 
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftControl))
+        commandStream
+            .Where(_ => Input.GetKeyDown(KeyCode.C))
             .Subscribe(_ => CreateNextNode());
 
-        Observable.EveryUpdate()
+        commandStream
             .Where(_ => Input.GetKeyDown(KeyCode.Delete))
             .Subscribe(_ => RemoveNode());
 
-        Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.LeftShift))
+        commandStream
+            .Where(_ => Input.GetKeyDown(KeyCode.S))
             .Subscribe(_ => Save());
 
-        Observable.EveryUpdate()
-           .Where(_ => Input.GetKeyDown(KeyCode.E) && Input.GetKey(KeyCode.LeftControl))
+        commandStream
+           .Where(_ => Input.GetKeyDown(KeyCode.E))
            .Subscribe(_ =>
            {
-               if(selectedNode.nodeType == Node.NodeType.BranchEnd)
-               {
-                   return;
-               }
-
-               if (selectedNode.script.scriptType == ScriptType.Text)
-               {
-                   selectedNode.script.scriptType = ScriptType.Event;
-               }
-               else
-               {
-                   selectedNode.script.scriptType = ScriptType.Text;
-               }
-
-               RefreshInspector();
-               selectedNode.RefreshNodeType();
+               ToggleScriptType();
            });
     }
+
+    #region Keyboard commands
+    private void ToggleScriptType()
+    {
+        if (selectedNode.nodeType == Node.NodeType.BranchEnd)
+        {
+            return;
+        }
+
+        if (selectedNode.script.scriptType == ScriptType.Text)
+        {
+            selectedNode.script.scriptType = ScriptType.Event;
+        }
+        else
+        {
+            selectedNode.script.scriptType = ScriptType.Text;
+        }
+
+        RefreshInspector();
+        selectedNode.RefreshNodeType();
+    }
+
+    private void HideInspector()
+    {
+        if (ScriptInspector.instance.gameObject.activeSelf == true)
+        {
+            ScriptInspector.instance.gameObject.SetActive(false);
+            editorMgr.grpahPanel.SetActive(false);
+        }
+        else
+        {
+            ScriptInspector.instance.gameObject.SetActive(true);
+            editorMgr.grpahPanel.SetActive(true);
+        }
+    }
+
+    private void DialogPlay()
+    {
+        if (ScriptInspector.instance.gameObject.activeSelf == true)
+        {
+            ScriptInspector.instance.gameObject.SetActive(false);
+            editorMgr.grpahPanel.SetActive(false);
+
+            Save();
+            DialogManager.instance.ReadScript(editorMgr.scriptGroupID);
+            DialogManager.instance.ExecuteMoveTo(selectedNode.script.scriptID, DialogManager.instance.DialogStart);
+        }
+        else
+        {
+            ScriptInspector.instance.gameObject.SetActive(true);
+            editorMgr.grpahPanel.SetActive(true);
+
+            DialogManager.instance.StopDialog();
+        }
+    }
+
+    private void Undo()
+    {
+        EditorCommand cmd;
+
+        if (commands.TryPop(out cmd) == true)
+        {
+            cmd.Undo();
+            redoCommands.Push(cmd);
+        }
+        else
+        {
+            "되돌릴 작업이 없습니다".Log("Undo");
+        }
+    }
+
+    private void Redo()
+    {
+        EditorCommand cmd;
+
+        if (redoCommands.TryPop(out cmd) == true)
+        {
+            cmd.Execute();
+            commands.Push(cmd);
+        }
+        else
+        {
+            "되돌릴 작업이 없습니다".Log("Redo");
+        }
+    }
+    #endregion
 
     public void RefreshInspector()
     {
@@ -150,6 +198,7 @@ public class NodeGraph : MonoBehaviour
         ScriptInspector.instance.SetInspector(selectedNode);  
     }
 
+    #region Save / Export
     public void Save()
     {
         RefreshInspector();
@@ -232,6 +281,11 @@ public class NodeGraph : MonoBehaviour
                                 value = EventData.DEFAULT_DURATION_TURN.ToString();
                             }
                         }
+
+                        if(script.linkEvent == true && node.nextNode != null && node.nextNode.script.scriptType == ScriptType.Text)
+                        {
+                            value = ScriptObject.DEFAULT_LINK_EVENT.ToString();
+                        }
                     }
 
                     colums.Add(value);
@@ -242,6 +296,7 @@ public class NodeGraph : MonoBehaviour
             });
         } 
     }
+    #endregion
 
     public void CreateGraph()
     {

@@ -240,8 +240,6 @@ public class EventManager : MonoBehaviour
 
         Sprite sprite = Resources.Load<Sprite>("Images/Background/" + resource);
 
-        ("Images/Background/" + resource).Log();
-
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
         sequence.AppendCallback(() => SetBackground(sprite));
         sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
