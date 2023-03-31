@@ -30,6 +30,8 @@ public class NodeGraph : MonoBehaviour
     private Stack<EditorCommand> commands = new(); //실행된 커맨드
     private Stack<EditorCommand> redoCommands = new(); //언도된 커맨드
 
+    public bool isPlaying { get; private set; } = false;
+
     private void Awake()
     {
         if (instance != null)
@@ -131,28 +133,22 @@ public class NodeGraph : MonoBehaviour
         selectedNode.RefreshNodeType();
     }
 
-    private void HideInspector()
+    private void HideInspector(bool? doHide = null)
     {
-        if (ScriptInspector.instance.gameObject.activeSelf == true)
-        {
-            ScriptInspector.instance.gameObject.SetActive(false);
-            editorMgr.grpahPanel.SetActive(false);
-            objectList.gameObject.SetActive(false);
-        }
-        else
-        {
-            ScriptInspector.instance.gameObject.SetActive(true);
-            editorMgr.grpahPanel.SetActive(true);
-            objectList.gameObject.SetActive(true);
-        }
+        bool isActive = ScriptInspector.instance.gameObject.activeSelf;
+
+        ScriptInspector.instance.gameObject.SetActive(!doHide ?? !isActive);
+        editorMgr.grpahPanel.SetActive(!doHide ?? !isActive);
+        objectList.gameObject.SetActive(!doHide ?? !isActive);
     }
 
     private void DialogPlay()
     {
-        if (ScriptInspector.instance.gameObject.activeSelf == true)
+        if (isPlaying == false)
         {
-            ScriptInspector.instance.gameObject.SetActive(false);
-            editorMgr.grpahPanel.SetActive(false);
+            isPlaying = true;
+
+            HideInspector(true);
 
             Save();
             DialogManager.instance.ReadScript(editorMgr.scriptGroupID);
@@ -160,8 +156,9 @@ public class NodeGraph : MonoBehaviour
         }
         else
         {
-            ScriptInspector.instance.gameObject.SetActive(true);
-            editorMgr.grpahPanel.SetActive(true);
+            isPlaying = false;
+
+            HideInspector(false);
 
             DialogManager.instance.StopDialog();
         }
