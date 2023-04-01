@@ -548,14 +548,23 @@ public class NodeGraph : MonoBehaviour
     {
         List<string> objectList = new();
 
+        bool passed = false;
+
         TraversalNode(true, head, (_, _, _, node) =>
         {
-            "순회".로그();
+            if (passed == true) return;
+
             if(node.script.scriptType == ScriptType.Event && node.script.eventData.eventType == EventType.CreateObject)
             {
-                "해당".로그();
                 objectList.Add(node.script.eventData.eventParam[1]);
             }
+
+            if (node.script.scriptType == ScriptType.Event && node.script.eventData.eventType == EventType.RemoveObject)
+            {
+                objectList.Remove(node.script.eventData.eventParam[0]);
+            }
+
+            if (node == selectedNode) passed = true;
         });
 
         this.objectList.RefreshList(objectList);
@@ -585,6 +594,8 @@ public class NodeGraph : MonoBehaviour
         selectedNode = node;
         node.SetColorSelect();
         ScriptInspector.instance.SetInspector(node);
+
+        RefreshObjectList();
     }
 
     public void SelectLastNode()

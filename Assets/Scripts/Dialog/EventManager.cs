@@ -11,9 +11,9 @@ public class EventManager : MonoBehaviour
 {
     private DialogManager dialogMgr;
 
-    public GameObject[] characterSet;
-    private GameObject characterPref;
-    private Dictionary<string, MysObject> characterList;
+    public Transform[] objectPositions;
+    private GameObject objectPref;
+    private Dictionary<string, MysObject> ObjectList;
 
     [SerializeField] private Image background;
 
@@ -21,9 +21,9 @@ public class EventManager : MonoBehaviour
 
     private void Awake()
     {
-        characterList = new();
+        ObjectList = new();
 
-        characterPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
+        objectPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
     }
 
     private void Start()
@@ -67,15 +67,15 @@ public class EventManager : MonoBehaviour
                 break;
 
             case EventType.CreateObject:
-                Event_CreateCharacter(script, ref sequence);
+                Event_CreateObject(script, ref sequence);
                 break;
 
             case EventType.RemoveObject:
-                Event_RemoveCharacter(script, ref sequence);
+                Event_RemoveObject(script, ref sequence);
                 break;
 
             case EventType.RemoveAllObject:
-                Event_RemoveAllCharacter(script, ref sequence);
+                Event_RemoveAllObject(script, ref sequence);
                 break;
 
             case EventType.Goto:
@@ -92,7 +92,7 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public void Event_CreateCharacter(ScriptObject script, ref Sequence sequence)
+    public void Event_CreateObject(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
 
@@ -102,8 +102,8 @@ public class EventManager : MonoBehaviour
         
         Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
 
-        MysObject character = Instantiate(characterPref).GetComponent<MysObject>();
-        characterList[name] = character;
+        MysObject character = Instantiate(objectPref).GetComponent<MysObject>();
+        ObjectList[name] = character;
 
         void CreateCharacter()
         {
@@ -117,16 +117,16 @@ public class EventManager : MonoBehaviour
         sequence.Append(character.image.DOFade(1, eventData.eventDuration));
     }
 
-    public void RemoveCharacter(string name)
+    public void RemoveObject(string name)
     {
-        MysObject character = characterList[name];
+        MysObject character = ObjectList[name];
 
-        characterList.Remove(name);
+        ObjectList.Remove(name);
 
         Destroy(character.gameObject);
     }
 
-    public void Event_RemoveCharacter(ScriptObject script, ref Sequence sequence)
+    public void Event_RemoveObject(ScriptObject script, ref Sequence sequence)
     {
    
         EventData eventData = script.eventData;
@@ -134,17 +134,17 @@ public class EventManager : MonoBehaviour
         string name = eventData.eventParam[0].ToString();
 
         script.scriptID.Log();
-        characterList.Count.Log();
+        ObjectList.Count.Log();
 
-        MysObject character = characterList[name];
+        MysObject character = ObjectList[name];
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
-        sequence.AppendCallback(() => RemoveCharacter(name));
+        sequence.AppendCallback(() => RemoveObject(name));
     }
 
-    public void RemoveAllCharacter()
+    public void RemoveAllObject()
     {
-        Dictionary<string, MysObject>.KeyCollection keys = characterList.Keys;
+        Dictionary<string, MysObject>.KeyCollection keys = ObjectList.Keys;
 
         List<string> keyList = new();
 
@@ -155,15 +155,15 @@ public class EventManager : MonoBehaviour
 
         for(int i = 0; i < keyList.Count; ++i)
         {
-            RemoveCharacter(keyList[i]);
+            RemoveObject(keyList[i]);
         }
     }
 
-    public void Event_RemoveAllCharacter(ScriptObject script, ref Sequence sequence)
+    public void Event_RemoveAllObject(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
 
-        sequence.AppendCallback(RemoveAllCharacter);
+        sequence.AppendCallback(RemoveAllObject);
     }
 
     public void Event_AddLovePoint(ScriptObject script, ref Sequence sequence)

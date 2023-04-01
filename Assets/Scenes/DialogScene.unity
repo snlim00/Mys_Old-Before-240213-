@@ -922,12 +922,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fadeae2a3b3b8a14ca04681824c0e746, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterSet:
-  - {fileID: 1393518346}
-  - {fileID: 462746054}
-  - {fileID: 899212368}
-  - {fileID: 1942939250}
-  - {fileID: 1826916088}
+  objectPositions:
+  - {fileID: 1393518347}
+  - {fileID: 462746055}
+  - {fileID: 899212369}
+  - {fileID: 1942939251}
+  - {fileID: 1826916089}
   background: {fileID: 1726202453}
   defaultBG: {fileID: 21300000, guid: 670cf7bb3fbffa24ebcf18d96f3e528e, type: 3}
 --- !u!1 &825080134

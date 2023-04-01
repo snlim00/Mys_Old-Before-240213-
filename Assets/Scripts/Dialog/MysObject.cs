@@ -12,14 +12,12 @@ public class MysObject : MonoBehaviour
     private void Awake()
     {
         eventMgr = FindObjectOfType<EventManager>();
+
+        transform.SetParent(eventMgr.transform);
     }
 
     public void SetPosition(int position)
     {
-        Transform parent = eventMgr.characterSet[position].transform;
-
-        transform.SetParent(parent);
-
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = eventMgr.objectPositions[position].transform.localPosition;
     }
 }

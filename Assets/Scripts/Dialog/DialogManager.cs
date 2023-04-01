@@ -292,7 +292,7 @@ public class DialogManager : MonoBehaviour
     public void ResetAll()
     {
         eventMgr.SetBackground(null);
-        eventMgr.RemoveAllCharacter();
+        eventMgr.RemoveAllObject();
     }
 
     #region Goto / MoveTo
@@ -314,7 +314,7 @@ public class DialogManager : MonoBehaviour
         StopAllSequence();
         ResetAll();
 
-        eventMgr.RemoveAllCharacter();
+        eventMgr.RemoveAllObject();
 
         int groupID = ScriptManager.GetGroupID(targetID);
         int startID = ScriptManager.GetFirstScriptIDFromGroupID(groupID);
