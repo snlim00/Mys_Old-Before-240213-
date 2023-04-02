@@ -143,7 +143,7 @@ public class Variable : MonoBehaviour
     {
         if(type != VariableType.Dropdown)
         {
-            "Varaible Type이 Dropdown이 아닙니다".로그();
+            "Varaible Type이 Dropdown이 아닙니다".Log(this.name);
             return;
         }
 
@@ -173,6 +173,7 @@ public class Variable : MonoBehaviour
     public void SetName(string name)
     {
         varName.text = name;
+        this.name = name;
     }
 
     public void SetValue(string value)

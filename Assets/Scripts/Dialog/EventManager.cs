@@ -1,6 +1,7 @@
 using DG.Tweening;
 using JetBrains.Annotations;
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UniRx.Triggers;
 using UnityEditor.Tilemaps;
@@ -9,6 +10,8 @@ using UnityEngine.UI;
 
 public class EventManager : MonoBehaviour
 {
+    private Ease defaultEase = Ease.Linear;
+
     private DialogManager dialogMgr;
 
     public Transform[] objectPositions;
@@ -70,6 +73,10 @@ public class EventManager : MonoBehaviour
                 Event_CreateObject(script, ref sequence);
                 break;
 
+            case EventType.MoveObject:
+                Event_MoveObject(script, ref sequence);
+                break;
+
             case EventType.RemoveObject:
                 Event_RemoveObject(script, ref sequence);
                 break;
@@ -97,7 +104,7 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
 
         string resource = eventData.eventParam[0];
-        string name = eventData.eventParam[1].ToString();
+        string name = eventData.eventParam[1];
         int position = int.Parse(eventData.eventParam[2]);
         
         Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
@@ -105,7 +112,7 @@ public class EventManager : MonoBehaviour
         MysObject character = Instantiate(objectPref).GetComponent<MysObject>();
         ObjectList[name] = character;
 
-        void CreateCharacter()
+        void CreateObject()
         {
             character.SetPosition(position);
             character.image.sprite = sprite;
@@ -113,8 +120,34 @@ public class EventManager : MonoBehaviour
             character.image.SetAlpha(0);
         }
 
-        sequence.AppendCallback(CreateCharacter);
+        sequence.AppendCallback(CreateObject);
         sequence.Append(character.image.DOFade(1, eventData.eventDuration));
+    }
+
+    public void Event_MoveObject(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        string name = eventData.eventParam[0];
+        int position = int.Parse(eventData.eventParam[1]);
+        float duration = int.Parse(eventData.eventParam[2]);
+
+        object outValue;
+        Ease ease = DOTween.defaultEaseType;
+        Enum.TryParse(typeof(Ease), eventData.eventParam[3], out outValue);
+        if(outValue != null)
+        {
+            ease = (Ease)outValue;
+
+            if(ease == Ease.Unset)
+            {
+                ease = defaultEase;
+            }
+        }
+
+        var obj = ObjectList[name];
+
+        sequence.Append(obj.transform.DOMove(objectPositions[position].position, duration).SetEase(ease));
     }
 
     public void RemoveObject(string name)

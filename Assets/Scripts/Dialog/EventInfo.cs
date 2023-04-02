@@ -1,9 +1,10 @@
-using Mono.Cecil.Cil;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class EventParamInfo
 {
@@ -54,6 +55,8 @@ public class EventInfo
 
     public static void Init()
     {
+        string[] easeTypes = Enum.GetNames(typeof(Ease));
+
         string[] characterNames = { CharacterName.Jihyae, CharacterName.Yunha, CharacterName.Seeun };
 
         //None
@@ -91,6 +94,22 @@ public class EventInfo
             info.paramInfo.Add(new(VariableType.InputField, "Name", ScriptDataKey.EventParam1, null, "오브젝트의 이름을 입력해주세요."));
             string[] options = { "0", "1", "2", "3", "4" };
             info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam2, options, "오브젝트의 위치를 정해주세요."));
+        }
+
+        //MoveObject
+        {
+            EventInfo info = new();
+
+            info.canUseDurationTurn = true;
+            info.canUseLoop = false;
+            info.canUseLinkEvent = true;
+            infos.Add(EventType.MoveObject, info);
+
+            info.paramInfo.Add(new(VariableType.Object, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
+            string[] options = { "0", "1", "2", "3", "4" };
+            info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam1, options, "오브젝트를 이동시킬 위치를 선택해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Duration", ScriptDataKey.EventParam2, null, "이동의 소요 시간을 입력해주세요.", InputField.ContentType.DecimalNumber));
+            info.paramInfo.Add(new(VariableType.Dropdown, "EaseType", ScriptDataKey.EventParam3, easeTypes, "이동의 보간 방식을 선택해주세요."));
         }
 
         //RemoveObject

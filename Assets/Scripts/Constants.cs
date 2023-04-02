@@ -39,6 +39,7 @@ public enum EventType
     None,
     SetBackground,
     CreateObject,
+    MoveObject,
     RemoveObject,
     RemoveAllObject,
     AddLovePoint,

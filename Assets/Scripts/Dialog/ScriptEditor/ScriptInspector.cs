@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ScriptInspector : MonoBehaviour
 {
@@ -113,8 +112,6 @@ public class ScriptInspector : MonoBehaviour
         var.SetValue(targetNode.script.GetVariableFromKey(targetKey));
 
         var.SetContentType(contentType);
-
-        var.name = name;
 
         return var;
     }
