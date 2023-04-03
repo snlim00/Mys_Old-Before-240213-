@@ -1051,6 +1051,7 @@ GameObject:
   - component: {fileID: 1070018829}
   - component: {fileID: 1070018831}
   - component: {fileID: 1070018830}
+  - component: {fileID: 1070018832}
   m_Layer: 5
   m_Name: BounceArrow
   m_TagString: Untagged
@@ -1116,6 +1117,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070018828}
   m_CullTransparentMesh: 1
+--- !u!114 &1070018832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070018828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4354f76c5e20ef547a164646e62cc603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1098140189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1633,7 +1646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24256b5dcfd4a77438a7698a15904f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceArrow: {fileID: 1070018830}
+  bounceArw: {fileID: 1070018832}
 --- !u!1 &1393518346
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,6 +20,8 @@ public class DialogManager : MonoBehaviour
 
     public ScriptManager scriptMgr = new();
 
+    [SerializeField] private BounceArrow bounceArw;
+
     private void Awake()
     {
         if(instance != null)
@@ -31,33 +33,6 @@ public class DialogManager : MonoBehaviour
         textMgr = FindObjectOfType<TextManager>();
         eventMgr = FindObjectOfType<EventManager>();
     }
-
-    #region Bounce Arrow
-    [SerializeField] private Image bounceArrow;
-    private Tween bounceArrowTween = null;
-    private bool enableBounceArrow = false;
-
-    private void SetBounceArrow(bool enable)
-    {
-        if(enable == true && enableBounceArrow == false)
-        {
-            bounceArrow.DOFade(1, 0.2f);
-
-            float pos = bounceArrow.transform.localPosition.y - 7;
-            bounceArrowTween = bounceArrow.transform.DOLocalMoveY(pos, 0.55f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-
-            enableBounceArrow = true;
-        }
-        else if(enable == false && enableBounceArrow == true)
-        {
-            bounceArrowTween?.Kill();
-
-            bounceArrow.DOFade(0, 0.2f);
-
-            enableBounceArrow = false;
-        }
-    }
-    #endregion
 
     public void ReadScript(int scriptGroupID)
     {
@@ -209,7 +184,7 @@ public class DialogManager : MonoBehaviour
 
         ExecuteNextScript();
 
-        SetBounceArrow(false);
+        bounceArw.SetEnable(false);
     }
 
     private void Skip(ScriptObject script)
@@ -226,7 +201,7 @@ public class DialogManager : MonoBehaviour
                 tweenObj.Skip();
             });
 
-            SetBounceArrow(true);
+            bounceArw.SetEnable(true);
         }
         else if (isPlaying == false)
         {
@@ -290,7 +265,7 @@ public class DialogManager : MonoBehaviour
 
             Sequence bounceArrowDelay = DOTween.Sequence();
             bounceArrowDelay.AppendInterval(duration);
-            bounceArrowDelay.AppendCallback(() => SetBounceArrow(true));
+            bounceArrowDelay.AppendCallback(() => bounceArw.SetEnable(true));
 
             bounceArrowDelay.Play();
         }
@@ -337,6 +312,7 @@ public class DialogManager : MonoBehaviour
 
     public void ResetAll()
     {
+        bounceArw.SetEnable(false);
         eventMgr.SetBackground(null);
         eventMgr.RemoveAllObject();
 
