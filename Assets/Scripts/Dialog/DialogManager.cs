@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 using System;
 using UniRx;
@@ -30,6 +31,33 @@ public class DialogManager : MonoBehaviour
         textMgr = FindObjectOfType<TextManager>();
         eventMgr = FindObjectOfType<EventManager>();
     }
+
+    #region Bounce Arrow
+    [SerializeField] private Image bounceArrow;
+    private Tween bounceArrowTween = null;
+    private bool enableBounceArrow = false;
+
+    private void SetBounceArrow(bool enable)
+    {
+        if(enable == true && enableBounceArrow == false)
+        {
+            bounceArrow.DOFade(1, 0.2f);
+
+            float pos = bounceArrow.transform.localPosition.y - 7;
+            bounceArrowTween = bounceArrow.transform.DOLocalMoveY(pos, 0.55f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+
+            enableBounceArrow = true;
+        }
+        else if(enable == false && enableBounceArrow == true)
+        {
+            bounceArrowTween?.Kill();
+
+            bounceArrow.DOFade(0, 0.2f);
+
+            enableBounceArrow = false;
+        }
+    }
+    #endregion
 
     public void ReadScript(int scriptGroupID)
     {
@@ -180,6 +208,8 @@ public class DialogManager : MonoBehaviour
         skipStream?.Dispose();
 
         ExecuteNextScript();
+
+        SetBounceArrow(false);
     }
 
     private void Skip(ScriptObject script)
@@ -195,11 +225,38 @@ public class DialogManager : MonoBehaviour
             {
                 tweenObj.Skip();
             });
+
+            SetBounceArrow(true);
         }
         else if (isPlaying == false)
         {
             Next();
         }
+    }
+
+    //추후 오디오의 Duration도 포함하여 계산하도록 해야 함 230403
+    private float FindLongestDuration()
+    {
+        float duration = tweenList[0].tween.Duration() - tweenList[0].tween.position;
+
+        for (int i = 1; i < tweenList.Count; ++i)
+        {
+            if (tweenList[i].tween.Duration() == Mathf.Infinity || tweenList[i].remainingTurn > 0)
+            {
+                continue;
+            }
+
+            if (duration < tweenList[i].tween.Duration() - tweenList[i].tween.position || duration == Mathf.Infinity)
+            {
+                duration = tweenList[i].tween.Duration() - tweenList[i].tween.position;
+            }
+            else if (tweenList[0].remainingTurn > 0)
+            {
+                duration = tweenList[i].tween.Duration() - tweenList[i].tween.position;
+            }
+        }
+
+        return duration;
     }
 
     private void SetSkip(ScriptObject script)
@@ -208,26 +265,8 @@ public class DialogManager : MonoBehaviour
         {
             Sequence skipSeq = DOTween.Sequence();
             autoSkipSequence = skipSeq;
-
-            //가장 큰 duration 뽑기 (추후 오디오의 duration도 고려)
-            float duration = tweenList[0].tween.Duration() - tweenList[0].tween.position;
-
-            for (int i = 1; i < tweenList.Count; ++i)
-            {
-                if (tweenList[i].tween.Duration() == Mathf.Infinity || tweenList[i].remainingTurn > 0)
-                {
-                    continue;
-                }
-
-                if (duration < tweenList[i].tween.Duration() - tweenList[i].tween.position || duration == Mathf.Infinity)
-                {
-                    duration = tweenList[i].tween.Duration() - tweenList[i].tween.position;
-                }
-                else if (tweenList[0].remainingTurn > 0)
-                {
-                    duration = tweenList[i].tween.Duration() - tweenList[i].tween.position;
-                }
-            }
+            
+            float duration = FindLongestDuration();
             
             float skipInterval = script.skipDelay;
             if (duration != Mathf.Infinity)
@@ -246,6 +285,14 @@ public class DialogManager : MonoBehaviour
             skipStream = Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.Space))
                 .Subscribe(_ => Skip(script));
+
+            float duration = FindLongestDuration();
+
+            Sequence bounceArrowDelay = DOTween.Sequence();
+            bounceArrowDelay.AppendInterval(duration);
+            bounceArrowDelay.AppendCallback(() => SetBounceArrow(true));
+
+            bounceArrowDelay.Play();
         }
     }
 
