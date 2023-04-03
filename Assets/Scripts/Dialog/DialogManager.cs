@@ -4,7 +4,6 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using UniRx;
-using TMPro;
 
 public class DialogManager : MonoBehaviour
 {
@@ -293,6 +292,10 @@ public class DialogManager : MonoBehaviour
     {
         eventMgr.SetBackground(null);
         eventMgr.RemoveAllObject();
+
+        textMgr.textBox.SetAlpha(1);
+        textMgr.text.SetAlpha(1);
+        textMgr.characterName.SetAlpha(1);
     }
 
     #region Goto / MoveTo
@@ -325,12 +328,12 @@ public class DialogManager : MonoBehaviour
     }
 
     //moveCB의 인자는 scriptID
-    private void MoveTo(ScriptObject script, int targetID, Action<int> moveCB)
+    private void MoveTo(ScriptObject script, int targetID, Action<int> moveAction)
     {
         //여기 부등호 >= 또는 >로 바꿔서 해당 스크립트 전까지 이동 or 해당 스크립트가 완료된 상태로 이동 설정 가능
         if(script.scriptID >= targetID)
         {
-            moveCB(script.scriptID);
+            moveAction(script.scriptID);
             return;
         }
 
@@ -370,7 +373,7 @@ public class DialogManager : MonoBehaviour
             tweenObj.isSkipped = false;
         });
 
-        MoveTo(scriptMgr.Next(), targetID, moveCB);
+        MoveTo(scriptMgr.Next(), targetID, moveAction);
     }
     #endregion
 }

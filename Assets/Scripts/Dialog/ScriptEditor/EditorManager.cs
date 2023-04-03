@@ -10,6 +10,8 @@ public class EditorManager : MonoBehaviour
 {
     public static EditorManager instance = null;
 
+    [SerializeField] private GameObject editorCanvas;
+
     private GameObject graphPref;
 
     private NodeGraph nodeGrp;
@@ -34,14 +36,10 @@ public class EditorManager : MonoBehaviour
         graphPref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Graph");
     }
 
-    private void Start()
-    {
-        //test code
-        //EditorStart(1);
-    }
-
     public void EditorStart(int scriptGroupID)
     {
+        editorCanvas.SetActive(true);
+
         "EDITOR START".Log();
         this.scriptGroupID = scriptGroupID;
 

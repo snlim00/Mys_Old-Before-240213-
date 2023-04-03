@@ -55,8 +55,8 @@ public class EventInfo
 
     public static void Init()
     {
+        string[] boolean = { true.ToString(), false.ToString() };
         string[] easeTypes = Enum.GetNames(typeof(Ease));
-
         string[] characterNames = { CharacterName.Jihyae, CharacterName.Yunha, CharacterName.Seeun };
 
         //None
@@ -130,6 +130,17 @@ public class EventInfo
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
             infos.Add(EventType.RemoveAllObject, info);
+        }
+
+        //HideTextBox
+        {
+            EventInfo info = new();
+            info.canUseDurationTurn = true;
+            info.canUseLoop = false;
+            info.canUseLinkEvent = true;
+            infos.Add(EventType.HideTextBox, info);
+
+            info.paramInfo.Add(new(VariableType.Dropdown, "Hide", ScriptDataKey.EventParam0, boolean, "텍스트 박스 숨김 여부를 선택해주세요."));
         }
 
         //Branch

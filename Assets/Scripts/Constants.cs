@@ -42,6 +42,7 @@ public enum EventType
     MoveObject,
     RemoveObject,
     RemoveAllObject,
+    HideTextBox,
     AddLovePoint,
     Goto,
     Branch,

@@ -13,6 +13,7 @@ public class EventManager : MonoBehaviour
     private Ease defaultEase = Ease.Linear;
 
     private DialogManager dialogMgr;
+    private TextManager textMgr;
 
     public Transform[] objectPositions;
     private GameObject objectPref;
@@ -27,6 +28,7 @@ public class EventManager : MonoBehaviour
         ObjectList = new();
 
         objectPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
+        textMgr = FindObjectOfType<TextManager>();
     }
 
     private void Start()
@@ -83,6 +85,10 @@ public class EventManager : MonoBehaviour
 
             case EventType.RemoveAllObject:
                 Event_RemoveAllObject(script, ref sequence);
+                break;
+
+            case EventType.HideTextBox:
+                Event_HideTextBox(script, ref sequence);
                 break;
 
             case EventType.Goto:
@@ -197,6 +203,22 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
 
         sequence.AppendCallback(RemoveAllObject);
+    }
+
+    public void Event_HideTextBox(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        bool hide = bool.Parse(eventData.eventParam[0]);
+
+        float targetAlpha = hide == true ? 0 : 1;
+
+        Sequence fadeSequence = DOTween.Sequence();
+        fadeSequence.Append(textMgr.text.DOFade(targetAlpha, eventData.eventDuration));
+        fadeSequence.Insert(0, textMgr.textBox.DOFade(targetAlpha, eventData.eventDuration));
+        fadeSequence.Insert(0, textMgr.characterName.DOFade(targetAlpha, eventData.eventDuration));
+
+        sequence.Append(fadeSequence);
     }
 
     public void Event_AddLovePoint(ScriptObject script, ref Sequence sequence)

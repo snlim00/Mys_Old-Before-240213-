@@ -9,22 +9,12 @@ public class TestDialogStarter : MonoBehaviour
 {
     [SerializeField] private InputField inputField;
 
-    public int scriptGroupID = -1;
-
     private void Awake()
     {
         inputField.contentType = InputField.ContentType.IntegerNumber;
         inputField.onEndEdit.AddListener(text => {
-            int scriptID = int.Parse(text);
-
-            if(GameConstants.isEditorMode == false)
-            {
-                scriptGroupID = ScriptManager.GetGroupID(scriptID);
-            }
-            else
-            {
-                scriptGroupID = scriptID;
-            }
+            int scriptGroupID = int.Parse(text);
+            int scriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
 
             SceneManager.LoadScene("DialogScene");
 
