@@ -261,29 +261,32 @@ public class NodeGraph : MonoBehaviour
                         EventInfo eventInfo = EventInfo.GetEventInfo(node.script.eventData.eventType);
 
                         //불가능한 값 처리
-                        if (eventInfo.canUseLoop == false)
                         {
-                            if (key == ScriptDataKey.LoopCount)
+                            if (eventInfo.canUseLoop == false)
                             {
-                                value = EventData.DEFAULT_LOOP_COUNT.ToString();
+                                if (key == ScriptDataKey.LoopCount)
+                                {
+                                    value = EventData.DEFAULT_LOOP_COUNT.ToString();
+                                }
                             }
-                        }
 
-                        if (eventInfo.canUseLinkEvent == false)
-                        {
-                            if (key == ScriptDataKey.LinkEvent)
+                            if (eventInfo.canUseLinkEvent == false)
                             {
-                                value = ScriptObject.DEFAULT_LINK_EVENT.ToString();
+                                if (key == ScriptDataKey.LinkEvent)
+                                {
+                                    value = ScriptObject.DEFAULT_LINK_EVENT.ToString();
+                                }
                             }
-                        }
 
-                        if (eventInfo.canUseDurationTurn == false)
-                        {
-                            if (key == ScriptDataKey.DurationTurn)
+                            if (eventInfo.canUseDurationTurn == false)
                             {
-                                value = EventData.DEFAULT_DURATION_TURN.ToString();
+                                if (key == ScriptDataKey.DurationTurn)
+                                {
+                                    value = EventData.DEFAULT_DURATION_TURN.ToString();
+                                }
                             }
                         }
+                        
 
                         if(script.linkEvent == true && node.nextNode != null && node.nextNode.script.scriptType == ScriptType.Text)
                         {

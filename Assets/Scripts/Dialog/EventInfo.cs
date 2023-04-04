@@ -35,6 +35,7 @@ public class EventInfo
 
     public string explain = null;
 
+    public bool canUseEventDuration = true;
     public bool canUseDurationTurn = false;
     public bool canUseLoop = false;
     public bool canUseLinkEvent = true;
@@ -63,6 +64,7 @@ public class EventInfo
         {
             EventInfo info = new();
 
+            info.canUseEventDuration = false;
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = false;
@@ -73,24 +75,26 @@ public class EventInfo
         {
             EventInfo info = new();
 
+            info.canUseEventDuration = true;
             info.canUseDurationTurn = true;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
             infos.Add(EventType.SetBackground, info);
 
-            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Background/\" 이후의 경로만 입력)\n* 확장자는 입력하지 않음."));
+            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/Background/ 이후의 경로만 입력\n* 확장자는 입력하지 않음."));
         }
 
         //CreateObject
         {
             EventInfo info = new();
 
+            info.canUseEventDuration = true;
             info.canUseDurationTurn = true;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
             infos.Add(EventType.CreateObject, info);
 
-            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. (\"Assets/Resources/Image/Character/\" 이후의 경로만 입력)\n* 확장자는 입력하지 않음."));
+            info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/Character/ 이후의 경로만 입력\n* 확장자는 입력하지 않음."));
             info.paramInfo.Add(new(VariableType.InputField, "Name", ScriptDataKey.EventParam1, null, "오브젝트의 이름을 입력해주세요."));
             string[] options = { "0", "1", "2", "3", "4" };
             info.paramInfo.Add(new(VariableType.Dropdown, "Position", ScriptDataKey.EventParam2, options, "오브젝트의 위치를 정해주세요."));
@@ -100,6 +104,7 @@ public class EventInfo
         {
             EventInfo info = new();
 
+            info.canUseEventDuration = true;
             info.canUseDurationTurn = true;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
@@ -115,6 +120,8 @@ public class EventInfo
         //RemoveObject
         {
             EventInfo info = new();
+
+            info.canUseEventDuration = true;
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
@@ -126,6 +133,8 @@ public class EventInfo
         //RemoveAllObject
         {
             EventInfo info = new();
+
+            info.canUseEventDuration = false;
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
@@ -135,6 +144,8 @@ public class EventInfo
         //HideTextBox
         {
             EventInfo info = new();
+
+            info.canUseEventDuration = true;
             info.canUseDurationTurn = true;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
@@ -146,6 +157,8 @@ public class EventInfo
         //Branch
         {
             EventInfo info = new();
+
+            info.canUseEventDuration = false;
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = false;
@@ -161,6 +174,7 @@ public class EventInfo
         {
             EventInfo info = new();
 
+            info.canUseEventDuration = false;
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = true;
@@ -173,6 +187,8 @@ public class EventInfo
         //Goto
         {     
             EventInfo info = new();
+
+            info.canUseEventDuration = false;
             info.canUseDurationTurn = false;
             info.canUseLoop = false;
             info.canUseLinkEvent = false;

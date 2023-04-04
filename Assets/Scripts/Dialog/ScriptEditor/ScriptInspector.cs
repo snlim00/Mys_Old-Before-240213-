@@ -67,7 +67,11 @@ public class ScriptInspector : MonoBehaviour
 
             variableList.Add(CreateVariable(VariableType.InputField, "EventDelay", node, ScriptDataKey.EventDelay, null, null, InputField.ContentType.DecimalNumber));
             variableList.Add(CreateVariable(VariableType.Dropdown, "Event", node, ScriptDataKey.EventType, Enum.GetNames(typeof(EventType))));
-            variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));
+
+            if(eventInfo.canUseEventDuration == true)
+            {
+                variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));
+            }
 
        
             if(eventInfo.canUseDurationTurn == true)

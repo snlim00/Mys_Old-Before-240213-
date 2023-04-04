@@ -23,6 +23,7 @@ public static class Tag
 {
     public static string Node = "Node";
     public static string Variable = "Variable";
+    public static string VariableName = "VariableName";
     public static string CharacterList = "CharacterList";
 }
 

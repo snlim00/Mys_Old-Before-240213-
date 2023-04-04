@@ -17,7 +17,7 @@ public enum VariableType
     //Node,
 }
 
-public class Variable : MonoBehaviour
+public class Variable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Text varName;
     [SerializeField] private InputField inputField;
@@ -38,6 +38,24 @@ public class Variable : MonoBehaviour
     {
         nodeGrp = NodeGraph.instance;
         inspector = ScriptInspector.instance;
+    }
+
+    public void OnPointerEnter(PointerEventData e)
+    {
+        if(e.pointerEnter.tag != Tag.VariableName)
+        {
+            return;
+        }
+
+        if(eventParamInfo != null && eventParamInfo.explain != null)
+        {
+            VariableTooltip.instance.ShowTooltip(eventParamInfo.explain);
+        }
+    }
+    
+    public void OnPointerExit(PointerEventData e)
+    {
+        VariableTooltip.instance.HideTooltip();
     }
 
     public void Init(VariableType type)
@@ -108,7 +126,7 @@ public class Variable : MonoBehaviour
     {
         button.image.color = Color.gray;
 
-        Observable.IntervalFrame(1).Take(1).Subscribe(_ =>
+        Observable.TimerFrame(1).Subscribe(_ =>
         {
             IDisposable stream = null;
             stream = Observable.EveryUpdate()
