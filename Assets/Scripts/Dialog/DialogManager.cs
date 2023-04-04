@@ -21,6 +21,7 @@ public class DialogManager : MonoBehaviour
     public ScriptManager scriptMgr = new();
 
     [SerializeField] private BounceArrow bounceArw;
+    private Sequence appearBounceArrow = null;
 
     private void Awake()
     {
@@ -187,28 +188,6 @@ public class DialogManager : MonoBehaviour
         bounceArw.SetEnable(false);
     }
 
-    private void Skip(ScriptObject script)
-    {
-        //플레이 중인 트윈이 있는지 확인.
-        bool isPlaying = ExistPlayingTween();
-
-        isPlaying.Log();
-
-        if (script.skipMethod == SkipMethod.Skipable && isPlaying == true)
-        {
-            DoAllTweens(tweenObj =>
-            {
-                tweenObj.Skip();
-            });
-
-            bounceArw.SetEnable(true);
-        }
-        else if (isPlaying == false)
-        {
-            Next();
-        }
-    }
-
     //추후 오디오의 Duration도 포함하여 계산하도록 해야 함 230403
     private float FindLongestDuration()
     {
@@ -263,11 +242,35 @@ public class DialogManager : MonoBehaviour
 
             float duration = FindLongestDuration();
 
-            Sequence bounceArrowDelay = DOTween.Sequence();
-            bounceArrowDelay.AppendInterval(duration);
-            bounceArrowDelay.AppendCallback(() => bounceArw.SetEnable(true));
+            appearBounceArrow = DOTween.Sequence();
+            appearBounceArrow.AppendInterval(duration);
+            appearBounceArrow.AppendCallback(() => bounceArw.SetEnable(true));
 
-            bounceArrowDelay.Play();
+            appearBounceArrow.Play();
+        }
+    }
+
+    private void Skip(ScriptObject script)
+    {
+        //플레이 중인 트윈이 있는지 확인.
+        bool isPlaying = ExistPlayingTween();
+
+        isPlaying.Log();
+
+        if (script.skipMethod == SkipMethod.Skipable && isPlaying == true)
+        {
+            DoAllTweens(tweenObj =>
+            {
+                tweenObj.Skip();
+            });
+
+            bounceArw.SetEnable(true);
+
+            appearBounceArrow?.Kill();
+        }
+        else if (isPlaying == false)
+        {
+            Next();
         }
     }
 
