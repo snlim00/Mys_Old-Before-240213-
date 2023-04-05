@@ -40,7 +40,6 @@ public class EditorManager : MonoBehaviour
     {
         editorCanvas.SetActive(true);
 
-        "EDITOR START".Log();
         this.scriptGroupID = scriptGroupID;
 
         string path = Application.dataPath + "/Data/ScriptTable" + scriptGroupID + ".CSV";
@@ -64,7 +63,6 @@ public class EditorManager : MonoBehaviour
 
     private void LoadScript(string path)
     {
-        "Load Script".Log();
         scriptMgr = new();
 
         scriptMgr.ReadScript("ScriptTable" + scriptGroupID + ".CSV");
@@ -120,11 +118,8 @@ public class EditorManager : MonoBehaviour
 
     private void CreateBranch()
     {
-        scriptMgr.currentScript.scriptID.Log("CreateBranch");
         ScriptObject parentScript = scriptMgr.currentScript;
         Node parent = CreateNode(scriptMgr.currentScript);
-
-        //parentScript.scriptID.Log("Parent");
 
         BranchInfo branchInfo = parentScript.GetBranchInfo();
 

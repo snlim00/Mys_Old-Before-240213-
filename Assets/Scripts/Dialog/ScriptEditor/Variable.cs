@@ -161,7 +161,7 @@ public class Variable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if(type != VariableType.Dropdown)
         {
-            "Varaible Type이 Dropdown이 아닙니다".Log(this.name);
+            "Varaible Type이 Dropdown이 아닙니다".LogWarning(this.name);
             return;
         }
 

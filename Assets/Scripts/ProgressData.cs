@@ -29,7 +29,7 @@ public static class ProgressData
                 break;
 
             default:
-                ("ProgressData.AddLovePoint - 캐릭터를 찾을 수 없습니다. " + script.scriptID + " : " + target).LogWarning();
+                (target).LogWarning("ProgressData.AddLovePoint - 캐릭터를 찾을 수 없습니다" + script.scriptID);
                 break;
         }
     }
@@ -48,7 +48,7 @@ public static class ProgressData
                 return ProgressData.lovePoint_Seeun;
 
             default:
-                ("ProgressData.GetLovePointFromCharacter - 캐릭터를 찾을 수 없습니다. " + script.scriptID + " : " + target).LogWarning();
+                target.LogWarning("ProgressData.GetLovePointFromCharacter - 캐릭터를 찾을 수 없습니다." + script.scriptID);
                 return -1;
         }
     }

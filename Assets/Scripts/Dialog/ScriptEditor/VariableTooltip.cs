@@ -40,7 +40,6 @@ public class VariableTooltip : MonoBehaviour
             .Subscribe(_ =>
             {
                 textRect.localPosition = textRect.sizeDelta / 2 + new Vector2(5, 5);
-                "A".Log();
             });
     }
 

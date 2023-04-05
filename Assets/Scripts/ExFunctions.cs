@@ -7,44 +7,53 @@ using UnityEngine.UI;
 
 public static class ExFunctions
 {
-    public static void Log(this object obj, object info = null)
+    private static string CreateMessage(object message, object info = null)
     {
-        if(info == null)
+        string msg = "";
+
+        if(info != null)
         {
-            Debug.Log(obj);
+            msg += info + " : ";
         }
-        else
+            
+        msg += message;
+
+        return msg;
+    }
+
+    public static void Log(this object obj, object info = null, bool withToastMessage = false)
+    {
+        string msg = CreateMessage(obj, info);
+
+        Debug.Log(msg);
+
+        if(withToastMessage == true)
         {
-            Debug.Log(info + " : " + obj);
-            ToastManager.Print(info + " : " + obj);
+            ToastManager.Print(msg);
         }
     }
 
-    public static void LogError(this object obj, object info = null)
+    public static void LogError(this object obj, object info = null, bool withToastMessage = false)
     {
-        if (info == null)
+        string msg = CreateMessage(obj, info);
+
+        Debug.LogError(msg);
+
+        if (withToastMessage == true)
         {
-            Debug.LogError(obj);
-            ToastManager.Print("[ ! ] " + obj);
-        }
-        else
-        {
-            Debug.LogError(info + " : " + obj);
-            ToastManager.Print("[ ! ] " + info + " : " + obj);
+            ToastManager.Print("[Error] " + msg);
         }
     }
 
-    public static void LogWarning(this object obj, object info = null)
+    public static void LogWarning(this object obj, object info = null, bool withToastMessage = false)
     {
-        if (info == null)
+        string msg = CreateMessage(obj, info);
+
+        Debug.LogWarning(msg);
+
+        if (withToastMessage == true)
         {
-            Debug.LogWarning(obj);
-            ToastManager.Print("[ ! ] " + obj);
-        }
-        else
-        {
-            Debug.LogWarning(info + " : " + obj);
-            ToastManager.Print("[ ! ] " + info + " : " + obj);
+            ToastManager.Print("[ ! ] " + msg);
         }
     }
 

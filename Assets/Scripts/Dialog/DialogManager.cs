@@ -48,7 +48,6 @@ public class DialogManager : MonoBehaviour
         scriptMgr.SetCurrentScript(script);
 
         ExecuteScript(script);
-        "DialogStart".Log();
     }
 
     public void RemoveTween(TweenObject tweenObj)
@@ -91,9 +90,6 @@ public class DialogManager : MonoBehaviour
     #region ExecuteScript
     private void ExecuteScript(ScriptObject script)
     {
-        script.scriptID.Log("ExecuteScript");
-        //("ExecuteScript : " + script.scriptID).Log();
-
         if (script.scriptType == ScriptType.Event)
         {
             if(script.eventData.eventType == EventType.Goto) //이 코드를 여기에 둬도 되나?? 230111
@@ -229,7 +225,7 @@ public class DialogManager : MonoBehaviour
             }
 
             skipSeq.AppendInterval(skipInterval);
-            ("Auto Skip in... " + skipInterval).Log();
+            //("Auto Skip in... " + skipInterval).Log();
             skipSeq.AppendCallback(Next);
 
             skipSeq.Play();
@@ -255,7 +251,7 @@ public class DialogManager : MonoBehaviour
         //플레이 중인 트윈이 있는지 확인.
         bool isPlaying = ExistPlayingTween();
 
-        isPlaying.Log();
+        //isPlaying.Log();
 
         if (script.skipMethod == SkipMethod.Skipable && isPlaying == true)
         {
@@ -303,7 +299,6 @@ public class DialogManager : MonoBehaviour
         //진행 중인 시퀀스, 스트림 모두 중지
         if (skipStream != null)
         {
-            "Dispose".Log();
             skipStream.Dispose();
         }
 

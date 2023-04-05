@@ -243,7 +243,6 @@ public class RemoveNode : EditorCommand
             }
             else
             {
-                branchIndex.Log();
                 removedNode.parent.branch[branchIndex] = removedNode;
             }
         }

@@ -170,9 +170,6 @@ public class EventManager : MonoBehaviour
 
         string name = eventData.eventParam[0].ToString();
 
-        script.scriptID.Log();
-        ObjectList.Count.Log();
-
         MysObject character = ObjectList[name];
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
@@ -265,7 +262,7 @@ public class EventManager : MonoBehaviour
 
         if (branch == -1)
         {
-            ("분기를 찾을 수 없습니다. ScriptID : " + script.scriptID).Log();
+            (script.scriptID).LogError("분기를 찾을 수 없습니다. ScriptID", true);
             return;
         }
 

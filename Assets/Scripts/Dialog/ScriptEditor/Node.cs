@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +14,7 @@ public class Node : MonoBehaviour
         BranchEnd,
         Goto,
     }
-
+    
     public static readonly Color selectedColor = new Color32(114, 134, 211, 255);
     //public static readonly Color subSelectedColor = new Color32(142, 162, 233, 255);
     public static readonly Vector2 interval = new Vector2(82, -30);
@@ -60,7 +59,6 @@ public class Node : MonoBehaviour
             return false;
         }
     }
-
 
     private void Awake()
     {

@@ -171,7 +171,7 @@ public class NodeGraph : MonoBehaviour
         }
         else
         {
-            "되돌릴 작업이 없습니다".Log("Undo");
+            "되돌릴 작업이 없습니다".Log("Undo", true);
         }
     }
 
@@ -186,7 +186,7 @@ public class NodeGraph : MonoBehaviour
         }
         else
         {
-            "되돌릴 작업이 없습니다".Log("Redo");
+            "되돌릴 작업이 없습니다".Log("Redo", true);
         }
     }
     #endregion
@@ -375,14 +375,14 @@ public class NodeGraph : MonoBehaviour
     {
         if (selectedNode.nextNode == null && selectedNode.prevNode == null) //마지막 하나 남은 노드라면 지우지 않음
         {
-            "마지막 하나 남은 노드는 삭제할 수 없습니다".LogWarning();
+            "마지막 하나 남은 노드는 삭제할 수 없습니다".LogWarning("RemoveNode", true);
             return;
         }
 
         //이전 노드가 Branch이며 해당 노드의 다음 노드가 없다면 삭제할 수 없음.
         if (selectedNode.prevNode != null && selectedNode.prevNode.nodeType == Node.NodeType.Branch && selectedNode.nextNode == null)
         {
-            "브랜치의 다음 노드는 항상 존재해야 합니다.".LogWarning();
+            "브랜치의 다음 노드는 항상 존재해야 합니다.".LogWarning("RemoveNode", true);
             return;
         }
 
@@ -390,7 +390,7 @@ public class NodeGraph : MonoBehaviour
         {
             if (selectedNode.prevNode == null && selectedNode.nextNode.nodeType == Node.NodeType.BranchEnd)
             {
-                "브랜치의 마지막 하나 남은 노드는 삭제할 수 없습니다.".LogWarning();
+                "브랜치의 마지막 하나 남은 노드는 삭제할 수 없습니다.".LogWarning("RemoveNode", true);
                 return;
             }
             else if(selectedNode.nodeType == Node.NodeType.BranchEnd)

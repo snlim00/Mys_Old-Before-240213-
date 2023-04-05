@@ -36,8 +36,8 @@ public class ToastMessage : MonoBehaviour
         fadeIn.AppendInterval(duration);
         fadeIn.AppendCallback(() => fadeOut.Play());
 
-        fadeOut.Append(img.DOFade(0, 0.2f));
-        fadeOut.Insert(0, text.DOFade(0, 0.2f));
+        fadeOut.Append(img.DOFade(0, 0.4f));
+        fadeOut.Insert(0, text.DOFade(0, 0.4f));
         fadeOut.AppendCallback(() => Destroy(this.gameObject));
 
         fadeIn.Play();
