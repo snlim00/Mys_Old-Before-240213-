@@ -31,6 +31,13 @@ public class ToastManager : MonoBehaviour
         ToastMessage toastMsg = Instantiate(msgPref).GetComponent<ToastMessage>();
 
         toastMsg.Print(message);
+
+        int childCount = content.transform.childCount;
+        if(childCount > 2)
+        {
+            "Destroy".Log();
+            content.transform.GetChild(0).GetComponent<ToastMessage>().Remove();
+        }
     }
 
     public static void Print(string message)

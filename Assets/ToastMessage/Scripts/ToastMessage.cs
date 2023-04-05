@@ -11,6 +11,8 @@ public class ToastMessage : MonoBehaviour
 
     private Image img;
 
+    private List<Sequence> seqs;
+
     private void Awake()
     {
         img = GetComponent<Image>();
@@ -20,8 +22,11 @@ public class ToastMessage : MonoBehaviour
         transform.position = new Vector2(Screen.width / 2, Screen.height * 0.85f);
     }
 
+
     public void Print(string message, float duration = 2f)
     {
+        seqs = new();
+
         text.text = message;
 
         img.SetAlpha(0);
@@ -41,5 +46,18 @@ public class ToastMessage : MonoBehaviour
         fadeOut.AppendCallback(() => Destroy(this.gameObject));
 
         fadeIn.Play();
+
+        seqs.Add(fadeIn);
+        seqs.Add(fadeOut);
+    }
+
+    public void Remove()
+    {
+        foreach (Sequence seq in seqs)
+        {
+            seq.Kill();
+        }
+
+        Destroy(this.gameObject);
     }
 }
