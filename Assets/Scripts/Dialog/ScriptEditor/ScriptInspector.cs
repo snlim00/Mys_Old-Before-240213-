@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -73,7 +72,6 @@ public class ScriptInspector : MonoBehaviour
                 variableList.Add(CreateVariable(VariableType.InputField, "EventDuration", node, ScriptDataKey.EventDuration, null, null, InputField.ContentType.DecimalNumber));
             }
 
-       
             if(eventInfo.canUseDurationTurn == true)
             {
                 variableList.Add(CreateVariable(VariableType.InputField, "DurationTurn", node, ScriptDataKey.DurationTurn, null, null, InputField.ContentType.IntegerNumber));

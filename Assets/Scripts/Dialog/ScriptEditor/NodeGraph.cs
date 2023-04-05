@@ -1,15 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using UniRx;
-using Unity.PlasticSCM.Editor.WebApi;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class NodeGraph : MonoBehaviour
 {
@@ -535,9 +531,7 @@ public class NodeGraph : MonoBehaviour
                 {
                     node.SetName("-");
 
-                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString(); 
-                    //다음 노드의 ScriptID가 refresh 되기 전임.. ScriptID를 다른 시점에서 처리해야 할 듯
-                    //SetScriptID 함수를 따로 만들어서 이전에 실행하도록 하여 해결 230316
+                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString();
                 }
             }
         });

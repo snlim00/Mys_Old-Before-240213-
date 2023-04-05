@@ -1,10 +1,8 @@
 using DG.Tweening;
-using JetBrains.Annotations;
 using System.Collections;
 using System;
 using System.Collections.Generic;
 using UniRx.Triggers;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.UI;
 

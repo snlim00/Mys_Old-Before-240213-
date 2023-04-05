@@ -168,20 +168,8 @@ public class CreateBranchNode : EditorCommand
 public class RemoveNode : EditorCommand
 {
     private Node removedNode;
-
-    ~RemoveNode() //Destroy가 안됨 ,. . . . . ..ㅠㅠㅠㅠ
-    {
-        "소멸".로그();
-
-        try
-        {
-            GameObject.Destroy(removedNode.gameObject);
-        }
-        catch
-        {
-            "오류가 나긴 났음".로그();
-        }
-    }
+    private bool isHead = false; //삭제하는 노드가 헤드였다면 해당 변수 true, 언도 시 head여부에 따라 NodeGrpah의 Head를 removedNode로 변경해 줌.
+    private int branchIndex = -1;
 
     public override void Execute()
     {
@@ -210,6 +198,8 @@ public class RemoveNode : EditorCommand
 
         if (removedNode.isHead == true)
         {
+            isHead = true;
+
             if(removedNode.parent == null)
             {
                 nodeGrp.head = newSelectedNode;
@@ -219,9 +209,9 @@ public class RemoveNode : EditorCommand
                 int idx = removedNode.GetBranchIndex();
 
                 removedNode.parent.branch[idx] = newSelectedNode;
+
+                branchIndex = idx;
             }
-            //"change first node".Log();
-            
         }
 
         removedNode.transform.SetParent(null);
@@ -243,6 +233,19 @@ public class RemoveNode : EditorCommand
         if(removedNode.prevNode != null)
         {
             removedNode.prevNode.nextNode = removedNode;
+        }
+
+        if(isHead == true)
+        {
+            if(branchIndex == -1)
+            {
+                nodeGrp.head = removedNode;
+            }
+            else
+            {
+                branchIndex.Log();
+                removedNode.parent.branch[branchIndex] = removedNode;
+            }
         }
 
         nodeGrp.RefreshAllNode();

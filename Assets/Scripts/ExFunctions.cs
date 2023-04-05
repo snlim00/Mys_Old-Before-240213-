@@ -11,22 +11,41 @@ public static class ExFunctions
     {
         if(info == null)
         {
-            Debug.Log(obj); 
+            Debug.Log(obj);
         }
         else
         {
             Debug.Log(info + " : " + obj);
+            ToastManager.Print(info + " : " + obj);
         }
     }
 
-    public static void LogError(this object obj)
+    public static void LogError(this object obj, object info = null)
     {
-        Debug.LogError(obj);
+        if (info == null)
+        {
+            Debug.LogError(obj);
+            ToastManager.Print("[ ! ] " + obj);
+        }
+        else
+        {
+            Debug.LogError(info + " : " + obj);
+            ToastManager.Print("[ ! ] " + info + " : " + obj);
+        }
     }
 
-    public static void LogWarning(this object obj)
+    public static void LogWarning(this object obj, object info = null)
     {
-        Debug.LogWarning(obj);
+        if (info == null)
+        {
+            Debug.LogWarning(obj);
+            ToastManager.Print("[ ! ] " + obj);
+        }
+        else
+        {
+            Debug.LogWarning(info + " : " + obj);
+            ToastManager.Print("[ ! ] " + info + " : " + obj);
+        }
     }
 
     public static void ·Î±×(this object obj)
