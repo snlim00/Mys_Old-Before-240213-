@@ -10,6 +10,7 @@ public class VariableTooltip : MonoBehaviour
     public static VariableTooltip instance;
 
     [SerializeField] private Text text;
+    [SerializeField] private RectTransform panel;
 
     private RectTransform textRect;
 
@@ -40,6 +41,9 @@ public class VariableTooltip : MonoBehaviour
             .Subscribe(_ =>
             {
                 textRect.localPosition = textRect.sizeDelta / 2 + new Vector2(5, 5);
+
+                panel.sizeDelta = textRect.sizeDelta + new Vector2(7, 10);
+                panel.localPosition = textRect.localPosition;
             });
     }
 

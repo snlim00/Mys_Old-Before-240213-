@@ -11,14 +11,6 @@ public static class GameConstants
     public static bool isEditorMode = true;
 }
 
-public static class Constants //해당 프로젝트에서는 사용되지 않음. 221217
-{
-    public static int essentialKeyCount = 2;
-
-    public static int idKey = 0;
-    public static int nameKey = 1;
-}
-
 public static class Tag
 {
     public static string Node = "Node";
