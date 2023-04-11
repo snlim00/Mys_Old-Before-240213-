@@ -61,23 +61,25 @@ public class EventInfo
 
         //None
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = false;
-            info.canUseDurationTurn = false;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = false;
+            EventInfo info = new()
+            {
+                canUseEventDuration = false,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = false
+            };
             infos.Add(EventType.None, info);
         }
 
         //SetBackground
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = true;
-            info.canUseDurationTurn = true;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
+            EventInfo info = new()
+            {
+                canUseEventDuration = true,
+                canUseDurationTurn = true,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
             infos.Add(EventType.SetBackground, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "배경의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/Background/ 이후의 경로만 입력\n* 확장자는 입력하지 않음."));
@@ -85,12 +87,13 @@ public class EventInfo
 
         //CreateObject
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = true;
-            info.canUseDurationTurn = true;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
+            EventInfo info = new()
+            {
+                canUseEventDuration = true,
+                canUseDurationTurn = true,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
             infos.Add(EventType.CreateObject, info);
 
             info.paramInfo.Add(new(VariableType.InputField, "Resource", ScriptDataKey.EventParam0, null, "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/Character/ 이후의 경로만 입력\n* 확장자는 입력하지 않음."));
@@ -101,12 +104,13 @@ public class EventInfo
 
         //MoveObject
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = true;
-            info.canUseDurationTurn = true;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
+            EventInfo info = new()
+            {
+                canUseEventDuration = true,
+                canUseDurationTurn = true,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
             infos.Add(EventType.MoveObject, info);
 
             info.paramInfo.Add(new(VariableType.Object, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
@@ -118,12 +122,13 @@ public class EventInfo
 
         //RemoveObject
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = true;
-            info.canUseDurationTurn = false;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
+            EventInfo info = new()
+            {
+                canUseEventDuration = true,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
             infos.Add(EventType.RemoveObject, info);
 
             info.paramInfo.Add(new(VariableType.Object, "Object", ScriptDataKey.EventParam0, null, "오브젝트를 선택해주세요."));
@@ -131,36 +136,68 @@ public class EventInfo
 
         //RemoveAllObject
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = false;
-            info.canUseDurationTurn = false;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
+            EventInfo info = new()
+            {
+                canUseEventDuration = false,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
             infos.Add(EventType.RemoveAllObject, info);
         }
 
         //HideTextBox
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = true;
-            info.canUseDurationTurn = true;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
+            EventInfo info = new()
+            {
+                canUseEventDuration = true,
+                canUseDurationTurn = true,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
             infos.Add(EventType.HideTextBox, info);
 
             info.paramInfo.Add(new(VariableType.Dropdown, "Hide", ScriptDataKey.EventParam0, boolean, "텍스트 박스 숨김 여부를 선택해주세요."));
         }
 
+        //AddLovePoint
+        {
+            EventInfo info = new()
+            {
+                canUseEventDuration = false,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = true
+            };
+            infos.Add(EventType.AddLovePoint, info);
+
+            info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Point Amount", ScriptDataKey.EventParam1, null, "호감도의 양을 적어주세요.", InputField.ContentType.IntegerNumber));
+        }
+
+        //Goto
+        {
+            EventInfo info = new()
+            {
+                canUseEventDuration = false,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = false
+            };
+            infos.Add(EventType.Goto, info);
+
+            info.paramInfo.Add(new(VariableType.InputField, "Script", ScriptDataKey.EventParam0, null, "이동할 스크립트를 선택해주세요."));
+        }
+
         //Branch
         {
-            EventInfo info = new();
-
-            info.canUseEventDuration = false;
-            info.canUseDurationTurn = false;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = false;
+            EventInfo info = new()
+            {
+                canUseEventDuration = false,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = false
+            };
             infos.Add(EventType.Branch, info);
 
             info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
@@ -169,31 +206,20 @@ public class EventInfo
             info.paramInfo.Add(new(VariableType.InputField, "Point Amount 3", ScriptDataKey.EventParam5, null, "호감도 요구 조건을 적어주세요.", InputField.ContentType.IntegerNumber));
         }
 
-        //AddLovePoint
+        //Choice
         {
-            EventInfo info = new();
+            EventInfo info = new()
+            {
+                canUseEventDuration = true,
+                canUseDurationTurn = false,
+                canUseLoop = false,
+                canUseLinkEvent = false
+            };
+            infos.Add(EventType.Choice, info);
 
-            info.canUseEventDuration = false;
-            info.canUseDurationTurn = false;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = true;
-            infos.Add(EventType.AddLovePoint, info);
-
-            info.paramInfo.Add(new(VariableType.Dropdown, "Character", ScriptDataKey.EventParam0, characterNames, "캐릭터를 선택해주세요."));
-            info.paramInfo.Add(new(VariableType.InputField, "Point Amount", ScriptDataKey.EventParam1, null, "호감도의 양을 적어주세요.", InputField.ContentType.IntegerNumber));
-        }
-
-        //Goto
-        {     
-            EventInfo info = new();
-
-            info.canUseEventDuration = false;
-            info.canUseDurationTurn = false;
-            info.canUseLoop = false;
-            info.canUseLinkEvent = false;
-            infos.Add(EventType.Goto, info);
-
-            info.paramInfo.Add(new(VariableType.InputField, "Script", ScriptDataKey.EventParam0, null, "이동할 스크립트를 선택해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Option 1", ScriptDataKey.EventParam1, null, "첫 번째 선택지를 입력해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Option 2", ScriptDataKey.EventParam3, null, "두 번째 선택지를 입력해주세요."));
+            info.paramInfo.Add(new(VariableType.InputField, "Option 3", ScriptDataKey.EventParam5, null, "세 번째 선택지를 입력해주세요."));
         }
     }
 }
