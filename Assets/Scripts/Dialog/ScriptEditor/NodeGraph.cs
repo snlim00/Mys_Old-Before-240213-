@@ -60,6 +60,14 @@ public class NodeGraph : MonoBehaviour
             });
 
         commandStream
+            .Where(_ => Input.GetKeyDown(KeyCode.D))
+            .Subscribe(_ =>
+            {
+                Save();
+                BranchInfo.GetBranchInfo(selectedNode.script).Log();
+            });
+
+        commandStream
             .Where(_ => Input.GetKeyDown(KeyCode.H))
             .Subscribe(_ =>
             {
@@ -356,12 +364,7 @@ public class NodeGraph : MonoBehaviour
     }
 
     public void CreateNextNode()
-    {
-        if (selectedNode.nodeType == Node.NodeType.Goto)
-        {
-            return;
-        }
-
+    { 
         if(selectedNode.nodeType == Node.NodeType.BranchEnd)
         {
             return;
@@ -513,7 +516,6 @@ public class NodeGraph : MonoBehaviour
                 }
                 else if (node.prevNode != null)
                 {
-
                     Vector2 pos = node.prevNode.transform.localPosition;
 
                     int childCount = node.prevNode.GetChildCount() + 1;

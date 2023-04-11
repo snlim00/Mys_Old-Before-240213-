@@ -39,6 +39,7 @@ public enum EventType
     AddLovePoint,
     Goto,
     Branch,
+    Choice,
 }
 
 public enum ScriptDataKey

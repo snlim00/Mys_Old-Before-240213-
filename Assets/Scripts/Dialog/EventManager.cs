@@ -136,9 +136,8 @@ public class EventManager : MonoBehaviour
         int position = int.Parse(eventData.eventParam[1]);
         float duration = int.Parse(eventData.eventParam[2]);
 
-        object outValue;
         Ease ease = DOTween.defaultEaseType;
-        Enum.TryParse(typeof(Ease), eventData.eventParam[3], out outValue);
+        Enum.TryParse(typeof(Ease), eventData.eventParam[3], out object outValue);
         if(outValue != null)
         {
             ease = (Ease)outValue;
@@ -234,7 +233,6 @@ public class EventManager : MonoBehaviour
     public void Event_Goto(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
-
         int scriptID = int.Parse(eventData.eventParam[0]);
 
         sequence.AppendCallback(() => Goto(scriptID));
@@ -247,7 +245,7 @@ public class EventManager : MonoBehaviour
         string target = eventData.eventParam[0];
         int lovePoint = ProgressData.GetLovePointFromCharacter(script, target);
 
-        BranchInfo branchInfo = script.GetBranchInfo();
+        BranchInfo branchInfo = BranchInfo.GetBranchInfo(script);
 
         int branch = -1;
 

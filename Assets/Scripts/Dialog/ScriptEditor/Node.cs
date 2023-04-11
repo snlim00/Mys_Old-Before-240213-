@@ -17,7 +17,7 @@ public class Node : MonoBehaviour
     
     public static readonly Color selectedColor = new Color32(114, 134, 211, 255);
     //public static readonly Color subSelectedColor = new Color32(142, 162, 233, 255);
-    public static readonly Vector2 interval = new Vector2(82, -30);
+    public static readonly Vector2 interval = new(82, -30);
     public const int maxBranchCount = 3;
 
     private NodeGraph nodeGrp;
@@ -179,7 +179,7 @@ public class Node : MonoBehaviour
     {
         if (script.scriptType == ScriptType.Event)
         {
-            if (script.eventData.eventType == EventType.Branch)
+            if (script.eventData.eventType == EventType.Branch || script.eventData.eventType == EventType.Choice)
             {
                 SetNodeType(NodeType.Branch);
             }

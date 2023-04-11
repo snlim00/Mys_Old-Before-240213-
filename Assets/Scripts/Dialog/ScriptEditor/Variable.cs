@@ -26,6 +26,7 @@ public class Variable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private NodeGraph nodeGrp;
     private ScriptInspector inspector;
+    private VariableTooltip varTooltip;
 
     public EventParamInfo eventParamInfo = null;
 
@@ -38,24 +39,25 @@ public class Variable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         nodeGrp = NodeGraph.instance;
         inspector = ScriptInspector.instance;
+        varTooltip = VariableTooltip.instance;
     }
 
     public void OnPointerEnter(PointerEventData e)
     {
-        if(e.pointerEnter.tag != Tag.VariableName)
+        if(e.pointerEnter.CompareTag(Tag.VariableName) == false)
         {
             return;
         }
 
         if(eventParamInfo != null && eventParamInfo.explain != null)
         {
-            VariableTooltip.instance.ShowTooltip(eventParamInfo.explain);
+            varTooltip.ShowTooltip(eventParamInfo.explain);
         }
     }
     
     public void OnPointerExit(PointerEventData e)
     {
-        VariableTooltip.instance.HideTooltip();
+        varTooltip.HideTooltip();
     }
 
     public void Init(VariableType type)
@@ -110,8 +112,8 @@ public class Variable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             "이벤트 타입 변경".로그();
             inspector.RefreshInspector(targetNode);
 
-            string value = GetValue();
-            EventType eventType = (EventType)Enum.Parse(typeof(EventType), value);
+            //string value = GetValue();
+            //EventType eventType = (EventType)Enum.Parse(typeof(EventType), value);
 
             targetNode.Refresh();
         }
@@ -143,7 +145,7 @@ public class Variable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
                     button.image.color = Color.white;
 
-                    if (current?.tag != Tag.CharacterList)
+                    if (current.CompareTag(Tag.CharacterList) == false)
                     {
                         return;
                     }

@@ -2,9 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 
 public enum ScriptType
@@ -44,33 +42,195 @@ public class EventData
 
 public struct BranchInfo
 {
-    public List<int> requiredValue;
+    public EventType type;
+
+    //type에 따라 둘 중 하나를 사용하게 됨
+    public List<int> requiredValue; //EventType.Branch
+    public List<string> choiceText; //EventType.Choice
+
     public List<int> targetID;
     
     public int Count
     {
         get
         {
-            return Mathf.Min(requiredValue.Count, targetID.Count);
+            if(type == EventType.Branch)
+            {
+                return Mathf.Min(requiredValue.Count, targetID.Count);
+            }
+            else if(type == EventType.Choice)
+            {
+                return Mathf.Min(choiceText.Count, targetID.Count);
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 
-    public BranchInfo(List<int> requiredValue, List<int> targetID)
+    public BranchInfo(EventType type, object value, List<int> targetID)
     {
-        this.requiredValue = requiredValue;
+        this.type = type;
+
+        if(type == EventType.Branch)
+        {
+            this.requiredValue = (List<int>)value;
+            this.choiceText = null;
+        }
+        else if(type == EventType.Choice)
+        {
+            this.requiredValue = null;
+            this.choiceText = (List<string>)value;
+        }
+        else
+        {
+            this.requiredValue = null;
+            this.choiceText = null;
+        }
+
         this.targetID = targetID;
     }
 
     public void Log()
     {
         string message = "";
-
-        for(int i = 0; i < this.Count; ++i)
+        if(type == EventType.Branch)
         {
-            message += (requiredValue[i] + " | " + targetID[i] + "\n");
+            for(int i = 0; i < this.Count; ++i)
+            {
+                message += (requiredValue[i] + " | " + targetID[i] + "\n");
+            }
+        }
+        else if(type == EventType.Choice)
+        {
+            for (int i = 0; i < this.Count; ++i)
+            {
+                message += (choiceText[i] + " | " + targetID[i] + "\n");
+            }
         }
 
-        message.Log();
+        Debug.Log(message);
+    }
+
+    public static BranchInfo GetBranchInfo(in ScriptObject script)
+    {
+        EventData eventData = script.eventData;
+
+        if (script.scriptType != ScriptType.Event)
+        {
+            return new BranchInfo(EventType.None, null, null);
+        }
+
+        if (eventData.eventType == EventType.Branch)
+        {
+            BranchInfo branchInfo = CreateBranchInfo(script);
+            return branchInfo;
+
+            //return CreateBranchInfo(script);
+        }
+        else if(eventData.eventType == EventType.Choice)
+        {
+            BranchInfo branchInfo = CreateChoiceInfo(script);
+            return branchInfo;
+            //return CreateChoiceInfo(script);
+        }
+        else
+        {
+            return new BranchInfo(EventType.None, null, null);
+        }
+    }
+
+    private static BranchInfo CreateBranchInfo(in ScriptObject script)
+    {
+        EventData eventData = script.eventData;
+
+        if (script.scriptType != ScriptType.Event || eventData.eventType != EventType.Branch)
+        {
+            script.Log();
+            "ParseBranch - 해당 스크립트는 브랜치가 아닙니다.".LogError();
+            return new BranchInfo(EventType.None, null, null);
+        }
+
+        List<int> requiredValue = new();
+        List<int> targetScriptID = new();
+
+        for (int i = 1; i < eventData.eventParam.Count; ++i)
+        {
+            if (i % 2 == 0)
+            {
+                if (int.TryParse(eventData.eventParam[i], out int value))
+                {
+                    targetScriptID.Add(value);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if (int.TryParse(eventData.eventParam[i], out int value))
+                {
+                    requiredValue.Add(value);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        BranchInfo branchInfo = new(EventType.Branch, requiredValue, targetScriptID);
+
+        return branchInfo;
+    }
+
+    private static BranchInfo CreateChoiceInfo(in ScriptObject script)
+    {
+        EventData eventData = script.eventData;
+
+        if (eventData.eventType != EventType.Choice)
+        {
+            script.Log();
+            "ParseBranch - 해당 스크립트는 브랜치가 아닙니다.".LogError();
+            return new BranchInfo(EventType.None, null, null);
+        }
+
+        List<string> choiceText = new();
+        List<int> targetScriptID = new();
+
+        for (int i = 1; i < eventData.eventParam.Count; ++i)
+        {
+            if (i % 2 == 0)
+            {
+                if (int.TryParse(eventData.eventParam[i], out int value))
+                {
+                    targetScriptID.Add(value);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                string text = eventData.eventParam[i].ToString();
+
+                if (text != "")
+                {
+                    choiceText.Add(text);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        BranchInfo branchInfo = new(EventType.Choice, choiceText, targetScriptID);
+
+        return branchInfo;
     }
 }
 
@@ -117,58 +277,11 @@ public class ScriptObject : ICloneable
         return clone;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns>requiredValue와 targetScriptID를 튜플로 담은 리스트</returns>
-    public BranchInfo GetBranchInfo()
-    {
-        if(scriptType != ScriptType.Event || eventData.eventType != EventType.Branch)
-        {
-            this.Log();
-            "ParseBranch - 해당 스크립트는 브랜치가 아닙니다.".LogError();
-            return new BranchInfo(null, null);
-        }
-
-        List<int> requiredValue = new();
-        List<int> targetScriptID = new();
-
-        for (int i = 1; i < eventData.eventParam.Count; ++i)
-        {
-            if (i % 2 == 0)
-            {
-                if (int.TryParse(eventData.eventParam[i], out int value))
-                {
-                    targetScriptID.Add(value);
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                if (int.TryParse(eventData.eventParam[i], out int value))
-                {
-                    requiredValue.Add(value);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        BranchInfo branchInfo = new(requiredValue, targetScriptID);
-
-        return branchInfo;
-    }
-
     public int GetBranchCount
     {
         get
         {
-            return GetBranchInfo().Count;
+            return BranchInfo.GetBranchInfo(this).Count;
         }
     }
 

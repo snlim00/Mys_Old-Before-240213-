@@ -322,6 +322,7 @@ public class DialogManager : MonoBehaviour
     #region Goto / MoveTo
     public void Goto(int scriptID)
     {
+        scriptID.Log("Goto");
         StopAllSequence();
 
         DoAllTweens(tween =>

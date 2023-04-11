@@ -59,6 +59,7 @@ public class EditorManager : MonoBehaviour
         }
     }
 
+    #region 스크립트 불러오기
     private ScriptManager scriptMgr = new();
 
     private void LoadScript(string path)
@@ -74,10 +75,11 @@ public class EditorManager : MonoBehaviour
 
         while(scriptMgr.currentScript != null)
         {
-            if(scriptMgr.currentScript.scriptType == ScriptType.Event && scriptMgr.currentScript.eventData.eventType == EventType.Branch)
+            if(scriptMgr.currentScript.scriptType == ScriptType.Event
+                && (scriptMgr.currentScript.eventData.eventType == EventType.Branch/* || scriptMgr.currentScript.eventData.eventType == EventType.Choice*/))
             {
-                hasBranch = true;
-                CreateBranch();
+                    hasBranch = true;
+                    CreateBranch();
             }
             else
             {
@@ -121,7 +123,7 @@ public class EditorManager : MonoBehaviour
         ScriptObject parentScript = scriptMgr.currentScript;
         Node parent = CreateNode(scriptMgr.currentScript);
 
-        BranchInfo branchInfo = parentScript.GetBranchInfo();
+        BranchInfo branchInfo = BranchInfo.GetBranchInfo(parentScript);
 
         for(int i = 0; i < branchInfo.Count; ++i)
         {
@@ -156,4 +158,5 @@ public class EditorManager : MonoBehaviour
 
         nodeGrp.SelectNode(parent);
     }
+    #endregion
 }
