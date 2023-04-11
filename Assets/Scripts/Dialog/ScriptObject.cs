@@ -137,8 +137,7 @@ public class ScriptObject : ICloneable
         {
             if (i % 2 == 0)
             {
-                int value;
-                if (int.TryParse(eventData.eventParam[i], out value))
+                if (int.TryParse(eventData.eventParam[i], out int value))
                 {
                     targetScriptID.Add(value);
                 }
@@ -149,8 +148,7 @@ public class ScriptObject : ICloneable
             }
             else
             {
-                int value;
-                if (int.TryParse(eventData.eventParam[i], out value))
+                if (int.TryParse(eventData.eventParam[i], out int value))
                 {
                     requiredValue.Add(value);
                 }
@@ -314,9 +312,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.ScriptType:
                 {
-                    object outValue;
-
-                    if (Enum.TryParse(typeof(ScriptType), value, out outValue))
+                    if (Enum.TryParse(typeof(ScriptType), value, out object outValue))
                     {
                         scriptType = (ScriptType)outValue;
                     }
@@ -333,8 +329,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.TextDuration:
                 {
-                    float outValue;
-                    if (float.TryParse(value, out outValue))
+                    if (float.TryParse(value, out float outValue))
                     {
                         textDuration = outValue;
                     }
@@ -351,9 +346,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.SkipMethod:
                 {
-                    object outValue;
-
-                    if (Enum.TryParse(typeof(SkipMethod), value, out outValue))
+                    if (Enum.TryParse(typeof(SkipMethod), value, out object outValue))
                     {
                         skipMethod = (SkipMethod)outValue;
                     }
@@ -362,9 +355,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.SkipDelay:
                 {
-                    float outValue;
-
-                    if (float.TryParse(value, out outValue))
+                    if (float.TryParse(value, out float outValue))
                     {
                         skipDelay = outValue;
                     }
@@ -373,9 +364,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.LinkEvent:
                 {
-                    bool outValue;
-
-                    if (bool.TryParse(value, out outValue))
+                    if (bool.TryParse(value, out bool outValue))
                     {
                         linkEvent = outValue;
                     }
@@ -384,9 +373,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.EventType:
                 {
-                    object outValue;
-
-                    if (Enum.TryParse(typeof(EventType), value, out outValue))
+                    if (Enum.TryParse(typeof(EventType), value, out object outValue))
                     {
                         eventData.eventType = (EventType)outValue;
                     }
@@ -395,9 +382,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.EventDelay:
                 {
-                    float outValue;
-
-                    if (float.TryParse(value, out outValue))
+                    if (float.TryParse(value, out float outValue))
                     {
                         eventData.eventDelay = outValue;
                     }
@@ -406,9 +391,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.DurationTurn:
                 {
-                    int outValue;
-
-                    if (int.TryParse(value, out outValue))
+                    if (int.TryParse(value, out int outValue))
                     {
                         eventData.durationTurn = outValue;
                     }
@@ -417,9 +400,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.EventDuration:
                 {
-                    float outValue;
-
-                    if (float.TryParse(value, out outValue))
+                    if (float.TryParse(value, out float outValue))
                     {
                         eventData.eventDuration = outValue;
                     }
@@ -428,9 +409,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.LoopCount:
                 {
-                    int outValue;
-
-                    if (int.TryParse(value, out outValue))
+                    if (int.TryParse(value, out int outValue))
                     {
                         eventData.loopCount = outValue;
                     }
@@ -439,9 +418,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.LoopType:
                 {
-                    object outValue;
-
-                    if (Enum.TryParse(typeof(LoopType), value, out outValue))
+                    if (Enum.TryParse(typeof(LoopType), value, out object outValue))
                     {
                         eventData.loopType = (LoopType)outValue;
                     }
@@ -450,9 +427,7 @@ public class ScriptObject : ICloneable
 
             case ScriptDataKey.LoopDelay:
                 {
-                    float outValue;
-
-                    if (float.TryParse(value, out outValue))
+                    if (float.TryParse(value, out float outValue))
                     {
                         eventData.loopDelay = outValue;
                     }
