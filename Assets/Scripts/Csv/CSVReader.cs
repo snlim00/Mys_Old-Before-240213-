@@ -35,7 +35,7 @@ public static class CSVReader
         for (var i = 1; i < lines.Length; i++)
         {
             var values = Regex.Split(lines[i], SPLIT_RE);
-            if (values.Length == 0 || values[0] == "") continue;
+            if (values.Length == 0 || string.IsNullOrEmpty(values[0])) continue;
 
             ScriptObject entry = new ScriptObject(values);
 

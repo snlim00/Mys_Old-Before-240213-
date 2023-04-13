@@ -32,7 +32,7 @@ public class ObjectList : MonoBehaviour
 
         btn.SetButtonText(name);
 
-        if(name == "")
+        if(string.IsNullOrEmpty(name))
         {
             btn.SetButtonText(unnamed);
         }
