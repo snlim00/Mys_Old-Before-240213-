@@ -60,11 +60,17 @@ public class NodeGraph : MonoBehaviour
             });
 
         commandStream
-            .Where(_ => Input.GetKeyDown(KeyCode.D))
+            .Where(_ => Input.GetKeyDown(KeyCode.I))
             .Subscribe(_ =>
             {
-                Save();
                 BranchInfo.GetBranchInfo(selectedNode.script).Log();
+            });
+
+        commandStream
+            .Where(_ => Input.GetKeyDown(KeyCode.G))
+            .Subscribe(_ =>
+            {
+                DialogManager.instance.Goto(10011);
             });
 
         commandStream
@@ -232,7 +238,8 @@ public class NodeGraph : MonoBehaviour
             TraversalNode(true, this.head, (index, branchIndex, depth, node) =>
             {
                 //branch 파라미터 처리
-                if(node.script.eventData.eventType == EventType.Branch)
+                if(node.script.scriptType == ScriptType.Event 
+                && (node.script.eventData.eventType == EventType.Branch || node.script.eventData.eventType == EventType.Choice))
                 {
                     for(int i = 0; i < Node.maxBranchCount; ++i)
                     {

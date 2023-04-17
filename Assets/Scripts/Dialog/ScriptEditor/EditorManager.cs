@@ -76,7 +76,7 @@ public class EditorManager : MonoBehaviour
         while(scriptMgr.currentScript != null)
         {
             if(scriptMgr.currentScript.scriptType == ScriptType.Event
-                && (scriptMgr.currentScript.eventData.eventType == EventType.Branch/* || scriptMgr.currentScript.eventData.eventType == EventType.Choice*/))
+                && (scriptMgr.currentScript.eventData.eventType == EventType.Branch || scriptMgr.currentScript.eventData.eventType == EventType.Choice))
             {
                     hasBranch = true;
                     CreateBranch();
@@ -96,7 +96,7 @@ public class EditorManager : MonoBehaviour
             }
         }
 
-        //브랜치 생성 시 다음 노드가 자동 생성되므로 해당 노드 제거.
+        //브랜치를 하나라도 생성 시 다음 노드가 자동 생성되므로 해당 노드 제거.
         if(hasBranch == true)
         {
             nodeGrp.SelectLastNode();
@@ -143,7 +143,8 @@ public class EditorManager : MonoBehaviour
                     break;
                 }
 
-                if (scriptMgr.currentScript.scriptType == ScriptType.Event && scriptMgr.currentScript.eventData.eventType == EventType.Branch)
+                if (scriptMgr.currentScript.scriptType == ScriptType.Event 
+                    && (scriptMgr.currentScript.eventData.eventType == EventType.Branch || scriptMgr.currentScript.eventData.eventType == EventType.Choice))
                 {
                     CreateBranch();
                 }
