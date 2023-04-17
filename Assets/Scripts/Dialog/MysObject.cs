@@ -18,6 +18,6 @@ public class MysObject : MonoBehaviour
 
     public void SetPosition(int position)
     {
-        transform.localPosition = eventMgr.objectPositions[position].transform.localPosition;
+        transform.position = eventMgr.objectPositions[position].transform.position;
     }
 }
