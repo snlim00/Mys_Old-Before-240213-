@@ -235,7 +235,8 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
         int scriptID = int.Parse(eventData.eventParam[0]);
 
-        sequence.AppendCallback(() => Goto(scriptID));
+        //sequence.AppendCallback(() => Goto(scriptID));
+        Goto(scriptID);
     }
 
     public void Event_Branch(ScriptObject script, ref Sequence sequence)
