@@ -12,8 +12,6 @@ public class MysObject : MonoBehaviour
     private void Awake()
     {
         eventMgr = FindObjectOfType<EventManager>();
-
-        transform.SetParent(eventMgr.transform);
     }
 
     public void SetPosition(int position)

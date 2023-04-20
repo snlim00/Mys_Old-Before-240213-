@@ -135,21 +135,11 @@ public static class ExFunctions
 
         if (button == null) return;
 
-        if(button?.transform.GetChild(0).TryGetComponent<Text>(out outValue) ?? false)
-        {
-            outValue.text = text;
-        }
+        button.transform.GetComponentInChildren<Text>().text = text;
     }
 
     public static string GetButtonText(this Button button)
     {
-        Text outValue;
-
-        if (button.transform.GetChild(0).TryGetComponent<Text>(out outValue))
-        {
-            return outValue.text;
-        }
-
-        return null;
+        return button.transform.GetComponentInChildren<Text>().text;
     }
 }

@@ -16,9 +16,13 @@ public class EventManager : MonoBehaviour
     public Transform[] objectPositions;
     private GameObject objectPref;
     private Dictionary<string, MysObject> ObjectList;
+    [SerializeField] private Transform objectParent;
+
+    private GameObject choiceOptionPref;
+    private List<Button> choiceOptionList = new();
+    [SerializeField] private Transform choiceOptionParent;
 
     [SerializeField] private Image background;
-
     [SerializeField] private Sprite defaultBG;
 
     private void Awake()
@@ -26,6 +30,7 @@ public class EventManager : MonoBehaviour
         ObjectList = new();
 
         objectPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
+        choiceOptionPref = Resources.Load<GameObject>("Prefabs/ChoiceOption");
         textMgr = FindObjectOfType<TextManager>();
     }
 
@@ -100,6 +105,10 @@ public class EventManager : MonoBehaviour
             case EventType.SetBackground:
                 Event_SetBackground(script, ref sequence);
                 break;
+
+            case EventType.Choice:
+                Event_Choice(script, ref sequence);
+                break;
         }
     }
 
@@ -113,19 +122,23 @@ public class EventManager : MonoBehaviour
         
         Sprite sprite = Resources.Load<Sprite>("Images/Character/" + resource);
 
-        MysObject character = Instantiate(objectPref).GetComponent<MysObject>();
-        ObjectList[name] = character;
+        MysObject obj = Instantiate(objectPref).GetComponent<MysObject>();
+        obj.transform.SetParent(objectParent);
+        ObjectList[name] = obj;
+
+        obj.image.sprite = sprite;
+        obj.image.SetAlpha(0);
+        obj.name = name;
 
         void CreateObject()
         {
-            character.SetPosition(position);
-            character.image.sprite = sprite;
+            obj.SetPosition(position);
 
-            character.image.SetAlpha(0);
+            obj.image.SetAlpha(0);
         }
 
         sequence.AppendCallback(CreateObject);
-        sequence.Append(character.image.DOFade(1, eventData.eventDuration));
+        sequence.Append(obj.image.DOFade(1, eventData.eventDuration));
     }
 
     public void Event_MoveObject(ScriptObject script, ref Sequence sequence)
@@ -164,7 +177,6 @@ public class EventManager : MonoBehaviour
 
     public void Event_RemoveObject(ScriptObject script, ref Sequence sequence)
     {
-   
         EventData eventData = script.eventData;
 
         string name = eventData.eventParam[0].ToString();
@@ -235,39 +247,8 @@ public class EventManager : MonoBehaviour
         EventData eventData = script.eventData;
         int scriptID = int.Parse(eventData.eventParam[0]);
 
-        //sequence.AppendCallback(() => Goto(scriptID));
-        Goto(scriptID);
-    }
-
-    public void Event_Branch(ScriptObject script, ref Sequence sequence)
-    {
-        EventData eventData = script.eventData;
-
-        string target = eventData.eventParam[0];
-        int lovePoint = ProgressData.GetLovePointFromCharacter(script, target);
-
-        BranchInfo branchInfo = BranchInfo.GetBranchInfo(script);
-
-        int branch = -1;
-
-        for(int i = branchInfo.Count - 1; i >= 0; --i)
-        {
-            if (branchInfo.requiredValue[i] <= lovePoint)
-            {
-                branch = i;
-                break;
-            }
-        }
-
-        if (branch == -1)
-        {
-            (script.scriptID).LogError("분기를 찾을 수 없습니다. ScriptID", true);
-            return;
-        }
-
-        int scriptID = branchInfo.targetID[branch];
-
         sequence.AppendCallback(() => Goto(scriptID));
+        Goto(scriptID);
     }
 
     public void SetBackground(Sprite sprite)
@@ -293,5 +274,104 @@ public class EventManager : MonoBehaviour
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
         sequence.AppendCallback(() => SetBackground(sprite));
         sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
+    }
+
+    public void Event_Branch(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        string target = eventData.eventParam[0];
+        int lovePoint = ProgressData.GetLovePointFromCharacter(script, target);
+
+        BranchInfo branchInfo = BranchInfo.GetBranchInfo(script);
+
+        int branch = -1;
+
+        for (int i = branchInfo.Count - 1; i >= 0; --i)
+        {
+            if (branchInfo.requiredValue[i] <= lovePoint)
+            {
+                branch = i;
+                break;
+            }
+        }
+
+        if (branch == -1)
+        {
+            (script.scriptID).LogError("분기를 찾을 수 없습니다. ScriptID", true);
+            return;
+        }
+
+        int scriptID = branchInfo.targetID[branch];
+
+        sequence.AppendCallback(() => Goto(scriptID));
+    }
+
+    public void RemoveAllChoiceOption(float duration)
+    {
+        foreach (var btn in choiceOptionList)
+        {
+            if (btn == null) break;
+
+            Sequence seq = DOTween.Sequence();
+            seq.Append(btn.image.DOFade(0, duration));
+            seq.Insert(0, btn.GetComponentInChildren<Text>().DOFade(0, duration));
+            seq.AppendCallback(() => Destroy(btn.gameObject));
+
+            seq.Play();
+        }
+    }
+
+    public void Event_Choice(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+        
+        Button CreateChoiceBtn(string choiceText, int targetID)
+        {
+            Button btn = Instantiate(choiceOptionPref).GetComponent<Button>();
+
+            btn.transform.SetParent(choiceOptionParent);
+            btn.transform.localScale = Vector3.one;
+            choiceOptionList.Add(btn);
+
+            btn.SetButtonText(choiceText);
+
+            //AddListener
+            btn.onClick.AddListener(() =>
+            {
+                Goto(targetID);
+
+                RemoveAllChoiceOption(eventData.eventDuration);
+            });
+
+            Text text = btn.GetComponentInChildren<Text>();
+
+            btn.image.SetAlpha(0);
+            text.SetAlpha(0);
+
+            Sequence seq = DOTween.Sequence();
+            seq.Append(btn.image.DOFade(1, eventData.eventDuration));
+            seq.Insert(0, text.DOFade(1, eventData.eventDuration));
+
+            seq.Play();
+
+            return btn;
+        }
+
+        choiceOptionList = new();
+       
+        BranchInfo branchInfo = BranchInfo.GetBranchInfo(script);
+        branchInfo.Log();
+
+        sequence.AppendCallback(() =>
+        {
+            dialogMgr.DisposeSkipStream();
+
+            for (int i = 0; i < branchInfo.Count; ++i)
+            {
+                Button btn = CreateChoiceBtn(branchInfo.choiceText[i], branchInfo.targetID[i]);
+            }
+
+        });
     }
 }

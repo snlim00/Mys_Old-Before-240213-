@@ -270,6 +270,11 @@ public class DialogManager : MonoBehaviour
         }
     }
 
+    public void DisposeSkipStream()
+    {
+        skipStream.Dispose();
+    }
+
     private void ExecuteNextScript()
     {
         if(scriptMgr.GetNextScript() == null)
@@ -292,6 +297,14 @@ public class DialogManager : MonoBehaviour
     public void StopDialog()
     {
         StopAllSequence();
+
+        DoAllTweens(tween =>
+        {
+            RemoveTween(tween);
+            tween.Skip(true, true);
+        });
+
+        bounceArw.SetEnable(false);
     }
 
     private void StopAllSequence()
@@ -310,6 +323,8 @@ public class DialogManager : MonoBehaviour
 
     public void ResetAll()
     {
+        eventMgr.RemoveAllChoiceOption(0);
+
         bounceArw.SetEnable(false);
         eventMgr.SetBackground(null);
         eventMgr.RemoveAllObject();
@@ -323,13 +338,8 @@ public class DialogManager : MonoBehaviour
     public void Goto(int scriptID)
     {
         scriptID.Log("Goto");
-        StopAllSequence();
 
-        DoAllTweens(tween =>
-        {
-            tween.Skip(true);
-            RemoveTween(tween);
-        });
+        StopDialog();
 
         DialogStart(scriptID);
     }
