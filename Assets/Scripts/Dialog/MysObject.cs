@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class MysObject : MonoBehaviour
 {
-    private EventManager eventMgr;
+    private NewEventManager eventMgr;
 
     public Image image;
 
     private void Awake()
     {
-        eventMgr = FindObjectOfType<EventManager>();
+        eventMgr = FindObjectOfType<NewEventManager>();
     }
 
     public void SetPosition(int position)

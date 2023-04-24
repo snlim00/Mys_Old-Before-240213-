@@ -1,0 +1,6 @@
+ScriptID,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6
+20001,Text,,때 이른 봄 몇송이 꺾어다 너의 방문 앞에 두었어.,0.1,Skipable,0.5,True,,,None,0,0,0.5,0,Restart,0,,,,,,,
+20002,Event,,,0.1,Skipable,0.5,False,,,CreateObject,0,0,0.5,0,Restart,0,Test,Test,2,,,,
+20003,Text,,실컷 자고 일어날 때면 그 때쯤엔 예쁘게 피어 있겠다.,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
+20004,Text,,별 띄운 여름 한 컵 따라다 너의 방문 앞에 두었어.,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
+20005,Text,,금새 다 녹아버릴 텐데 너는 아직 혼자 쉬고 싶은가 봐.,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,

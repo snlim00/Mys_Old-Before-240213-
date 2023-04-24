@@ -16,9 +16,9 @@ public static class CSVReader
     static string LINE_SPLIT_RE = @"\r\n|\n\r|\n|\r";
     static char[] TRIM_CHARS = { '\"' };
 
-    public static List<ScriptObject> ReadScript(string path)
+    public static List<ScriptObject> ReadScript(int scriptGroupID)
     {
-        string filePath = Application.dataPath + "/Data/" + path;
+        string filePath = PathManager.CreateScriptPath(scriptGroupID);
         
         StreamReader file = new StreamReader(filePath);
         //path.Log();

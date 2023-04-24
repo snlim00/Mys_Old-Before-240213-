@@ -3,12 +3,113 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System;
-using UnityEditor;
 using UniRx;
-using System.Runtime.CompilerServices;
+
+public class TweenManager
+{
+    private List<TweenObject> tweenList = new();
+
+    public void AddRange(List<TweenObject> tweenObjs)
+    {
+        tweenList.AddRange(tweenObjs);
+    }
+
+    public void RemoveTween(TweenObject tweenObj)
+    {
+        tweenList.Remove(tweenObj);
+    }
+
+    public void DoAllTweens(Action<TweenObject> action)
+    {
+        foreach(TweenObject tweenObj in tweenList)
+        {
+            action(tweenObj);
+        }
+    }
+
+    /// <summary>
+    /// Play가 호출되지 않은 모든 트윈의 Play를 호출합니다.
+    /// </summary>
+    public void PlayAllTweens()
+    {
+        DoAllTweens(tweenObj =>
+        {
+            if (tweenObj.tween.IsPlaying() == false)
+            {
+                tweenObj.tween.Play();
+            }
+
+            tweenObj.isSkipped = false;
+        });
+    }
+
+    public void SkipAllTweens()
+    {
+        //DoAllTweens(tweenObj =>
+        //{
+        //    tweenObj.Skip(true);
+        //});
+
+        for(int i = tweenList.Count - 1; i >= 0; --i)
+        {
+            tweenList[i].Skip(true);
+        }
+    }
+
+    public bool ExistPlayingTween()
+    {
+        bool isPlaying = false;
+
+        DoAllTweens(tweenObj =>
+        {
+            if (isPlaying == true) return;
+
+            if(tweenObj.tween.IsPlaying() == true)
+            {
+                if (tweenObj.isInfinityLoop == true || tweenObj.isSkipped == true) //무한 루프, 이미 스킵된 트윈은 플레이 중 여부를 고려하지 않음.
+                {
+                    return;
+                }
+
+                isPlaying = true;
+            }
+        });
+
+        return isPlaying;
+    }
+
+    //추후 오디오의 Duration을 포함하여 계산하도록 할 것. 230425
+    /// <summary>
+    /// 가장 긴 남은 지속 시간을 반환합니다.<br></br>
+    /// 무한 반복 트윈과 현재 턴에서 종료되지 않는 트윈은 제외됩니다.
+    /// </summary>
+    public float FindLongestDuration()
+    {
+        float duration = -1;
+
+        DoAllTweens(tweenObj =>
+        {
+            Tween tween = tweenObj.tween;
+
+            if (tween.Duration() == Mathf.Infinity || tweenObj.remainingTurn > 0) //무한 반복 트윈, 현재 턴에서 종료되지 않는 트윈은 제외함.
+            {
+                return;
+            }
+
+            if (duration < tweenObj.GetRemainingDuration() || duration == -1) //가장 큰 남은 시간을 duration에 할당.
+            {
+                duration = tweenObj.GetRemainingDuration();
+            }
+        });
+
+        return duration;
+    }
+}
 
 public class TweenObject
 {
+    private TweenManager tweenMgr;
+
     public Tween tween;
 
     public ScriptObject script;
@@ -22,6 +123,25 @@ public class TweenObject
         get { return tween.Loops() == -1; }
     }
 
+
+    public TweenObject(Tween tween, ScriptObject script)
+    {
+        this.tween = tween;
+        this.script = script;
+    }
+
+    public TweenObject(Tween tween, ScriptObject script, TweenManager tweenMgr)
+    {
+        this.tween = tween;
+        this.script = script;
+        this.tweenMgr = tweenMgr;
+    }
+
+    /// <summary>
+    /// 스킵을 진행합니다. 남은 턴을 감소시키거나 시퀀스를 중단합니다.
+    /// </summary>
+    /// <param name="completeInfinityLoop"></param>
+    /// <param name="ignoreRemainingTurn"></param>
     public void Skip(bool completeInfinityLoop = false, bool ignoreRemainingTurn = false)
     {
         if (script.scriptType == ScriptType.Text)
@@ -54,18 +174,17 @@ public class TweenObject
         {
             tween.Goto(tween.Duration(false));
             tween.Pause();
-            DialogManager.instance.RemoveTween(this);
+            tweenMgr.RemoveTween(this);
         }
         else
         {
             tween.Complete(true);
-            DialogManager.instance.RemoveTween(this);
+            tweenMgr.RemoveTween(this);
         }
     }
 
-    public TweenObject(Tween tween, ScriptObject script)
+    public float GetRemainingDuration()
     {
-        this.tween = tween;
-        this.script = script;
+        return tween.Duration() - tween.position;
     }
 }
