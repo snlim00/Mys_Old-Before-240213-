@@ -25,11 +25,14 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
     private void Start()
     {
-        DialogStart(2);
+        //DialogStart(2);
+        ExecuteMoveTo(20001);
     }
 
     public void DialogStart(int scriptGroupID, int firstScriptID = -1)
     {
+        firstScriptID.Log("Dialog Start");
+
         scriptMgr.ReadScript(scriptGroupID);
 
         if(firstScriptID == -1) 
@@ -155,4 +158,63 @@ public class NewDialogManager : Singleton<NewDialogManager>
             "모든 스크립트가 종료되었습니다.".LogError("Next", true);
         }
     }
+
+    #region Stop
+    public void StopDialog()
+    {
+        tweenMgr.StopAllTweens();
+
+        skipStream?.Dispose();
+    }
+    #endregion
+
+    public void ResetAll()
+    {
+        eventMgr.RemoveAllChoiceOption(0);
+
+        eventMgr.SetBackground(null);
+        eventMgr.RemoveAllObject();
+
+        textMgr.textBox.SetAlpha(1);
+        textMgr.text.SetAlpha(1);
+        textMgr.characterName.SetAlpha(1);
+    }
+
+    #region Goto / Moveto
+    public void Goto(int scriptID)
+    {
+        StopDialog();
+
+        DialogStart(scriptID);
+    }
+
+    public void ExecuteMoveTo(int targetID)
+    {
+        ResetAll();
+        
+        scriptMgr.ReadScript(ScriptManager.GetGroupID(targetID));
+
+        ScriptObject firstScript = scriptMgr.GetScript(ScriptManager.GetFirstScriptIDFromScriptID(targetID));
+
+        scriptMgr.SetCurrentScript(firstScript.scriptID);
+
+        MoveTo(firstScript, targetID);
+    }
+
+    private void MoveTo(ScriptObject currentScript, int targetID)
+    {
+        if(currentScript.scriptID >= targetID)
+        {
+            DialogStart(ScriptManager.GetGroupID(currentScript.scriptID), currentScript.scriptID);
+            return;
+        }
+
+        List<TweenObject> tweenList = CreateTweenList(currentScript);
+        tweenMgr.AddRange(tweenList);
+        tweenMgr.PlayAllTweens();
+        tweenMgr.StopAllTweens();
+
+        MoveTo(scriptMgr.Next(), targetID);
+    }
+    #endregion
 }

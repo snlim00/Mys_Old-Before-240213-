@@ -52,7 +52,12 @@ public class NewScriptManager
     {
         var next = GetNextScript();
 
-        currentScriptID = next.scriptID;
+        if(next == null)
+        {
+            return null;
+        }
+
+        SetCurrentScript(next.scriptID);
 
         return next;
     }
