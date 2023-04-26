@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using DG.Tweening;
 using UniRx;
 
@@ -17,6 +18,11 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
     public NewScriptManager scriptMgr = new();
 
+    public UnityEvent onDialogStart { get; set; } = new();
+    public UnityEvent onStart { get; set; } = new();
+    public UnityEvent onSkip { get; set; } = new();
+    public UnityEvent onNext { get; set; } = new();
+
     private void Awake()
     {
         textMgr = FindObjectOfType<NewTextManager>();
@@ -26,7 +32,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
     private void Start()
     {
         //DialogStart(2);
-        ExecuteMoveTo(20001);
+        ExecuteMoveTo(20004);
     }
 
     public void DialogStart(int scriptGroupID, int firstScriptID = -1)
@@ -42,6 +48,8 @@ public class NewDialogManager : Singleton<NewDialogManager>
         scriptMgr.SetCurrentScript(firstScriptID);
 
         ExecuteScript(scriptMgr.currentScript);
+
+        onDialogStart.Invoke();
     }
 
     #region Execute Script
@@ -54,6 +62,8 @@ public class NewDialogManager : Singleton<NewDialogManager>
         tweenMgr.PlayAllTweens();
 
         SetSkip(script);
+
+        onStart.Invoke();
     }
 
     private List<TweenObject> CreateTweenList(in ScriptObject firstScript)
@@ -134,6 +144,8 @@ public class NewDialogManager : Singleton<NewDialogManager>
         if(script.skipMethod == SkipMethod.Skipable && isPlaying == true) //Skipable 타입인데 재생중인 트윈이 있다면 스킵해버리기.
         {
             tweenMgr.SkipAllTweens();
+
+            onSkip.Invoke();
         }
         else if(isPlaying == false) //스킵 타입과 관계없이 isPlaying이 false라면 다음 스크립트로 이동
         {
@@ -152,6 +164,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
         {
             ExecuteScript(scriptMgr.Next());
             //ExecuteScript(scriptMgr.currentScript);
+            onNext.Invoke();
         }
         else
         {
@@ -211,6 +224,16 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
         List<TweenObject> tweenList = CreateTweenList(currentScript);
         tweenMgr.AddRange(tweenList);
+
+        //tweenMgr.DoAllTweensForModify(tweenObj =>
+        //{
+        //    if(tweenObj.script.scriptType == ScriptType.Text)
+        //    {
+        //        tweenObj.script.Log();
+        //        tweenMgr.RemoveTween(tweenObj);
+        //    }
+        //});
+
         tweenMgr.PlayAllTweens();
         tweenMgr.StopAllTweens();
 
