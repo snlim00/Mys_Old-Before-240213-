@@ -32,13 +32,11 @@ public class NewDialogManager : Singleton<NewDialogManager>
     private void Start()
     {
         //DialogStart(2);
-        ExecuteMoveTo(20004);
+        //ExecuteMoveTo(20004);
     }
 
     public void DialogStart(int scriptGroupID, int firstScriptID = -1)
     {
-        firstScriptID.Log("Dialog Start");
-
         scriptMgr.ReadScript(scriptGroupID);
 
         if(firstScriptID == -1) 
@@ -73,7 +71,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
         tweenList.Add(CreateSequence(script));
 
-        while (script.linkEvent == true || script.scriptType != ScriptType.Text)
+        while (script.linkEvent == true && scriptMgr.GetNextScript() != null && scriptMgr.GetNextScript().scriptType != ScriptType.Text)
         {
             script = scriptMgr.Next();
 
