@@ -38,7 +38,7 @@ public class DialogManager : MonoBehaviour
     public void ReadScript(int scriptGroupID)
     {
         scriptMgr = new();
-        scriptMgr.ReadScript("ScriptTable" + scriptGroupID + ".CSV");
+        scriptMgr.ReadScript(scriptGroupID);
     }
 
     public void DialogStart(int scriptID)

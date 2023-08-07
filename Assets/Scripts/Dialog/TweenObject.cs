@@ -27,6 +27,14 @@ public class TweenManager
         }
     }
 
+    public void DoAllTweensForModify(Action<TweenObject> action)
+    {
+        for (int i = tweenList.Count - 1; i >= 0; --i)
+        {
+            action(tweenList[i]);
+        }
+    }
+
     /// <summary>
     /// Play가 호출되지 않은 모든 트윈의 Play를 호출합니다.
     /// </summary>
@@ -50,10 +58,18 @@ public class TweenManager
         //    tweenObj.Skip(true);
         //});
 
-        for(int i = tweenList.Count - 1; i >= 0; --i)
+        DoAllTweensForModify(tweenObj =>
         {
-            tweenList[i].Skip(true);
-        }
+            tweenObj.Skip(true);
+        });
+    }
+
+    public void StopAllTweens()
+    {
+        DoAllTweensForModify(tweenObj =>
+        {
+            tweenObj.Skip(true, true);
+        });
     }
 
     public bool ExistPlayingTween()

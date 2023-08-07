@@ -4,18 +4,19 @@ using System;
 using System.Collections.Generic;
 using UniRx.Triggers;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class NewEventManager : MonoBehaviour
 {
     private Ease defaultEase = Ease.Linear;
 
-    private DialogManager dialogMgr;
+    private NewDialogManager dialogMgr;
     private TextManager textMgr;
 
     public Transform[] objectPositions;
     private GameObject objectPref;
-    private Dictionary<string, MysObject> ObjectList;
+    private Dictionary<string, MysObject> objectList;
     [SerializeField] private Transform objectParent;
 
     private GameObject choiceOptionPref;
@@ -27,7 +28,7 @@ public class NewEventManager : MonoBehaviour
 
     private void Awake()
     {
-        ObjectList = new();
+        objectList = new();
 
         objectPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
         choiceOptionPref = Resources.Load<GameObject>("Prefabs/ChoiceOption");
@@ -36,7 +37,7 @@ public class NewEventManager : MonoBehaviour
 
     private void Start()
     {
-        dialogMgr = DialogManager.instance;
+        dialogMgr = NewDialogManager.Instance;
     }
 
     public Sequence CreateEventSequence(ScriptObject script)
@@ -124,7 +125,7 @@ public class NewEventManager : MonoBehaviour
 
         MysObject obj = Instantiate(objectPref).GetComponent<MysObject>();
         obj.transform.SetParent(objectParent);
-        ObjectList[name] = obj;
+        objectList[name] = obj;
 
         obj.image.sprite = sprite;
         obj.image.SetAlpha(0);
@@ -161,16 +162,16 @@ public class NewEventManager : MonoBehaviour
             }
         }
 
-        var obj = ObjectList[name];
+        var obj = objectList[name];
 
         sequence.Append(obj.transform.DOMove(objectPositions[position].position, duration).SetEase(ease));
     }
 
     public void RemoveObject(string name)
     {
-        MysObject character = ObjectList[name];
+        MysObject character = objectList[name];
 
-        ObjectList.Remove(name);
+        objectList.Remove(name);
 
         Destroy(character.gameObject);
     }
@@ -181,7 +182,7 @@ public class NewEventManager : MonoBehaviour
 
         string name = eventData.eventParam[0].ToString();
 
-        MysObject character = ObjectList[name];
+        MysObject character = objectList[name];
 
         sequence.Append(character.image.DOFade(0, eventData.eventDuration));
         sequence.AppendCallback(() => RemoveObject(name));
@@ -189,7 +190,7 @@ public class NewEventManager : MonoBehaviour
 
     public void RemoveAllObject()
     {
-        Dictionary<string, MysObject>.KeyCollection keys = ObjectList.Keys;
+        Dictionary<string, MysObject>.KeyCollection keys = objectList.Keys;
 
         List<string> keyList = new();
 
@@ -200,6 +201,7 @@ public class NewEventManager : MonoBehaviour
 
         for (int i = 0; i < keyList.Count; ++i)
         {
+            objectList[keyList[i]].name.Log();
             RemoveObject(keyList[i]);
         }
     }
@@ -248,7 +250,6 @@ public class NewEventManager : MonoBehaviour
         int scriptID = int.Parse(eventData.eventParam[0]);
 
         sequence.AppendCallback(() => Goto(scriptID));
-        Goto(scriptID);
     }
 
     public void SetBackground(Sprite sprite)
@@ -322,6 +323,9 @@ public class NewEventManager : MonoBehaviour
         }
     }
 
+    public UnityEvent<int, int> onChoice = new();
+    public UnityEvent<int, int> onChoiceOnce = new();
+
     public void Event_Choice(ScriptObject script, ref Sequence sequence)
     {
         EventData eventData = script.eventData;
@@ -342,6 +346,10 @@ public class NewEventManager : MonoBehaviour
                 Goto(targetID);
 
                 RemoveAllChoiceOption(eventData.eventDuration);
+
+                onChoice.Invoke(choiceOptionList.IndexOf(btn), targetID);
+                onChoiceOnce.Invoke(choiceOptionList.IndexOf(btn), targetID);
+                onChoiceOnce.RemoveAllListeners();
             });
 
             Text text = btn.GetComponentInChildren<Text>();
@@ -365,13 +373,24 @@ public class NewEventManager : MonoBehaviour
 
         sequence.AppendCallback(() =>
         {
-            dialogMgr.DisposeSkipStream();
+            //dialogMgr.DisposeSkipStream();
 
             for (int i = 0; i < branchInfo.Count; ++i)
             {
                 Button btn = CreateChoiceBtn(branchInfo.choiceText[i], branchInfo.targetID[i]);
             }
 
+        });
+    }
+
+    public void Event_CloseScenario(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        int chapterId = int.Parse(eventData.eventParam[0]);
+
+        sequence.AppendCallback(() => { 
+            //GameData.saveFile.
         });
     }
 }

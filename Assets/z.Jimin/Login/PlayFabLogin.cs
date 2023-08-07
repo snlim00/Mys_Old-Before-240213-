@@ -21,7 +21,7 @@ public class PlayFabLogin : MonoBehaviour
 
     public bool OnLogin()
     {
-        SaveFile data = SaveData.Load("SaveFile");
+        SaveFile data = SaveManager.Load(GameInit.tempSaveNumber);
         if (SteamManager.Initialized)   //스팀이 켜져 있는가?
         {
             if (data == null)   //세이브 파일이 없을 때
@@ -29,8 +29,8 @@ public class PlayFabLogin : MonoBehaviour
                 //세이브파일 생성
                 var id = SteamUser.GetSteamID().ToString();
                 SaveFile file = new SaveFile();
-                file.account = id;
-                SaveData.Save(file, "SaveFile");
+                //file.account = id;
+                SaveManager.Save(file, GameInit.tempSaveNumber);
                 OnLogin();
                 return false;
             }
@@ -38,7 +38,8 @@ public class PlayFabLogin : MonoBehaviour
             {
                 var name = SteamUser.GetSteamID();
 
-                if (data.account == name.ToString())  //세이브 파일과 계정이 일치한다면
+                //if (data.account == name.ToString())  //세이브 파일과 계정이 일치한다면
+                if(true)
                 {
                     Steamworks.AppId_t appid = new AppId_t();
                     var returnValue = SteamUser.UserHasLicenseForApp(SteamUser.GetSteamID(), appid);
@@ -59,8 +60,8 @@ public class PlayFabLogin : MonoBehaviour
                     //아이디와 세이브파일이 일치하지 않을경우 새로운 세이브파일 덮어쓰기
                     var id = SteamUser.GetSteamID().ToString();
                     SaveFile file = new SaveFile();
-                    file.account = id;
-                    SaveData.Save(file, "SaveFile");
+                    //file.account = id;
+                    SaveManager.Save(file, GameInit.tempSaveNumber);
                     Debug.Log("계정이 없거나 잘못된 계정입니다.");
                     OnLogin();
                     return false;

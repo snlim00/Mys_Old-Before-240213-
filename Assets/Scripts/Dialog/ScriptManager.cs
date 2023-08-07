@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
 
-//얘를 정적 클래스로 만들지 말자.
+
 public class ScriptManager
 {
+
+
     public List<ScriptObject> scripts = new();
 
     public int currentIndex { get; private set; } = 0;
@@ -17,29 +19,9 @@ public class ScriptManager
         }
     }
 
-    /// <summary>
-    /// Data/ScriptTable.CSV 파일을 읽어옴.<br/>
-    /// 전체 게임 내에서 한 번만 호출.
-    /// </summary>
-    public void ReadAllScript()
+    public void ReadScript(int scriptGroupID)
     {
-        string path = Application.dataPath + "/Data";
-        var di = new System.IO.DirectoryInfo(path); // Assets/Data의 모든 파일 불러오기
-
-        foreach(var file in di.GetFiles())
-        {
-            string name = file.Name;
-
-            if(name.Contains(".CSV") && name.Contains(".meta") == false) //.CSV확장자의 파일 모두 불러오기 (.meta 파일은 제외)
-            {
-                ReadScript(name);
-            }
-        }
-    }
-
-    public void ReadScript(string path)
-    {
-        var script = CSVReader.ReadScript(path);
+        var script = CSVReader.CreateScriptObject(scriptGroupID);
 
         scripts.AddRange(script);
 
@@ -152,6 +134,11 @@ public class ScriptManager
     public static int GetFirstScriptIDFromGroupID(int id)
     {
         return (id * 10000) + 1;
+    }
+
+    public static int GetFirstScriptIDFromScriptID(int scriptID)
+    {
+        return GetFirstScriptIDFromGroupID(GetGroupID(scriptID));
     }
 
     public static bool IsSameScriptGroup(int id1, int id2)

@@ -55,13 +55,31 @@ public class NewDialogManager : Singleton<NewDialogManager>
     {
         List<TweenObject> tweenList = CreateTweenList(script);
 
-        tweenMgr.AddRange(tweenList);
+        PlayScript(tweenList);
 
-        tweenMgr.PlayAllTweens();
+        bool isChoice = false;
+        tweenMgr.DoAllTweens(tweenObj =>
+        {
+            ScriptObject script = tweenObj.script;
+            
+            if(script.scriptType == ScriptType.Event && script.eventData.eventType == EventType.Choice)
+            {
+                isChoice = true;
+                return;
+            }
+        });
+        if (isChoice == true) return;
 
         SetSkip(script);
 
         onStart.Invoke();
+    }
+
+    public void PlayScript(in List<TweenObject> tweenList)
+    {
+        tweenMgr.AddRange(tweenList);
+
+        tweenMgr.PlayAllTweens();
     }
 
     private List<TweenObject> CreateTweenList(in ScriptObject firstScript)
@@ -181,6 +199,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
     public void ResetAll()
     {
+        "ResetAll".Log();
         eventMgr.RemoveAllChoiceOption(0);
 
         eventMgr.SetBackground(null);
@@ -196,7 +215,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
     {
         StopDialog();
 
-        DialogStart(scriptID);
+        DialogStart(ScriptManager.GetGroupID(scriptID), scriptID);
     }
 
     public void ExecuteMoveTo(int targetID)
@@ -221,18 +240,39 @@ public class NewDialogManager : Singleton<NewDialogManager>
         }
 
         List<TweenObject> tweenList = CreateTweenList(currentScript);
-        tweenMgr.AddRange(tweenList);
+        PlayScript(tweenList);
 
-        //tweenMgr.DoAllTweensForModify(tweenObj =>
-        //{
-        //    if(tweenObj.script.scriptType == ScriptType.Text)
-        //    {
-        //        tweenObj.script.Log();
-        //        tweenMgr.RemoveTween(tweenObj);
-        //    }
-        //});
+        bool isChoice = false;
+        tweenMgr.DoAllTweens(tweenObj =>
+        {
+            ScriptObject script = tweenObj.script;
 
-        tweenMgr.PlayAllTweens();
+            if (script.scriptType == ScriptType.Event && script.eventData.eventType == EventType.Choice)
+            {
+                isChoice = true;
+                script.scriptID.Log();
+                return;
+            }
+        });
+        if (isChoice == true)
+        {
+
+            "IS CHOICE IS TRUE".Log();
+            //이후에 어떤 선택지를 고르면 해당 스크립트부터 targetID까지 진행되는 ExecuteMoveTo를 호출하도록 해야 함.
+            //해당 지점을 지난 이후에 텍스트 시퀀스가 동시에 실행되는 오류 존재.
+                //Goto로 이동하게 되는 지점의 텍스트에 발생하는 문제로 추정됨. (해당 텍스트는 moveTO함수 내에서 제어되지 않음)
+                    //어차피 디버깅용 기능이니 수정하지 말까? 230427
+            eventMgr.onChoiceOnce.AddListener((index, scriptID) =>
+            {
+                var script = scriptMgr.GetScript(scriptID);
+                scriptMgr.SetCurrentScript(script.scriptID);
+                MoveTo(script, targetID);
+                targetID.Log("ON CHOICE ONCE");
+            });
+
+            return;
+        }
+
         tweenMgr.StopAllTweens();
 
         MoveTo(scriptMgr.Next(), targetID);

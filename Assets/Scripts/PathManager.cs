@@ -11,4 +11,12 @@ public class PathManager
     {
         return scriptPath + "ScriptTable" + scriptGroupID + ".CSV";
     }
+
+
+    private static string SavePath => Application.persistentDataPath + "/saves/";
+
+    public static string CreateSaveFilePath(int saveFileNumber)
+    {
+        return SavePath + "SaveFile" + saveFileNumber + ".json";
+    }
 }

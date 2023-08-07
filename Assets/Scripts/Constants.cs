@@ -20,6 +20,13 @@ public static class Tag
 }
 
 #region Script
+public static class MysSection
+{
+    public static string title = "Title";
+    public static string chapter = "Chapter";
+    public static string branch = "Branch";
+}
+
 public enum SkipMethod
 {
     Skipable, //½ºÅµ °¡´É
@@ -60,6 +67,7 @@ public enum ScriptDataKey
     EventDuration,
     LoopCount,
     LoopType,
+
     LoopDelay,
     EventParam0,
     EventParam1,
@@ -76,4 +84,12 @@ public static class CharacterName
     public const string Jihyae = "Jihyae";
     public const string Yunha = "Yunha";
     public const string Seeun = "Seeun";
+}
+
+public static class StatusName
+{
+    public const string STR = "STR";
+    public const string DEX = "DEX";
+    public const string INT = "INT";
+    public const string LUK = "LUK";
 }

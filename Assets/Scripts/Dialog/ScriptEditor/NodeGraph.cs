@@ -11,6 +11,8 @@ public class NodeGraph : MonoBehaviour
 {
     public static NodeGraph instance = null;
 
+    private NewDialogManager dialogMgr;
+
     private EditorManager editorMgr;
 
     private ObjectList objectList;
@@ -38,6 +40,7 @@ public class NodeGraph : MonoBehaviour
         instance = this;
 
         editorMgr = EditorManager.instance;
+        dialogMgr = NewDialogManager.Instance;
 
         nodePref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Node");
         rect = GetComponent<RectTransform>();
@@ -70,7 +73,7 @@ public class NodeGraph : MonoBehaviour
             .Where(_ => Input.GetKeyDown(KeyCode.G))
             .Subscribe(_ =>
             {
-                DialogManager.instance.Goto(10011);
+                dialogMgr.Goto(10011);
             });
 
         commandStream
@@ -160,9 +163,8 @@ public class NodeGraph : MonoBehaviour
 
             HideInspector(true);
 
-            Save();
-            DialogManager.instance.ReadScript(editorMgr.scriptGroupID);
-            DialogManager.instance.ExecuteMoveTo(selectedNode.script.scriptID, DialogManager.instance.DialogStart);
+            Save(); 
+            dialogMgr.ExecuteMoveTo(selectedNode.script.scriptID);
         }
         else
         {
@@ -170,7 +172,8 @@ public class NodeGraph : MonoBehaviour
 
             HideInspector(false);
 
-            DialogManager.instance.StopDialog();
+            dialogMgr.StopDialog();
+            FindObjectOfType<NewEventManager>().RemoveAllChoiceOption(0);
         }
     }
 

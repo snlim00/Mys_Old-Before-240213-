@@ -66,7 +66,7 @@ public class EditorManager : MonoBehaviour
     {
         scriptMgr = new();
 
-        scriptMgr.ReadScript("ScriptTable" + scriptGroupID + ".CSV");
+        scriptMgr.ReadScript(scriptGroupID);
 
         //시작 스크립트 설정
         int firstScriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);

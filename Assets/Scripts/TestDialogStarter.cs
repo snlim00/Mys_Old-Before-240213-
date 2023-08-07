@@ -28,8 +28,7 @@ public class TestDialogStarter : MonoBehaviour
             {
                 Observable.TimerFrame(1).Subscribe(_ =>
                 {
-                    DialogManager.instance.ReadScript(scriptGroupID);
-                    DialogManager.instance.ExecuteMoveTo(scriptID, DialogManager.instance.DialogStart);
+                    NewDialogManager.Instance.ExecuteMoveTo(scriptID);
                 });
             }
         });
