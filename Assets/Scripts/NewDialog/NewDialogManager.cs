@@ -11,7 +11,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
     private Sequence autoSkipSequence = null;
     private IDisposable skipStream = null;
 
-    private NewTextManager textMgr;
+    private TextManager textMgr;
     private NewEventManager eventMgr;
 
     public TweenManager tweenMgr = new();
@@ -25,7 +25,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
     private void Awake()
     {
-        textMgr = FindObjectOfType<NewTextManager>();
+        textMgr = FindObjectOfType<TextManager>();
         eventMgr = FindObjectOfType<NewEventManager>();
     }
 

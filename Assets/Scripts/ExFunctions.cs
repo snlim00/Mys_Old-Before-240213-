@@ -131,8 +131,6 @@ public static class ExFunctions
 
     public static void SetButtonText(this Button button, string text)
     {
-        Text outValue = null;
-
         if (button == null) return;
 
         button.transform.GetComponentInChildren<Text>().text = text;

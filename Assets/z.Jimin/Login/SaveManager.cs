@@ -43,30 +43,4 @@ public class SaveManager
 		return saveData;
 	}
     #endregion
-
-	public static SaveFile CreateNewSaveFile()
-	{
-		var saveFile = new SaveFile();
-
-        saveFile.chapterData = new()
-        {
-            { CharacterName.Jihyae, 0 },
-            { CharacterName.Seeun, 0 },
-            { CharacterName.Yunha, 0 }
-        };
-
-		saveFile.status = new()
-		{
-			{ StatusName.STR, 0 },
-			{ StatusName.DEX, 0 },
-			{ StatusName.INT, 0 },
-			{ StatusName.LUK, 0 },
-		};
-
-		saveFile.money = 0;
-
-		saveFile.date = 0;
-
-        return saveFile;
-	}
 }

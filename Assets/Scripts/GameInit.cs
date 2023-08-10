@@ -17,7 +17,7 @@ public class GameInit : MonoBehaviour
 
         if (saveFile == null)
         {
-            saveFile = SaveManager.CreateNewSaveFile();
+            saveFile = SaveFile.CreateNewSaveFile();
             
             SaveManager.Save(saveFile, tempSaveNumber);
         }

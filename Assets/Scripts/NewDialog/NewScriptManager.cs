@@ -22,7 +22,7 @@ public class NewScriptManager
     {
         this.scriptGroupID = scriptGroupID;
 
-        scripts = CSVReader.CreateScriptObject(scriptGroupID);
+        scripts = CSVReader.ReadScript(scriptGroupID);
     }
 
     public void SetCurrentScript(int scriptID)

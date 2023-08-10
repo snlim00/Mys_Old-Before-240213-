@@ -21,7 +21,7 @@ public class ScriptManager
 
     public void ReadScript(int scriptGroupID)
     {
-        var script = CSVReader.CreateScriptObject(scriptGroupID);
+        var script = CSVReader.ReadScript(scriptGroupID);
 
         scripts.AddRange(script);
 
