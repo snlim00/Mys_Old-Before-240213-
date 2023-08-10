@@ -11,12 +11,12 @@ public class NewDialogManager : Singleton<NewDialogManager>
     private Sequence autoSkipSequence = null;
     private IDisposable skipStream = null;
 
-    private TextManager textMgr;
+    private NewTextManager textMgr;
     private NewEventManager eventMgr;
 
     public TweenManager tweenMgr = new();
 
-    public NewScriptManager scriptMgr = new();
+    public ScriptManager scriptMgr = new();
 
     public UnityEvent onDialogStart { get; set; } = new();
     public UnityEvent onStart { get; set; } = new();
@@ -25,7 +25,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
     private void Awake()
     {
-        textMgr = FindObjectOfType<TextManager>();
+        textMgr = FindObjectOfType<NewTextManager>();
         eventMgr = FindObjectOfType<NewEventManager>();
     }
 
@@ -41,7 +41,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
         if(firstScriptID == -1) 
         { 
-            firstScriptID = NewScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
+            firstScriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
         }
         scriptMgr.SetCurrentScript(firstScriptID);
 
@@ -221,10 +221,13 @@ public class NewDialogManager : Singleton<NewDialogManager>
     public void ExecuteMoveTo(int targetID)
     {
         ResetAll();
-        
-        scriptMgr.ReadScript(ScriptManager.GetGroupID(targetID));
 
-        ScriptObject firstScript = scriptMgr.GetScript(ScriptManager.GetFirstScriptIDFromScriptID(targetID));
+        int groupId = ScriptManager.GetGroupID(targetID);
+
+
+        scriptMgr.ReadScript(groupId);
+
+        ScriptObject firstScript = scriptMgr.GetScript(ScriptManager.GetFirstScriptIDFromGroupID(groupId));
 
         scriptMgr.SetCurrentScript(firstScript.scriptID);
 

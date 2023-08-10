@@ -12,7 +12,7 @@ public class NewEventManager : MonoBehaviour
     private Ease defaultEase = Ease.Linear;
 
     private NewDialogManager dialogMgr;
-    private TextManager textMgr;
+    private NewTextManager textMgr;
 
     public Transform[] objectPositions;
     private GameObject objectPref;
@@ -32,7 +32,7 @@ public class NewEventManager : MonoBehaviour
 
         objectPref = Resources.Load<GameObject>("Prefabs/CharacterPref");
         choiceOptionPref = Resources.Load<GameObject>("Prefabs/ChoiceOption");
-        textMgr = FindObjectOfType<TextManager>();
+        textMgr = FindObjectOfType<NewTextManager>();
     }
 
     private void Start()

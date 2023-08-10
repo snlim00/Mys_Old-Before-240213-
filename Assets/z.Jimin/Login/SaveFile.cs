@@ -30,10 +30,10 @@ public class SaveFile
 
         saveFile.status = new()
         {
-            { StatusName.STR, 0 },
-            { StatusName.DEX, 0 },
-            { StatusName.INT, 0 },
-            { StatusName.LUK, 0 },
+            { StatName.STR, 0 },
+            { StatName.DEX, 0 },
+            { StatName.INT, 0 },
+            { StatName.LUK, 0 },
         };
 
         saveFile.money = 0;

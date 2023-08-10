@@ -22,9 +22,11 @@ public static class Tag
 #region Script
 public static class MysSection
 {
-    public static string title = "Title";
     public static string chapter = "Chapter";
-    public static string branch = "Branch";
+    public static string title = "Title";
+    public static string explain = "Explain";
+    public static string requiredStat = "RequiredStat";
+    public static string script = "Script";
 }
 
 public enum SkipMethod
@@ -86,10 +88,30 @@ public static class CharacterName
     public const string Seeun = "Seeun";
 }
 
-public static class StatusName
+public static class StatName
 {
     public const string STR = "STR";
     public const string DEX = "DEX";
     public const string INT = "INT";
     public const string LUK = "LUK";
+
+    public static string GetStatName(int index)
+    {
+        switch(index)
+        {
+            case 1:
+                return STR;
+
+            case 2:
+                return DEX;
+
+            case 3:
+                return INT;
+
+            case 4:
+                return LUK;
+        }
+
+        return STR;
+    }
 }
