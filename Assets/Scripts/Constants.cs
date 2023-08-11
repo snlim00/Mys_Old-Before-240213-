@@ -53,7 +53,7 @@ public enum EventType
 
 public enum ScriptDataKey
 {
-    ScriptID,
+    ScriptId,
     ScriptType,
     CharacterName,
     Text,
@@ -99,16 +99,16 @@ public static class StatName
     {
         switch(index)
         {
-            case 1:
+            case 0:
                 return STR;
 
-            case 2:
+            case 1:
                 return DEX;
 
-            case 3:
+            case 2:
                 return INT;
 
-            case 4:
+            case 3:
                 return LUK;
         }
 

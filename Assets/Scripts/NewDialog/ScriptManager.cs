@@ -36,7 +36,7 @@ public class ScriptManager
     {
         foreach(var script in scripts)
         {
-            if(script.scriptID == scriptID) 
+            if(script.scriptId == scriptID) 
             { 
                 return script;
             }
@@ -59,7 +59,7 @@ public class ScriptManager
             return null;
         }
 
-        SetCurrentScript(next.scriptID);
+        SetCurrentScript(next.scriptId);
 
         return next;
     }

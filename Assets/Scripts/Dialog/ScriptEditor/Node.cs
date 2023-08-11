@@ -97,7 +97,7 @@ public class Node : MonoBehaviour
 
     public void SetScriptID(int id)
     {
-        script.scriptID = EditorManager.instance.scriptGroupID * 10000 + id;
+        script.scriptId = EditorManager.instance.scriptGroupID * 10000 + id;
     }
 
     public void SetName(string text)

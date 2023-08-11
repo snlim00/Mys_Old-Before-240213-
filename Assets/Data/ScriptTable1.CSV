@@ -1,17 +1,17 @@
 [Chapter]
-1
+32
 
 [Title]
-첫 만남
+ㅎㅇㅎㅇ
 
 [Explain]
-셰어하우스에 들어갔더니 미소녀 세 명이 날 반긴 건에 대하여.
+ㅁㄴㅇㄻㅇㄴㄻㄴㅇㄹ
 
 [RequiredStat]
 0,0,0,0
 
 [Script]
-ScriptID,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6
+ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6
 10001,Text,,?�녕?�세??,0.1,Skipable,0.5,False,,,None,0,0.5,0,0,Restart,0,,,2,10005,,,
 10002,Text,,,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
 10003,Text,,,0.1,Skipable,0.5,False,,,Branch,0,0,0.5,0,Restart,0,Jihyae,,10004,,10006,,
@@ -19,4 +19,3 @@ ScriptID,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEve
 10005,Event,,,0.1,Skipable,0.5,False,,,Goto,0,0,0.5,0,Restart,0,10008,,,,,,
 10006,Text,,,0.1,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,
 10007,Event,,,0.1,Skipable,0.5,False,,,Goto,0,0,0.5,0,Restart,0,10008,,,,,,
-10008,Event,,,0.1,Skipable,0.5,False,,,Choice,0,0,0.5,0,Restart,0,Jihyae,,,,,,

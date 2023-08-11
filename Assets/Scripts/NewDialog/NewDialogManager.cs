@@ -16,7 +16,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
     public TweenManager tweenMgr = new();
 
-    public ScriptManager scriptMgr = new();
+    public NewScriptManager scriptMgr;
 
     public UnityEvent onDialogStart { get; set; } = new();
     public UnityEvent onStart { get; set; } = new();
@@ -35,15 +35,19 @@ public class NewDialogManager : Singleton<NewDialogManager>
         //ExecuteMoveTo(20004);
     }
 
-    public void DialogStart(int scriptGroupID, int firstScriptID = -1)
+    public void DialogStart(int scriptGroupId, int firstScriptId = -1)
     {
-        scriptMgr.ReadScript(scriptGroupID);
+        scriptMgr = CSVReader.ReadScript(scriptGroupId);
 
-        if(firstScriptID == -1) 
+        scriptMgr.chapter.Log();
+        scriptMgr.title.Log();
+        scriptMgr.explain.Log();
+
+        if(firstScriptId == -1) 
         { 
-            firstScriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
+            firstScriptId = scriptMgr.firstScript.scriptId;
         }
-        scriptMgr.SetCurrentScript(firstScriptID);
+        scriptMgr.SetCurrentScript(firstScriptId);
 
         ExecuteScript(scriptMgr.currentScript);
 
@@ -89,7 +93,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
         tweenList.Add(CreateSequence(script));
 
-        while (script.linkEvent == true && scriptMgr.GetNextScript() != null && scriptMgr.GetNextScript().scriptType != ScriptType.Text)
+        while (script.linkEvent == true && scriptMgr.nextScript != null && scriptMgr.nextScript.scriptType != ScriptType.Text)
         {
             script = scriptMgr.Next();
 
@@ -176,7 +180,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
         skipStream?.Dispose(); //skipStream 중단시키기
 
-        if(scriptMgr.GetNextScript() != null)
+        if(scriptMgr.nextScript != null)
         {
             ExecuteScript(scriptMgr.Next());
             //ExecuteScript(scriptMgr.currentScript);
@@ -211,34 +215,31 @@ public class NewDialogManager : Singleton<NewDialogManager>
     }
 
     #region Goto / Moveto
-    public void Goto(int scriptID)
+    public void Goto(int scriptId)
     {
         StopDialog();
 
-        DialogStart(ScriptManager.GetGroupID(scriptID), scriptID);
+        DialogStart(NewScriptManager.GetScriptGroupId(scriptId), scriptId);
     }
 
-    public void ExecuteMoveTo(int targetID)
+    public void ExecuteMoveTo(int targetId)
     {
         ResetAll();
 
-        int groupId = ScriptManager.GetGroupID(targetID);
+        int groupId = scriptMgr.scriptGroupId;
 
+        ScriptObject firstScript = scriptMgr.firstScript;
 
-        scriptMgr.ReadScript(groupId);
+        scriptMgr.SetCurrentScript(firstScript.scriptId);
 
-        ScriptObject firstScript = scriptMgr.GetScript(ScriptManager.GetFirstScriptIDFromGroupID(groupId));
-
-        scriptMgr.SetCurrentScript(firstScript.scriptID);
-
-        MoveTo(firstScript, targetID);
+        MoveTo(firstScript, targetId);
     }
 
-    private void MoveTo(ScriptObject currentScript, int targetID)
+    private void MoveTo(ScriptObject currentScript, int targetId)
     {
-        if(currentScript.scriptID >= targetID)
+        if(currentScript.scriptId >= targetId)
         {
-            DialogStart(ScriptManager.GetGroupID(currentScript.scriptID), currentScript.scriptID);
+            DialogStart(NewScriptManager.GetScriptGroupId(currentScript.scriptId), currentScript.scriptId);
             return;
         }
 
@@ -253,10 +254,11 @@ public class NewDialogManager : Singleton<NewDialogManager>
             if (script.scriptType == ScriptType.Event && script.eventData.eventType == EventType.Choice)
             {
                 isChoice = true;
-                script.scriptID.Log();
+                script.scriptId.Log();
                 return;
             }
         });
+
         if (isChoice == true)
         {
 
@@ -265,12 +267,12 @@ public class NewDialogManager : Singleton<NewDialogManager>
             //해당 지점을 지난 이후에 텍스트 시퀀스가 동시에 실행되는 오류 존재.
                 //Goto로 이동하게 되는 지점의 텍스트에 발생하는 문제로 추정됨. (해당 텍스트는 moveTO함수 내에서 제어되지 않음)
                     //어차피 디버깅용 기능이니 수정하지 말까? 230427
-            eventMgr.onChoiceOnce.AddListener((index, scriptID) =>
+            eventMgr.onChoiceOnce.AddListener((index, scriptId) =>
             {
-                var script = scriptMgr.GetScript(scriptID);
-                scriptMgr.SetCurrentScript(script.scriptID);
-                MoveTo(script, targetID);
-                targetID.Log("ON CHOICE ONCE");
+                var script = scriptMgr.GetScript(scriptId);
+                scriptMgr.SetCurrentScript(script.scriptId);
+                MoveTo(script, targetId);
+                targetId.Log("ON CHOICE ONCE");
             });
 
             return;
@@ -278,7 +280,7 @@ public class NewDialogManager : Singleton<NewDialogManager>
 
         tweenMgr.StopAllTweens();
 
-        MoveTo(scriptMgr.Next(), targetID);
+        MoveTo(scriptMgr.Next(), targetId);
     }
     #endregion
 }

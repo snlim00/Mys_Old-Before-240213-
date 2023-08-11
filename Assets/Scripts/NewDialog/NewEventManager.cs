@@ -72,7 +72,7 @@ public class NewEventManager : MonoBehaviour
         switch (script.eventData.eventType)
         {
             case EventType.None:
-                ("이벤트가 존재하지 않습니다. ScriptID : " + script.scriptID).LogError();
+                ("이벤트가 존재하지 않습니다. ScriptID : " + script.scriptId).LogError();
                 break;
 
             case EventType.CreateObject:
@@ -299,7 +299,7 @@ public class NewEventManager : MonoBehaviour
 
         if (branch == -1)
         {
-            (script.scriptID).LogError("분기를 찾을 수 없습니다. ScriptID", true);
+            (script.scriptId).LogError("분기를 찾을 수 없습니다. ScriptID", true);
             return;
         }
 

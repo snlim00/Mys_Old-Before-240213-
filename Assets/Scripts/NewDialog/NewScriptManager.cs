@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class NewScriptManager
 {
     public int scriptGroupId;
@@ -97,9 +98,16 @@ public class NewScriptManager
         return currentScript;
     }
 
+    public ScriptObject GetScript(int scriptId)
+    {
+        ScriptObject script = scripts.Find(script => script.scriptId == scriptId);
+
+        return script;
+    }
+
     public ScriptObject SetCurrentScript(int scriptId)
     {
-        ScriptObject script = scripts.Find(script => script.scriptID == scriptId);
+        ScriptObject script = GetScript(scriptId);
 
         return SetCurrentScript(script);
     }
@@ -111,5 +119,12 @@ public class NewScriptManager
         currentScriptIndex = idx;
 
         return currentScript;
+    }
+
+    public static int GetScriptGroupId(int scriptId)
+    {
+        int groupID = (int)Mathf.Floor(scriptId / 10000f);
+
+        return groupID;
     }
 }

@@ -41,6 +41,7 @@ public class NodeGraph : MonoBehaviour
 
         editorMgr = EditorManager.instance;
         dialogMgr = NewDialogManager.Instance;
+        dialogMgr.Log();
 
         nodePref = Resources.Load<GameObject>("Prefabs/ScriptEditor/Node");
         rect = GetComponent<RectTransform>();
@@ -164,7 +165,7 @@ public class NodeGraph : MonoBehaviour
             HideInspector(true);
 
             Save(); 
-            dialogMgr.ExecuteMoveTo(selectedNode.script.scriptID);
+            dialogMgr.ExecuteMoveTo(selectedNode.script.scriptId);
         }
         else
         {
@@ -232,6 +233,20 @@ public class NodeGraph : MonoBehaviour
         using (var writer = new CsvFileWriter(path))
         {
             List<string> colums = new List<string>();
+
+            writer.WriteString("[" + MysSection.chapter + "]\n" + editorMgr.scriptMgr.chapter + "\n");
+            writer.WriteString("[" + MysSection.title + "]\n" + editorMgr.scriptMgr.title + "\n");
+            writer.WriteString("[" + MysSection.explain + "]\n" + editorMgr.scriptMgr.explain + "\n");
+
+            List<int> requireStatValues = new();
+
+            foreach(var kvp in editorMgr.scriptMgr.requiredStat)
+            {
+                requireStatValues.Add(kvp.Value);
+            }
+            writer.WriteString("[" + MysSection.requiredStat + "]\n" + string.Join(",", requireStatValues) + "\n");
+            writer.WriteString("[" + MysSection.script + "]");
+
             string[] keys = Enum.GetNames(typeof(ScriptDataKey));
 
             colums.AddRange(keys);
@@ -258,7 +273,7 @@ public class NodeGraph : MonoBehaviour
                             break;
                         }
 
-                        node.script.eventData.eventParam[i * 2 + 2] = node.branch[i].script.scriptID.ToString();
+                        node.script.eventData.eventParam[i * 2 + 2] = node.branch[i].script.scriptId.ToString();
                     }
                 }
 
@@ -543,7 +558,7 @@ public class NodeGraph : MonoBehaviour
                 {
                     node.SetName("-");
 
-                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptID.ToString();
+                    node.script.eventData.eventParam[0] = node?.parent?.nextNode.script.scriptId.ToString();
                 }
             }
         });

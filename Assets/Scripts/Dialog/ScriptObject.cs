@@ -246,7 +246,7 @@ public class ScriptObject : ICloneable
     public static readonly bool DEFAULT_LINK_EVENT = false;
 
     
-    public int scriptID = UNVALID_ID;
+    public int scriptId = UNVALID_ID;
 
     public ScriptType scriptType = ScriptType.Text;
 
@@ -313,8 +313,8 @@ public class ScriptObject : ICloneable
 
         switch (key)
         {
-            case ScriptDataKey.ScriptID:
-                return scriptID.ToString();
+            case ScriptDataKey.ScriptId:
+                return scriptId.ToString();
 
             case ScriptDataKey.ScriptType:
                 return Enum.GetName(typeof(ScriptType), scriptType);
@@ -419,8 +419,8 @@ public class ScriptObject : ICloneable
 
         switch (key)
         {
-            case ScriptDataKey.ScriptID:
-                scriptID = int.Parse(value);
+            case ScriptDataKey.ScriptId:
+                scriptId = int.Parse(value);
                 break;
 
             case ScriptDataKey.ScriptType:

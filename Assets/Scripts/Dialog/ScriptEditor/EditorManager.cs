@@ -60,16 +60,16 @@ public class EditorManager : MonoBehaviour
     }
 
     #region 스크립트 불러오기
-    private ScriptManager scriptMgr = new();
+    public NewScriptManager scriptMgr = new();
 
     private void LoadScript(string path)
     {
-        scriptMgr = new();
+        scriptMgr = CSVReader.ReadScript(scriptGroupID);
 
-        scriptMgr.ReadScript(scriptGroupID);
+        //Debug.Log(scriptMgr.currentScript);
 
         //시작 스크립트 설정
-        int firstScriptID = ScriptManager.GetFirstScriptIDFromGroupID(scriptGroupID);
+        int firstScriptID = scriptMgr.firstScript.scriptId;
 
         bool hasBranch = false;
 
@@ -86,7 +86,7 @@ public class EditorManager : MonoBehaviour
                 CreateNode(scriptMgr.currentScript);
             }
 
-            if(scriptMgr.GetNextScript() != null)
+            if(scriptMgr.nextScript != null)
             {
                 scriptMgr.Next();
             }

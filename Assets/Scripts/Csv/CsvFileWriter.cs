@@ -66,6 +66,12 @@ public class CsvFileWriter : CsvFileCommon, IDisposable
 		Writer.WriteLine();
 	}
 
+	public void WriteString(string str)
+	{
+		Writer.Write(str);
+        Writer.WriteLine();
+    }
+
 	// Propagate Dispose to StreamWriter
 	public void Dispose()
 	{
