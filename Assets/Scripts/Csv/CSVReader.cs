@@ -24,6 +24,8 @@ public static class CSVReader
 
         string scriptFile = file.ReadToEnd();
 
+        file.Close();
+
         NewScriptManager scriptMgr = new();
 
         scriptMgr.scripts = CreateScriptList(scriptFile);
@@ -34,14 +36,14 @@ public static class CSVReader
         string statStr = GetSectionValue(scriptFile, MysSection.requiredStat);
         string[] stats = Regex.Split(statStr, SPLIT_RE);
 
-        for(int i = 0; i < stats.Length; ++i)
+        for (int i = 0; i < stats.Length; ++i)
         {
             string statName = StatName.GetStatName(i);
 
             scriptMgr.requiredStat.Add(statName, int.Parse(stats[i]));
         }
 
-        file.Close();
+        scriptMgr.title.Log();
 
         return scriptMgr;
     }

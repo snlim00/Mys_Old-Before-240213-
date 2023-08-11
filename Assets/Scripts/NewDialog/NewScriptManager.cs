@@ -12,7 +12,7 @@ public class NewScriptManager
 
     public string explain;
 
-    public Dictionary<string, int> requiredStat;
+    public Dictionary<string, int> requiredStat = new();
 
     public List<ScriptObject> scripts;
 }
