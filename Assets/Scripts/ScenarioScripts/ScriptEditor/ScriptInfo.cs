@@ -182,7 +182,7 @@ public class ScriptInfo
                 };
                 eventInfos.Add(EventType.SetBackground, info);
 
-                string explain0 = "배경의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/Background 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
+                string explain0 = "배경의 리소스 경로를 입력해주세요. \n* Assets/Resources/Images/Background 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam0, "Resource", string.Empty, explain: explain0));
             }
 
@@ -201,7 +201,7 @@ public class ScriptInfo
 
                 string explain0 = "오브젝트의 이름을 정해주세요. \n* 구분을 위해 에디터에서만 사용됨";
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam0, "Object Name", string.Empty, explain: explain0));
-                string explain1 = "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
+                string explain1 = "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Images/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam1, "Resource", string.Empty, explain: explain1));
                 string explain2 = "오브젝트의 태그를 선택해주세요.";
                 string[] option = Enum.GetNames(typeof(DialogObjectTag));
@@ -251,7 +251,7 @@ public class ScriptInfo
                 {
                     excludedKeys = new()
                     {
-                        
+
                     },
                 };
                 eventInfos.Add(EventType.SetObjectAlpha, info);
@@ -275,7 +275,7 @@ public class ScriptInfo
 
                 string explain0 = "이미지를 변경할 오브젝트를 선택해주세요.";
                 info.paramInfo.Add(new(VariableType.Object, ScriptDataKey.EventParam0, "Object", string.Empty, explain: explain0));
-                string explain1 = "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Image/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
+                string explain1 = "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Images/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam1, "Resource", string.Empty, explain: explain1));
             }
 
@@ -286,7 +286,7 @@ public class ScriptInfo
                 {
                     excludedKeys = new()
                     {
-                        
+
                     },
                 };
                 eventInfos.Add(EventType.SetObjectScale, info);
@@ -306,7 +306,7 @@ public class ScriptInfo
                 {
                     excludedKeys = new()
                     {
-                        
+
                     },
                 };
                 eventInfos.Add(EventType.RemoveObject, info);
@@ -346,6 +346,50 @@ public class ScriptInfo
 
                 string explain0 = "텍스트 박스를 숨길 지에 대한 여부를 선택해주세요. \n* 선택 시 텍스트 박스가 숨겨집니다.";
                 info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam0, "Do Hide", true.ToString(), explain: explain0));
+            }
+
+            //EventInfo_ShowTitle
+            {
+                ScriptInfo info = new()
+                {
+                    excludedKeys = new()
+                    {
+
+                    },
+                };
+                eventInfos.Add(EventType.ShowTitle, info);
+
+                string explain0 = "타이틀을 보이게 할 지에 대한 여부를 선택해주세요. \n* 선택 시 타이틀이 보여집니다.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam0, "Do Show", true.ToString(), explain: explain0));
+                string explain1 = "타이틀이 자동으로 사라지게 할 지에 대한 여부를 선택해주세요. \n* 선택 시 타이틀이 자동으로 사라집니다.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam1, "Auto Hide", false.ToString(), explain: explain1));
+                string explain2 = "Auto Hide가 활성화 된 경우, 타이틀이 보여지는 시간을 선택해주세요. \n* Auto Hide가 활성화되지 않은 경우, 의미 없는 값입니다.";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam2, "Duration", 3.ToString(), explain: explain2, contentType: InputField.ContentType.DecimalNumber));
+                string explain3 = "메인 타이틀에 보여질 텍스트를 입력해주세요.";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam3, "Title", string.Empty, explain: explain3));
+                string explain4 = "서브 타이틀에 보여질 텍스트를 입력해주세요.";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam4, "Subtitle", string.Empty, explain: explain4));
+            }
+
+            //EventInfo_ShowCg
+            {
+                ScriptInfo info = new()
+                {
+                    excludedKeys = new()
+                    {
+
+                    },
+                };
+                eventInfos.Add(EventType.ShowCg, info);
+
+                string explain0 = "CG를 보이게 할 지에 대한 여부를 선택해주세요. \n* 선택 시 타이틀이 보여집니다.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam0, "Do Show", true.ToString(), explain: explain0));
+                string explain1 = "CG가 자동으로 사라지게 할 지에 대한 여부를 선택해주세요. \n* 선택 시 타이틀이 자동으로 사라집니다.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam1, "Auto Hide", false.ToString(), explain: explain1));
+                string explain2 = "Auto Hide가 활성화 된 경우, CG가 보여지는 시간을 선택해주세요. \n* Auto Hide가 활성화되지 않은 경우, 의미 없는 값입니다.";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam2, "Duration", 3.ToString(), explain: explain2, contentType: InputField.ContentType.DecimalNumber));
+                string explain3 = "Cg 이미지의 리소스 경로를 입력해주세요. \n* Assets/Resources/Images/Cg/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam3, "Resource", string.Empty, explain: explain3));
             }
 
             //EventInfo_AddLovePoint
@@ -497,6 +541,23 @@ public class ScriptInfo
                     info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam18, "Choice 4", 0.ToString(), explain: explain18, contentType: InputField.ContentType.DecimalNumber));
                     //info.paramInfo.Add(new(VariableType.Script, ScriptDataKey.EventParam19, "Script ID 4", ScriptVariable.autoTracking));
                 }
+            }
+
+            //EventInfo_CloseScenario
+            {
+                ScriptInfo info = new()
+                {
+                    excludedKeys = new()
+                    {
+                        ScriptDataKey.LinkEvent,
+                        ScriptDataKey.EventDuration,
+                        ScriptDataKey.DurationTurn,
+                        ScriptDataKey.LoopCount,
+                        ScriptDataKey.LoopDelay,
+                        ScriptDataKey.LoopType,
+                    }
+                };
+                eventInfos.Add(EventType.CloseScenario, info);
             }
         }
     }

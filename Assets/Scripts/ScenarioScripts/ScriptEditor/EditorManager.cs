@@ -14,13 +14,11 @@ public class EditorManager : Singleton<EditorManager>
 
     public void Start()
     {
-        EditorStart(2);
+        
     }
 
     public void EditorStart(int scriptGroupId)
     {
-        GameData.saveFile = SaveFile.CreateNewSaveFile();
-
         string path = PathManager.CreateScriptPath(scriptGroupId);
         bool isExists = File.Exists(path);
 
@@ -178,6 +176,7 @@ public class EditorManager : Singleton<EditorManager>
             //스크립트 정보 처리
             {
                 writer.WriteString("[" + MysSection.chapter + "]\n" + RuntimeData.scriptMgr.chapter + "\n");
+                writer.WriteString("[" + MysSection.character + "]\n" + RuntimeData.scriptMgr.character + "\n");
                 writer.WriteString("[" + MysSection.title + "]\n" + RuntimeData.scriptMgr.title + "\n");
                 writer.WriteString("[" + MysSection.explain + "]\n" + RuntimeData.scriptMgr.explain + "\n");
 

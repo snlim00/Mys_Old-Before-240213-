@@ -9,7 +9,7 @@ public class SaveManager
 	private static string SavePath => Application.persistentDataPath + "/saves/";
 
 	#region 데이터 저장
-	public static void Save(SaveFile saveData, int saveFileNumber = 0)
+	public static void Save(SaveFile saveData, int saveFileNumber)
 	{
 		
 		if (!Directory.Exists(SavePath))
@@ -27,15 +27,17 @@ public class SaveManager
 
 
 	#region 데이터 로드
-	public static SaveFile Load(int saveFileNumber = 0)
+	public static SaveFile Load(int saveFileNumber)
 	{
 		string saveFilePath = PathManager.CreateSaveFilePath(saveFileNumber);
-        //Debug.Log(SavePath);
 
         if (!File.Exists(saveFilePath))
 		{
-			//Debug.LogError("No such saveFile exists");
-			return null;
+			SaveFile save = SaveFile.CreateNewSaveFile();
+
+			Save(save, saveFileNumber);
+
+            return save;
 		}
 
 		string saveFile = File.ReadAllText(saveFilePath);

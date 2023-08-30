@@ -57,35 +57,36 @@ public class NodeGraph : Singleton<NodeGraph>
             HideInspector();
         }
 
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (dialogMgr.isPlaying == false)
+            {
+                HideInspector(true);
+                inputType = InputType.Playing;
+                editorMgr.ExportScript();
+                dialogMgr.StartDialog(RuntimeData.scriptMgr.scriptGroupId);
+
+                dialogMgr.onStop.AddListener(() =>
+                {
+                    HideInspector(false);
+                    inputType = InputType.Select;
+                    dialogMgr.onStop.RemoveAllListeners();
+                });
+            }
+            else
+            {
+                HideInspector(false);
+                inputType = InputType.Select;
+                dialogMgr.StopDialog();
+            }
+        }
+
         if (inputType == InputType.Select)
         {
             if(Input.GetKeyDown(KeyCode.S))
             {
                 editorMgr.ExportScript();
-            }
-
-            if(Input.GetKeyDown(KeyCode.P))
-            {
-                if(dialogMgr.isPlaying == false)
-                {
-                    HideInspector(true);
-                    inputType = InputType.Playing;
-                    editorMgr.ExportScript();
-                    dialogMgr.StartDialog(RuntimeData.scriptMgr.scriptGroupId);
-
-                    dialogMgr.onStop.AddListener(() =>
-                    {
-                        HideInspector(false);
-                        inputType = InputType.Select;
-                        dialogMgr.onStop.RemoveAllListeners();
-                    });
-                }
-                else
-                {
-                    HideInspector(false);
-                    inputType = InputType.Select;
-                    dialogMgr.StopDialog();
-                }
             }
 
             if(Input.GetKeyDown(KeyCode.R))
@@ -109,14 +110,19 @@ public class NodeGraph : Singleton<NodeGraph>
 
             if(Input.GetKeyDown(KeyCode.C))
             {
-                var cmd = new CreateNextNode();
-                ExecuteCommand(cmd);
+                if(Input.GetKey(KeyCode.LeftShift))
+                {
+                    CreatePrevNode();
+                }
+                else
+                {
+                    CreateNextNode();
+                }
             }
 
             if(Input.GetKeyDown(KeyCode.Delete))
             {
-                var cmd = new RemoveNode();
-                ExecuteCommand(cmd);
+                RemoveNode();
             }
 
             if(Input.GetKeyDown(KeyCode.L))
@@ -133,15 +139,76 @@ public class NodeGraph : Singleton<NodeGraph>
             {
                 Debug.Log(selectedNode.GetBranchCount());
             }
+
+            if(Input.GetKeyDown(KeyCode.I))
+            {
+                Debug.Log(selectedNode.GetBranchIndex());
+            }
+
+            if(Input.GetKeyDown(KeyCode.Z))
+            {
+                if(Input.GetKey(KeyCode.LeftControl))
+                {
+                    Undo();
+                }
+            }
         }
     }
 
+    #region Commands
     private void ExecuteCommand(EditorCommand cmd)
     {
         cmd.Execute();
 
         undoCommand.Push(cmd);
     }
+
+    private void Undo()
+    {
+        var cmd = undoCommand.Pop();
+        cmd?.Undo();
+    }
+
+    private void CreateNextNode()
+    {
+        if(selectedNode.nodeType == NodeType.BranchEnd)
+        {
+            "Branch End 뒤에는 노드를 배치할 수 없습니다.".Log();
+            return;
+        }
+
+        var cmd = new CreateNextNode();
+        ExecuteCommand(cmd);
+    }
+
+    private void CreatePrevNode()
+    {
+        var cmd = new CreatePrevNode();
+        ExecuteCommand(cmd);
+    }
+
+    private void RemoveNode()
+    {
+        if (selectedNode.nextNode == null && selectedNode.prevNode.nodeType == NodeType.Branch)
+        {
+            "Branch 뒤에 배치된 노드는 항상 존재해야 합니다.".Log();
+        }
+
+        EditorCommand cmd = null;
+
+        if(selectedNode.nodeType == NodeType.BranchEnd)
+        {
+            cmd = new RemoveBranch();
+        }
+        else
+        {
+            cmd = new RemoveNode();
+        }
+
+        ExecuteCommand(cmd);
+        return;
+    }
+    #endregion
 
     public void CreateNodeGraph()
     {
@@ -270,6 +337,11 @@ public class NodeGraph : Singleton<NodeGraph>
                 else
                 {
                     name += depth.ToString();
+                }
+
+                if(node.nodeType == NodeType.BranchEnd)
+                {
+                    name = "-";
                 }
 
                 node.SetName(name);
@@ -452,7 +524,7 @@ public class NodeGraph : Singleton<NodeGraph>
     /// <param name="includeBranch">false라면 노드의 순회에서 브랜치에 속한 노드들이 제외됩니다.</param>
     /// <param name="head">순회를 시작하는 첫 번째 노드입니다.</param>
     /// <param name="action">모든 노드를 대상으로 실행되는 콜백 함수입니다.<br></br><br></br>
-    /// index, branchIndex, depth, Node<br></br><br></br>
+    /// index, branchIndex, depth, node<br></br><br></br>
     /// index : 부모가 없는 노드들만 나열했을 때, 해당 노드의 번호<br></br>
     /// branchIndex : 해당 브랜치가 속한 부모의 branch의 index. 부모가 없다면 null<br></br>
     /// depth : 해당 브랜치에 속한 노드들만 나열했을 때, 해당 노드의 해당 브랜치에서의 번호.</param>

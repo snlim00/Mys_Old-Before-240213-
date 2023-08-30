@@ -25,4 +25,14 @@ public class PathManager
     {
         return "Images/" + path;
     }
+
+    public static string CreateCgImagePath(string path)
+    {
+        return "Images/Cg/" + path;
+    }
+
+    public static string CreateBackgroundImagePath(string path)
+    {
+        return "Images/Backgrounds/" + path;
+    }
 }

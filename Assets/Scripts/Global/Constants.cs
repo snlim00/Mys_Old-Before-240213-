@@ -27,6 +27,7 @@ public enum NodeType
 public static class MysSection
 {
     public static string chapter = "Chapter";
+    public static string character = "Character";
     public static string title = "Title";
     public static string explain = "Explain";
     public static string requiredStat = "RequiredStat";
@@ -73,11 +74,14 @@ public enum EventType
     RemoveObject,
     RemoveAllObject,
     HideTextBox,
+    ShowTitle,
+    ShowCg,
     AddLovePoint,
     Goto,
     Branch,
     BranchEnd, //BranchEnd는 Goto와 동일한 이벤트임. 에디터에서 구분하기 위해 사용
     Choice,
+    CloseScenario,
 }
 
 public enum ScriptDataKey

@@ -6,6 +6,8 @@ public class ScriptManager
 {
     public int scriptGroupId;
 
+    public string character;
+
     public int chapter;
 
     public string title;

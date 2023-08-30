@@ -18,19 +18,20 @@ public class ScenarioStartManager : MonoBehaviour
                 return;
             }
 
-            bool isEditorMode = toggle.isOn;
+            RuntimeData.isEditorMode = toggle.isOn;
 
-            if (isEditorMode == true)
+            if (RuntimeData.isEditorMode == true)
             {
                 MysSceneManager.LoadDialogScene(() =>
                 {
-
+                    EditorManager.Instance.EditorStart(scriptGroupId);
                 });
             }
             else
             {
                 MysSceneManager.LoadDialogScene(() =>
                 {
+                    EditorManager.Instance.gameObject.SetActive(false);
                     DialogManager.Instance.StartDialog(scriptGroupId);
                 });
             }

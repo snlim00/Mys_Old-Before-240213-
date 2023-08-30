@@ -23,7 +23,13 @@ public class EventManager : Singleton<EventManager>
     [SerializeField] private Transform choiceOptionParent;
 
     [SerializeField] private Image background;
-    [SerializeField] private Sprite defaultBG;
+    [SerializeField] private Sprite defaultBg;
+
+    [SerializeField] private Image titleImg;
+    [SerializeField] private Text title;
+    [SerializeField] private Text subtitle;
+
+    [SerializeField] private Image cgImg;
 
     private void Awake()
     {
@@ -108,6 +114,14 @@ public class EventManager : Singleton<EventManager>
                 Event_HideTextBox(script, ref sequence);
                 break;
 
+            case EventType.ShowTitle:
+                Event_ShowTitle(script, ref sequence);
+                break;
+
+            case EventType.ShowCg:
+                Event_ShowCg(script, ref sequence);
+                break;
+
             case EventType.Goto:
             case EventType.BranchEnd:
                 Event_Goto(script, ref sequence);
@@ -124,7 +138,20 @@ public class EventManager : Singleton<EventManager>
             case EventType.Choice:
                 Event_Choice(script, ref sequence);
                 break;
+
+            case EventType.CloseScenario:
+                Event_CloseScenario(script, ref sequence);
+                break;
         }
+    }
+
+    public void ResetAll()
+    {
+        background.sprite = defaultBg;
+        titleImg.SetAlpha(0);
+        title.SetAlpha(0);
+        subtitle.SetAlpha(0);
+        cgImg.sprite = defaultBg;
     }
 
     public void SetBackground(Sprite sprite)
@@ -135,7 +162,7 @@ public class EventManager : Singleton<EventManager>
         }
         else
         {
-            background.sprite = defaultBG;
+            background.sprite = defaultBg;
         }
     }
 
@@ -145,7 +172,7 @@ public class EventManager : Singleton<EventManager>
 
         string resource = eventData.eventParam[0];
 
-        Sprite sprite = Resources.Load<Sprite>(PathManager.CreateImagePath(resource));
+        Sprite sprite = Resources.Load<Sprite>(PathManager.CreateBackgroundImagePath(resource));
 
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
         sequence.AppendCallback(() => SetBackground(sprite));
@@ -326,12 +353,65 @@ public class EventManager : Singleton<EventManager>
 
         float targetAlpha = hide == true ? 0 : 1;
 
-        Sequence fadeSequence = DOTween.Sequence();
-        fadeSequence.Append(textMgr.text.DOFade(targetAlpha, eventData.eventDuration));
-        fadeSequence.Insert(0, textMgr.textBox.DOFade(targetAlpha, eventData.eventDuration));
-        fadeSequence.Insert(0, textMgr.characterName.DOFade(targetAlpha, eventData.eventDuration));
+        sequence.Append(textMgr.text.DOFade(targetAlpha, eventData.eventDuration));
+        sequence.Insert(0, textMgr.textBox.DOFade(targetAlpha, eventData.eventDuration));
+        sequence.Insert(0, textMgr.characterName.DOFade(targetAlpha, eventData.eventDuration));
+    }
 
-        sequence.Append(fadeSequence);
+    public void Event_ShowTitle(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        bool show = bool.Parse(eventData.eventParam[0]);
+        bool autoHide = bool.Parse(eventData.eventParam[1]);
+        float duration = float.Parse(eventData.eventParam[2]);
+        string title = eventData.eventParam[3];
+        string subtitle = eventData.eventParam[4];
+
+        int alpha = show == true ? 1 : 0;
+        if(show == false) { autoHide = false; }
+
+        this.title.text = title;
+        this.subtitle.text = subtitle;
+
+        sequence.Append(titleImg.DOFade(alpha, eventData.eventDuration));
+        sequence.Join(this.title.DOFade(alpha, eventData.eventDuration));
+        sequence.Join(this.subtitle.DOFade(alpha, eventData.eventDuration));
+
+        if(autoHide == true)
+        {
+            sequence.AppendInterval(duration);
+
+            sequence.Append(titleImg.DOFade(0, eventData.eventDuration));
+            sequence.Join(this.title.DOFade(0, eventData.eventDuration));
+            sequence.Join(this.subtitle.DOFade(0, eventData.eventDuration));
+        }
+    }
+
+    public void Event_ShowCg(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        bool show = bool.Parse(eventData.eventParam[0]);
+        bool autoHide = bool.Parse(eventData.eventParam[1]);
+        float duration = float.Parse(eventData.eventParam[2]);
+        string resource = eventData.eventParam[3];
+
+        Sprite sprite = Resources.Load<Sprite>(PathManager.CreateCgImagePath(resource));
+
+        cgImg.sprite = sprite;
+
+        int alpha = show == true ? 1 : 0;
+        if(show == false) { autoHide = false; }
+
+        sequence.Append(cgImg.DOFade(alpha, eventData.eventDuration));
+
+        if(autoHide == true)
+        {
+            sequence.AppendInterval(duration);
+
+            sequence.Append(cgImg.DOFade(0, eventData.eventDuration));
+        }
     }
 
     public void Event_AddLovePoint(ScriptObject script, ref Sequence sequence)
@@ -434,10 +514,25 @@ public class EventManager : Singleton<EventManager>
     {
         EventData eventData = script.eventData;
 
-        int chapterId = int.Parse(eventData.eventParam[0]);
+        if (RuntimeData.isEditorMode)
+        {
+            sequence.AppendCallback(() => {
+                DialogManager.Instance.StopDialog();
+            });
+        }
+        else
+        {
+            sequence.AppendCallback(() => {
 
-        sequence.AppendCallback(() => { 
-            //GameData.saveFile.
-        });
+                GameData.saveFile.chapterData[RuntimeData.scriptMgr.character] = RuntimeData.scriptMgr.chapter;
+
+                SaveManager.Save(GameData.saveFile, RuntimeData.saveFileNumber);
+            });
+            sequence.AppendInterval(1);
+            sequence.AppendCallback(() =>
+            {
+                MysSceneManager.LoadLobbyScene(null);
+            });
+        }
     }
 }

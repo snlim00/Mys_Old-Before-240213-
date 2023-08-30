@@ -44,6 +44,8 @@ public class DialogManager : Singleton<DialogManager>
 
     public void StartDialog(int scriptGroupId, int firstScriptId = -1)
     {
+        ResetAll();
+
         scriptMgr = CSVReader.ReadScript(scriptGroupId);
 
         if(firstScriptId == -1)
@@ -234,5 +236,10 @@ public class DialogManager : Singleton<DialogManager>
         int groupId = ScriptManager.GetScriptGroupId(scriptId);
 
         StartDialog(groupId, scriptId);
+    }
+
+    public void ResetAll()
+    {
+        eventMgr.ResetAll();
     }
 }

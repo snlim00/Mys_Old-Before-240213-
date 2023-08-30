@@ -31,6 +31,7 @@ public static class CSVReader
             scriptGroupId = scriptGroupID,
             scripts = CreateScriptList(scriptFile),
             chapter = int.Parse(GetSectionValue(scriptFile, MysSection.chapter)),
+            character = GetSectionValue(scriptFile, MysSection.character),
             title = GetSectionValue(scriptFile, MysSection.title),
             explain = GetSectionValue(scriptFile, MysSection.explain)
         };
