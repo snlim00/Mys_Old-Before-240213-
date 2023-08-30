@@ -19,6 +19,7 @@ public class DropdownVariable : Variable
 
             if(node.script.scriptType == ScriptType.Event && targetKey == ScriptDataKey.EventType)
             {
+                node.SetDefaultParam();
                 nodeGrp.SetInspector();
                 targetNode.Refresh();
             }

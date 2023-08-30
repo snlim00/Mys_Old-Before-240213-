@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,11 +17,24 @@ public class ObjectVariable : Variable
         {
             if (nodeGrp.inputType == InputType.Object) { return; }
 
+            button.image.color = Color.gray;
+
+            var stream = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(1))
+                .Take(1)
+                .Subscribe(_ => {
+                    nodeGrp.CancelSelectScript();
+                    button.image.color = Color.white;
+                    });
+
             nodeGrp.inputType = InputType.Object;
             nodeGrp.OnSelectObject += (name) =>
             {
                 SetValue(name);
                 ApplyValue();
+
+                button.image.color = Color.white;
+                stream.Dispose();
             };
         });
     }

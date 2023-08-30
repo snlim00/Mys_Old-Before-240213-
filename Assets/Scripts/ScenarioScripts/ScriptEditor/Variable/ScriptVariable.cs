@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class ScriptVariable : Variable
 {
@@ -19,11 +20,24 @@ public class ScriptVariable : Variable
         {
             if(nodeGrp.inputType == InputType.Script) { return; }
 
+            button.image.color = Color.gray;
+
+            var stream = Observable.EveryUpdate()
+                .Where(_ => Input.GetMouseButtonDown(1))
+                .Take(1)
+                .Subscribe(_ => {
+                    nodeGrp.CancelSelectScript();
+                    button.image.color = Color.white;
+                });
+
             nodeGrp.inputType = InputType.Script;
             nodeGrp.OnSelectScript += (node) =>
             {
                 SetValue(node.script.scriptId.ToString());
                 ApplyValue();
+
+                button.image.color = Color.white;
+                stream.Dispose();
             };
         });
 

@@ -60,14 +60,6 @@ public class Node : MonoBehaviour
     private void Start()
     {
         nodeGrp = NodeGraph.Instance;
-    }
-
-    public void Init(ScriptObject script)
-    {
-        if(nodeGrp == null)
-        {
-            nodeGrp = NodeGraph.Instance;
-        }
 
         button.onClick.AddListener(() => nodeGrp.OnNodeClick(this));
 
@@ -77,12 +69,35 @@ public class Node : MonoBehaviour
             nodeGrp.CreateBranch();
             Refresh();
         });
+    }
+
+    public void Init(ScriptObject script)
+    {
+        if(nodeGrp == null)
+        {
+            nodeGrp = NodeGraph.Instance;
+        }
 
         transform.SetParent(nodeGrp.transform, false);
 
         this.script = script.Clone();
 
         Refresh();
+    }
+
+    public void SetDefaultParam()
+    {
+        if(script.scriptType != ScriptType.Event)
+        {
+            return;
+        }
+
+        var eventInfo = ScriptInfo.eventInfos[script.eventData.eventType];
+        
+        for(int i = 0; i < eventInfo.paramInfo.Count; ++i)
+        {
+            script.SetVariable(eventInfo.paramInfo[i].targetKey, eventInfo.paramInfo[i].defaultValue);
+        }
     }
 
     public void Refresh()

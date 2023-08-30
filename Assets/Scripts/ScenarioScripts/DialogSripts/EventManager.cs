@@ -14,6 +14,8 @@ public class EventManager : Singleton<EventManager>
     private DialogManager dialogMgr;
     private TextManager textMgr;
 
+    [SerializeField] private Image fadeObj;
+
     [SerializeField] private GameObject objectPref;
     private Dictionary<string, DialogObject> objectList;
     [SerializeField] private Transform objectParent;
@@ -78,6 +80,14 @@ public class EventManager : Singleton<EventManager>
                 ("이벤트가 존재하지 않습니다. ScriptID : " + script.scriptId).LogError();
                 break;
 
+            case EventType.SetBackground:
+                Event_SetBackground(script, ref sequence);
+                break;
+
+            case EventType.FadeIn:
+                Event_FadeIn(script, ref sequence);
+                break;
+
             case EventType.CreateObject:
                 Event_CreateObject(script, ref sequence);
                 break;
@@ -131,10 +141,6 @@ public class EventManager : Singleton<EventManager>
                 Event_Branch(script, ref sequence);
                 break;
 
-            case EventType.SetBackground:
-                Event_SetBackground(script, ref sequence);
-                break;
-
             case EventType.Choice:
                 Event_Choice(script, ref sequence);
                 break;
@@ -177,6 +183,27 @@ public class EventManager : Singleton<EventManager>
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
         sequence.AppendCallback(() => SetBackground(sprite));
         sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
+    }
+
+    public void Event_FadeIn(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        bool fadeIn = bool.Parse(eventData.eventParam[0]);
+        bool autoFadeOut = bool.Parse(eventData.eventParam[1]);
+        float duration = float.Parse(eventData.eventParam[2]);
+
+        int alpha = fadeIn == true ? 1 : 0;
+        if (fadeIn == false) { autoFadeOut = false; }
+
+        sequence.Append(fadeObj.DOFade(alpha, eventData.eventDuration));
+
+        if (autoFadeOut == true)
+        {
+            sequence.AppendInterval(duration);
+
+            sequence.Append(fadeObj.DOFade(0, eventData.eventDuration));
+        }
     }
 
     public void Event_CreateObject(ScriptObject script, ref Sequence sequence)

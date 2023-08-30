@@ -186,6 +186,26 @@ public class ScriptInfo
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam0, "Resource", string.Empty, explain: explain0));
             }
 
+
+            //EventInfo_FadeIn
+            {
+                ScriptInfo info = new()
+                {
+                    excludedKeys = new()
+                    {
+
+                    },
+                };
+                eventInfos.Add(EventType.FadeIn, info);
+
+                string explain0 = "FadeIn을 진행할 지에 대한 여부를 선택해주세요. \n* 미선택 시 기존 FadeIn된 화면이 FadeOut 됩니다.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam0, "Do Show", true.ToString(), explain: explain0));
+                string explain1 = "FadeIn된 화면이 자동으로 FadeOut하게 할 지에 대한 여부를 선택해주세요. \n* 페이드 인/아웃이 자동으로 연계됩니다.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam1, "Auto Fade Out", false.ToString(), explain: explain1));
+                string explain2 = "FadeIn된 경우 FadeIn을 지속할 시간을 입력해주세요. \n* Auto Fade Out이 활성화되지 않은 경우, 의미 없는 값입니다.";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam2, "Duration", 3.ToString(), explain: explain2, contentType: InputField.ContentType.DecimalNumber));
+            }
+
             //EventInfo_CreateObject
             {
                 ScriptInfo info = new()
@@ -481,7 +501,7 @@ public class ScriptInfo
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam6, "Branch 3", 0.ToString(), explain: explain4, contentType: InputField.ContentType.DecimalNumber));
                 //info.paramInfo.Add(new(VariableType.Script, ScriptDataKey.EventParam7, "Script ID 3", string.Empty));
                 string explain5 = "네 번째 브랜치가 요구하는 값을 입력해주세요.";
-                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam8, "Branch 4", 0.ToString(), explain: explain4, contentType: InputField.ContentType.DecimalNumber));
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam8, "Branch 4", 0.ToString(), explain: explain5, contentType: InputField.ContentType.DecimalNumber));
                 //info.paramInfo.Add(new(VariableType.Script, ScriptDataKey.EventParam7, "Script ID 4", string.Empty));
             }
 
