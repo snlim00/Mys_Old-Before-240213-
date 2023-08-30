@@ -89,6 +89,14 @@ public static class CSVReader
             var values = Regex.Split(lines[i], SPLIT_RE);
             if (values.Length == 0 || string.IsNullOrEmpty(values[0])) { continue; }
 
+            for (int j = 0; j < values.Length; ++j)
+            {
+                if (values[j].ContainsComma() && values[j].EnclosedInQutoes())
+                {
+                    values[j] = values[j].Substring(1, values[j].Length - 2);
+                }
+            }
+
             ScriptObject entry = new ScriptObject(values);
 
             list.Add(entry);

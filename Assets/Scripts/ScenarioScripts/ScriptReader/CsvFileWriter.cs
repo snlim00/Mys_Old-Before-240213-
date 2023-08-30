@@ -54,9 +54,14 @@ public class CsvFileWriter : CsvFileCommon, IDisposable
 		// Write each column
 		for (int i = 0; i < columns.Count; i++)
 		{
+			if (columns[i].ContainsComma() && columns[i].EnclosedInQutoes())
+			{
+                columns[i] = columns[i].Substring(1, columns[i].Length - 2);
+            }
+
 			// Add delimiter if this isn't the first column
 			if (i > 0)
-				Writer.Write(Delimiter);
+			Writer.Write(Delimiter);
 			// Write this column
 			if (columns[i].IndexOfAny(SpecialChars) == -1)
 				Writer.Write(columns[i]);

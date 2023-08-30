@@ -41,7 +41,7 @@ public class ScriptObject
 
     public static readonly int UNVALID_ID = -1;
     public static readonly ScriptType DEFAULT_SCRIPT_TYPE = ScriptType.Text;
-    public static readonly float DEFAULT_TEXT_DURATION = 0.1f;
+    public static readonly float DEFAULT_TEXT_DURATION = 0.03f;
     public static readonly SkipMethod DEFAULT_SKIP_METHOD = SkipMethod.Skipable;
     public static readonly float DEFAULT_SKIP_DELAY = 0.5f;
     public static readonly bool DEFAULT_LINK_EVENT = false;

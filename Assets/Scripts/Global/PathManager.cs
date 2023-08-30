@@ -33,6 +33,6 @@ public class PathManager
 
     public static string CreateBackgroundImagePath(string path)
     {
-        return "Images/Backgrounds/" + path;
+        return "Images/Background/" + path;
     }
 }
