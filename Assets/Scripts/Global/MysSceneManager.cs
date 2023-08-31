@@ -20,6 +20,13 @@ public class MysSceneManager : Singleton<MysSceneManager>
         cb?.Invoke();
     }
 
+    public static void LoadEditorLobbyScene(Action cb)
+    {
+        SceneManager.LoadScene("EditorLobby");
+
+        cb?.Invoke();
+    }
+
     public static void LoadDialogScene(Action cb)
     {
         MysSceneManager.LoadScene("ScenarioScene", cb);

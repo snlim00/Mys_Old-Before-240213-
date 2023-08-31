@@ -552,13 +552,14 @@ public class EventManager : Singleton<EventManager>
             sequence.AppendCallback(() => {
 
                 GameData.saveFile.chapterData[RuntimeData.scriptMgr.character] = RuntimeData.scriptMgr.chapter;
+                GameData.saveFile.date += 1;
 
                 SaveManager.Save(GameData.saveFile, RuntimeData.saveFileNumber);
             });
             sequence.AppendInterval(1);
             sequence.AppendCallback(() =>
             {
-                MysSceneManager.LoadLobbyScene(null);
+                MysSceneManager.LoadEditorLobbyScene(null);
             });
         }
     }

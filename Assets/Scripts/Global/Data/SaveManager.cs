@@ -42,6 +42,7 @@ public class SaveManager
 
 		string saveFile = File.ReadAllText(saveFilePath);
 		SaveFile saveData = JsonConvert.DeserializeObject<SaveFile>(saveFile);
+		Debug.Log(saveFilePath);
 		return saveData;
 	}
     #endregion

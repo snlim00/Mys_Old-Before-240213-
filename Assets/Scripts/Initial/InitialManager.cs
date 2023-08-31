@@ -11,8 +11,17 @@ public class InitialManager : MonoBehaviour
         GameData.saveFile = SaveManager.Load(RuntimeData.saveFileNumber);
 
         Observable.EveryUpdate()
-            .Where(_ => Input.anyKeyDown || Input.GetMouseButtonDown(0))
-            .Subscribe(_ => MysSceneManager.LoadLobbyScene(null))
+            .Where(_ => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            .Subscribe(_ => {
+                if(Input.GetKey(KeyCode.LeftShift))
+                {
+                    MysSceneManager.LoadLobbyScene(null);
+                }
+                else
+                {
+                    MysSceneManager.LoadEditorLobbyScene(null);
+                }
+            })
             .AddTo(this);
     }
 }
