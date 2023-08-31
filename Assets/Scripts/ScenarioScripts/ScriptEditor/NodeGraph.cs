@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using UnityEditor.Experimental.GraphView;
+using UnityEngine.UI;
 
 public enum InputType
 {
@@ -42,12 +42,26 @@ public class NodeGraph : Singleton<NodeGraph>
     public event Action<Node> OnSelectScript;
     public event Action<string> OnSelectObject;
 
+    #region commandButtons
+    [SerializeField] private Button createNextNodeBtn;
+    [SerializeField] private Button createPrevNodeBtn;
+    [SerializeField] private Button changeNodeTypeBtn;
+    [SerializeField] private Button removeNodeBtn;
+    [SerializeField] private Button playBtn;
+    #endregion
+
     private void Start()
     {
         dialogMgr = DialogManager.Instance;
         editorMgr = EditorManager.Instance;
         inspector = ScriptInspector.Instance;
         objList = ObjectList.Instance;
+
+        createNextNodeBtn.onClick.AddListener(CreateNextNode);
+        createPrevNodeBtn.onClick.AddListener(CreatePrevNode);
+        changeNodeTypeBtn.onClick.AddListener(ChangeNodeType);
+        removeNodeBtn.onClick.AddListener(RemoveNode);
+        playBtn.onClick.AddListener(Play);
     }
 
     private void Update()
@@ -60,33 +74,14 @@ public class NodeGraph : Singleton<NodeGraph>
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            if (dialogMgr.isPlaying == false)
-            {
-                HideInspector(true);
-                inputType = InputType.Playing;
-                editorMgr.ExportScript();
-                dialogMgr.StartDialog(RuntimeData.scriptMgr.scriptGroupId);
-
-                dialogMgr.onStop.AddListener(() =>
-                {
-                    HideInspector(false);
-                    inputType = InputType.Select;
-                    dialogMgr.onStop.RemoveAllListeners();
-                });
-            }
-            else
-            {
-                HideInspector(false);
-                inputType = InputType.Select;
-                dialogMgr.StopDialog();
-            }
+            Play();
         }
 
         if (inputType == InputType.Select)
         {
             if(Input.GetKeyDown(KeyCode.S))
             {
-                editorMgr.ExportScript();
+                Save();
             }
 
             if(Input.GetKeyDown(KeyCode.R))
@@ -96,28 +91,12 @@ public class NodeGraph : Singleton<NodeGraph>
 
             if(Input.GetKeyDown(KeyCode.E))
             {
-                if(selectedNode.script.scriptType == ScriptType.Event)
-                {
-                    selectedNode.script.scriptType = ScriptType.Text;
-                }
-                else
-                {
-                    selectedNode.script.scriptType = ScriptType.Event;
-                }
-
-                SetInspector(selectedNode);
+                ChangeNodeType();
             }
 
             if(Input.GetKeyDown(KeyCode.C))
             {
-                if(Input.GetKey(KeyCode.LeftShift))
-                {
-                    CreatePrevNode();
-                }
-                else
-                {
-                    CreateNextNode();
-                }
+                CreateNodeCommand();
             }
 
             if(Input.GetKeyDown(KeyCode.Delete))
@@ -169,6 +148,18 @@ public class NodeGraph : Singleton<NodeGraph>
         cmd?.Undo();
     }
 
+    private void CreateNodeCommand()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            CreatePrevNode();
+        }
+        else
+        {
+            CreateNextNode();
+        }
+    }
+
     private void CreateNextNode()
     {
         if(selectedNode.nodeType == NodeType.BranchEnd)
@@ -207,6 +198,49 @@ public class NodeGraph : Singleton<NodeGraph>
 
         ExecuteCommand(cmd);
         return;
+    }
+
+    private void ChangeNodeType()
+    {
+        if (selectedNode.script.scriptType == ScriptType.Event)
+        {
+            selectedNode.script.scriptType = ScriptType.Text;
+        }
+        else
+        {
+            selectedNode.script.scriptType = ScriptType.Event;
+        }
+
+        SetInspector(selectedNode);
+    }
+
+    private void Save()
+    {
+        editorMgr.ExportScript();
+    }
+
+    private void Play()
+    {
+        if (dialogMgr.isPlaying == false)
+        {
+            HideInspector(true);
+            inputType = InputType.Playing;
+            editorMgr.ExportScript();
+            dialogMgr.StartDialog(RuntimeData.scriptMgr.scriptGroupId);
+
+            dialogMgr.onStop.AddListener(() =>
+            {
+                HideInspector(false);
+                inputType = InputType.Select;
+                dialogMgr.onStop.RemoveAllListeners();
+            });
+        }
+        else
+        {
+            HideInspector(false);
+            inputType = InputType.Select;
+            dialogMgr.StopDialog();
+        }
     }
     #endregion
 
