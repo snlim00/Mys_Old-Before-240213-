@@ -159,6 +159,12 @@ public class EventManager : Singleton<EventManager>
         subtitle.SetAlpha(0);
         cgImg.sprite = defaultBg;
         cgImg.SetAlpha(0);
+
+        foreach(var obj in objectList)
+        {
+            Destroy(obj.Value?.gameObject);
+        }
+        objectList = new();
     }
 
     public void SetBackground(Sprite sprite)

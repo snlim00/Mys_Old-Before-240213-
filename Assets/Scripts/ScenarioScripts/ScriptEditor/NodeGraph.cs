@@ -66,15 +66,14 @@ public class NodeGraph : Singleton<NodeGraph>
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
+        if(inputType != InputType.EditInputField)
         {
-            HideInspector();
-        }
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                HideInspector();
+            }
 
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if(inputType != InputType.EditInputField)
+            if (Input.GetKeyDown(KeyCode.P))
             {
                 Play();
             }
@@ -229,7 +228,7 @@ public class NodeGraph : Singleton<NodeGraph>
             HideInspector(true);
             inputType = InputType.Playing;
             editorMgr.ExportScript();
-            dialogMgr.StartDialog(RuntimeData.scriptMgr.scriptGroupId);
+            dialogMgr.MoveTo(RuntimeData.scriptMgr.scriptGroupId, selectedNode.script.scriptId);
 
             dialogMgr.onStop.AddListener(() =>
             {

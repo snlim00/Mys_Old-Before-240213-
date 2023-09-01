@@ -65,8 +65,13 @@ public class DialogManager : Singleton<DialogManager>
     }
 
 
-    private void ExecuteScript(in ScriptObject script)
+    private void ExecuteScript(in ScriptObject script, Func<ScriptObject, bool> stopCondition = null)
     {
+        if(stopCondition?.Invoke(script) == true)
+        {
+            return;
+        }
+
         List<TweenObject> tweenList = CreateTweenList(script, out bool skipException, out Action skipAction);
 
         PlayScript(tweenList);
@@ -77,7 +82,7 @@ public class DialogManager : Singleton<DialogManager>
         }
         else
         {
-            SetSkip(script);
+            SetSkip(script, stopCondition);
         }
 
         onStart.Invoke();
@@ -154,7 +159,7 @@ public class DialogManager : Singleton<DialogManager>
     }
 
     #region Skip
-    private void SetSkip(ScriptObject script)
+    private void SetSkip(ScriptObject script, Func<ScriptObject, bool> stopCondition = null)
     {
         skipData = script;
 
@@ -172,7 +177,7 @@ public class DialogManager : Singleton<DialogManager>
             }
 
             skipSeq.AppendInterval(skipInterval);
-            skipSeq.AppendCallback(Next);
+            skipSeq.AppendCallback(() => Next(stopCondition));
 
             skipSeq.Play();
         }
@@ -183,11 +188,11 @@ public class DialogManager : Singleton<DialogManager>
 
             skipStream = Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.Space))
-                .Subscribe(_ => Skip(script));
+                .Subscribe(_ => Skip(script, stopCondition));
         }
     }
 
-    private void Skip(in ScriptObject script)
+    private void Skip(in ScriptObject script, Func<ScriptObject, bool> stopCondition = null)
     {
         bool isPlaying = tweenMgr.ExistPlayingTween();
 
@@ -201,12 +206,12 @@ public class DialogManager : Singleton<DialogManager>
         }
         else if (isPlaying == false) //스킵 타입과 관계없이 isPlaying이 false라면 다음 스크립트로 이동
         {
-            Next();
+            Next(stopCondition);
         }
     }
     #endregion
 
-    private void Next()
+    private void Next(Func<ScriptObject, bool> stopCondition = null)
     {
         tweenMgr.SkipAllTweens();
 
@@ -218,7 +223,7 @@ public class DialogManager : Singleton<DialogManager>
         {
             ScriptObject nextScript = scriptMgr.Next();
 
-            ExecuteScript(nextScript);
+            ExecuteScript(nextScript, stopCondition);
 
             onNext.Invoke();
         }
@@ -254,5 +259,40 @@ public class DialogManager : Singleton<DialogManager>
         eventMgr.ResetAll();
         textMgr.ResetAll();
         mouseEffect.ActiveMouseEffect(false);
+    }
+
+    public void MoveTo(int scriptGroupId, int targetScriptId)
+    {
+        ResetAll();
+
+        scriptMgr = CSVReader.ReadScript(scriptGroupId);
+
+        foreach (var script in scriptMgr.scripts)
+        {
+            script.textDuration = 0;
+            script.eventData.eventDuration = 0;
+            script.eventData.eventDelay = 0;
+            script.skipMethod = SkipMethod.Auto;
+            script.skipDelay = 0;
+        }
+
+        int firstScriptId = scriptMgr.firstScript.scriptId;
+
+        scriptMgr.SetCurrentScript(firstScriptId);
+
+        onDialogStart.Invoke();
+
+        isPlaying = true;
+
+        ExecuteScript(scriptMgr.currentScript, (script) =>
+        {
+            if(script.scriptId == targetScriptId)
+            {
+                StartDialog(scriptGroupId, targetScriptId);
+                return true;
+            }
+
+            return false;
+        });
     }
 }
