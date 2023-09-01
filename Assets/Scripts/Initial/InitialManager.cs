@@ -11,7 +11,7 @@ public class InitialManager : MonoBehaviour
         GameData.saveFile = SaveManager.Load(RuntimeData.saveFileNumber);
 
         Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            .Where(_ => Input.GetKeyDown(KeyCode.Space))
             .Subscribe(_ => {
                 if(Input.GetKey(KeyCode.LeftShift))
                 {

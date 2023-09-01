@@ -22,14 +22,14 @@ public class ScenarioStartManager : MonoBehaviour
 
             if (RuntimeData.isEditorMode == true)
             {
-                MysSceneManager.LoadDialogScene(() =>
+                MysSceneManager.LoadScenarioScene(() =>
                 {
                     EditorManager.Instance.EditorStart(scriptGroupId);
                 });
             }
             else
             {
-                MysSceneManager.LoadDialogScene(() =>
+                MysSceneManager.LoadScenarioScene(() =>
                 {
                     EditorManager.Instance.gameObject.SetActive(false);
                     DialogManager.Instance.StartDialog(scriptGroupId);

@@ -263,6 +263,8 @@ MonoBehaviour:
   profileMusicImage: {fileID: 2059184224}
   profileMusic: {fileID: 1371420891}
   storyPopup: {fileID: 1761197792}
+  storyTitle: {fileID: 86151871}
+  storyCondition: {fileID: 829078906}
   storyStartBtn: {fileID: 865335149}
 --- !u!1 &53656023
 GameObject:
@@ -2166,8 +2168,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1063486719}
   - {fileID: 1623979543}
+  - {fileID: 1063486719}
   - {fileID: 655544704}
   - {fileID: 1527423727}
   - {fileID: 19425981}
@@ -7448,12 +7450,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 252435477}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00018692, y: 202.2164}
-  m_SizeDelta: {x: 185.92, y: 65.5672}
+  m_AnchoredPosition: {x: -0.00018692, y: 209.93282}
+  m_SizeDelta: {x: 185.92, y: 81.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1063486720
 MonoBehaviour:
@@ -11426,7 +11428,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 252435477}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

@@ -34,4 +34,14 @@ public class PhoneScene : MonoBehaviour
     {
 
     }
+
+    public virtual void OnOpenScene()
+    {
+
+    }
+
+    public virtual void OnCloseScene()
+    {
+
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -57,9 +58,40 @@ public class PhoneManager : Singleton<PhoneManager>
 
     private void DisableAllScene()
     {
-        homeScene.gameObject.SetActive(false);
-        talkMainScene.gameObject.SetActive(false);
-        talkProfileScene.gameObject.SetActive(false);
+        foreach(var scene in Enum.GetValues(typeof(PhoneSceneList)))
+        {
+            CloseScene((PhoneSceneList)scene);
+        }
+    }
+
+    private void CloseScene(PhoneSceneList scene)
+    {
+        switch (scene)
+        {
+            case PhoneSceneList.Home:
+                if (homeScene.gameObject.activeSelf == true)
+                {
+                    homeScene.OnCloseScene();
+                    homeScene.gameObject.SetActive(false);
+                }
+                break;
+
+            case PhoneSceneList.TalkMain:
+                if (talkMainScene.gameObject.activeSelf == true)
+                {
+                    talkMainScene.OnCloseScene();
+                    talkMainScene.gameObject.SetActive(false);
+                }
+                break;
+
+            case PhoneSceneList.TalkProfile:
+                if (talkProfileScene.gameObject.activeSelf == true)
+                {
+                    talkProfileScene.OnCloseScene();
+                    talkProfileScene.gameObject.SetActive(false);
+                }
+                break;
+        }
     }
 
     private void OnTakeOutPhoneButtonClick()

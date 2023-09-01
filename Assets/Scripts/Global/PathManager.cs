@@ -9,7 +9,7 @@ public class PathManager
 
     public static string CreateScriptPath(int scriptGroupID)
     {
-        return scriptPath + "ScriptTable" + scriptGroupID + ".CSV";
+        return scriptPath + "ScriptTable" + scriptGroupID + ".mys";
     }
 
 

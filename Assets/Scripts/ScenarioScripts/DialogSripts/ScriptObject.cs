@@ -116,10 +116,12 @@ public class ScriptObject
                 return textDuration.ToString();
 
             case ScriptDataKey.Audio0:
-                return audio[0];
+                //return audio[0];
+                break;
 
             case ScriptDataKey.Audio1:
-                return audio[1];
+                //return audio[1];
+                break;
 
             case ScriptDataKey.SkipMethod:
                 return Enum.GetName(typeof(SkipMethod), skipMethod);

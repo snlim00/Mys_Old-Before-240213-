@@ -134,4 +134,30 @@ public class ScriptManager
 
         return groupID;
     }
+
+    public static int GetNextScenarioId(string characterName, int lastClearedChapter)
+    {
+        int nextScenario = GetFirstScenarioId(characterName);
+
+        nextScenario += 10 * lastClearedChapter; //DEMO : 데모 버전에서는 브랜치 등 외부 요소가 없으므로 그냥 10을 더해서 사용.
+
+        return nextScenario;
+    }
+
+    public static int GetFirstScenarioId(string characterName)
+    {
+        switch(characterName)
+        {
+            case CharacterInfo.Jihyae:
+                return 1010;
+
+            case CharacterInfo.Yunha:
+                return 2010;
+
+            case CharacterInfo.Seeun:
+                return 3010;
+        }
+
+        return 0;
+    }
 }

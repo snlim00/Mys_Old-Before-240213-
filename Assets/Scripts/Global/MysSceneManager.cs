@@ -27,9 +27,17 @@ public class MysSceneManager : Singleton<MysSceneManager>
         cb?.Invoke();
     }
 
-    public static void LoadDialogScene(Action cb)
+    public static void LoadScenarioScene(Action cb, int? scriptGroupId = null)
     {
-        MysSceneManager.LoadScene("ScenarioScene", cb);
+        MysSceneManager.LoadScene("ScenarioScene", () => {
+            cb?.Invoke();
+            
+            if(scriptGroupId != null)
+            {
+                EditorManager.Instance.gameObject.SetActive(false);
+                DialogManager.Instance.StartDialog(scriptGroupId ?? 0);
+            }
+        });
     }
 
     public static void LoadScene(string scene, Action cb)

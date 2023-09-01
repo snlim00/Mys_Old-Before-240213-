@@ -14,9 +14,13 @@ public class TalkProfileScene : PhoneScene
     [SerializeField] private Text profileMusic;
 
     [SerializeField] private GameObject storyPopup;
+    [SerializeField] private Text storyTitle;
+    [SerializeField] private Text storyCondition;
     [SerializeField] private Button storyStartBtn;
 
     private string targetCharacterName;
+
+    private int scenarioId;
 
     protected override void Start()
     {
@@ -31,6 +35,11 @@ public class TalkProfileScene : PhoneScene
         {
             phoneMgr.OpenScene(PhoneSceneList.TalkMain);
         });
+
+        storyStartBtn.onClick.AddListener(() =>
+        {
+            MysSceneManager.LoadScenarioScene(null, scenarioId);
+        });
     }
 
     public void Init(string characterName, string profileName, string message, string profileMusic, Sprite sprite)
@@ -41,14 +50,38 @@ public class TalkProfileScene : PhoneScene
         this.profileMusic.text = profileMusic;
         profileImage.sprite = sprite;
 
-        if(string.IsNullOrWhiteSpace(targetCharacterName))
+        if (string.IsNullOrWhiteSpace(profileMusic))
+        {
+            this.profileMusicImage.gameObject.SetActive(false);
+        }
+
+        if (string.IsNullOrWhiteSpace(targetCharacterName))
         {
             storyBtn.interactable = false;
         }
-
-        if(string.IsNullOrWhiteSpace(profileMusic))
+        else
         {
-            this.profileMusicImage.gameObject.SetActive(false);
+            storyStartBtn.interactable = true;
+
+            int lastClearedChapter = GameData.saveFile.chapterData[characterName];
+
+            if(lastClearedChapter >= 3) //DEMO : 3 챕터까지만 존재함.
+            {
+                storyTitle.text = "[ 개발중 ]";
+                storyCondition.text = "";
+                storyStartBtn.interactable = false;
+
+                return;
+            }
+
+            int nextScenarioId = ScriptManager.GetNextScenarioId(characterName, lastClearedChapter);
+
+            RuntimeData.scriptMgr = CSVReader.ReadScript(nextScenarioId);
+
+            scenarioId = nextScenarioId;
+
+            storyTitle.text = RuntimeData.scriptMgr.title;
+            storyCondition.text = RuntimeData.scriptMgr.explain;
         }
     }
 
@@ -64,5 +97,12 @@ public class TalkProfileScene : PhoneScene
         base.OnBackButtonClick();
 
         phoneMgr.OpenScene(PhoneSceneList.TalkMain);
+    }
+
+    public override void OnCloseScene()
+    {
+        base.OnCloseScene();
+
+        storyPopup.SetActive(false);
     }
 }
