@@ -74,7 +74,10 @@ public class NodeGraph : Singleton<NodeGraph>
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            Play();
+            if(inputType != InputType.EditInputField)
+            {
+                Play();
+            }
         }
 
         if (inputType == InputType.Select)

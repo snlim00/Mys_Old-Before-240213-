@@ -398,8 +398,11 @@ public class EventManager : Singleton<EventManager>
         int alpha = show == true ? 1 : 0;
         if(show == false) { autoHide = false; }
 
-        this.title.text = title;
-        this.subtitle.text = subtitle;
+        if(show == true)
+        {
+            this.title.text = title;
+            this.subtitle.text = subtitle;
+        }
 
         sequence.Append(titleImg.DOFade(alpha, eventData.eventDuration));
         sequence.Join(this.title.DOFade(alpha, eventData.eventDuration));
