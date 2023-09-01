@@ -112,6 +112,27 @@ public class Node : MonoBehaviour
         {
             addBranchBtn.gameObject.SetActive(false);
         }
+
+        if (script.scriptType == ScriptType.Event)
+        {
+            buttonImg.color = Color.gray;
+        }
+        else
+        {
+            buttonImg.color = Color.white;
+        }
+
+        if(prevNode != null)
+        {
+            if(prevNode.script.linkEvent == true)
+            {
+                rectTransform.sizeDelta = new(rectTransform.sizeDelta.x, rectTransform.sizeDelta.x * 0.6f);
+            }
+            else
+            {
+                rectTransform.sizeDelta = new(rectTransform.sizeDelta.x, rectTransform.sizeDelta.x);
+            }
+        }
     }
 
     public void RefreshNodeType()
@@ -132,7 +153,14 @@ public class Node : MonoBehaviour
 
     public void DeselectNode()
     {
-        buttonImg.color = Color.white;
+        if (script.scriptType == ScriptType.Event)
+        {
+            buttonImg.color = Color.gray;
+        }
+        else
+        {
+            buttonImg.color = Color.white;
+        }
     }
 
     public void SetNextNode(Node node)
