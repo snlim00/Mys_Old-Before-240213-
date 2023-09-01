@@ -18,6 +18,9 @@ public class TalkProfileScene : PhoneScene
     [SerializeField] private Text storyCondition;
     [SerializeField] private Button storyStartBtn;
 
+    [SerializeField] private Sprite defaultStoryStartSprite;
+    [SerializeField] private Sprite activeStoryStartSprite;
+
     private string targetCharacterName;
 
     private int scenarioId;
@@ -28,7 +31,7 @@ public class TalkProfileScene : PhoneScene
 
         storyBtn.onClick.AddListener(() =>
         {
-            storyPopup.SetActive(true);
+            storyPopup.SetActive(!storyPopup.activeSelf);
         });
 
         closeBtn.onClick.AddListener(() =>
@@ -57,6 +60,7 @@ public class TalkProfileScene : PhoneScene
 
         if (string.IsNullOrWhiteSpace(targetCharacterName))
         {
+            storyBtn.image.sprite = defaultStoryStartSprite;
             storyBtn.interactable = false;
         }
         else
@@ -70,9 +74,12 @@ public class TalkProfileScene : PhoneScene
                 storyTitle.text = "[ °³¹ßÁß ]";
                 storyCondition.text = "";
                 storyStartBtn.interactable = false;
+                storyBtn.image.sprite = defaultStoryStartSprite;
 
                 return;
             }
+
+            storyBtn.image.sprite = activeStoryStartSprite;
 
             int nextScenarioId = ScriptManager.GetNextScenarioId(characterName, lastClearedChapter);
 

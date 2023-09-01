@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class TextManager : MonoBehaviour
 {
+    public RectTransform textTransform;
+
     public Image textBox;
     public Text text;
     public Text characterName;
@@ -30,5 +32,12 @@ public class TextManager : MonoBehaviour
         }
 
         return seq;
+    }
+
+    public void ResetAll()
+    {
+        characterName.text = string.Empty;
+        text.text = string.Empty;
+        textTransform.anchoredPosition = Vector3.zero;
     }
 }

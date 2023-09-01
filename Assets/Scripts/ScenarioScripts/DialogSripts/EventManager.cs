@@ -158,6 +158,7 @@ public class EventManager : Singleton<EventManager>
         title.SetAlpha(0);
         subtitle.SetAlpha(0);
         cgImg.sprite = defaultBg;
+        cgImg.SetAlpha(0);
     }
 
     public void SetBackground(Sprite sprite)
@@ -378,10 +379,10 @@ public class EventManager : Singleton<EventManager>
 
         bool hide = bool.Parse(eventData.eventParam[0]);
 
-        float targetAlpha = hide == true ? 0 : 1;
+        float targetAlpha = hide == true ? 0 : 1f;
 
         sequence.Append(textMgr.text.DOFade(targetAlpha, eventData.eventDuration));
-        sequence.Insert(0, textMgr.textBox.DOFade(targetAlpha, eventData.eventDuration));
+        sequence.Insert(0, textMgr.textBox.DOFade(targetAlpha * 0.5f, eventData.eventDuration));
         sequence.Insert(0, textMgr.characterName.DOFade(targetAlpha, eventData.eventDuration));
     }
 
@@ -434,13 +435,17 @@ public class EventManager : Singleton<EventManager>
         int alpha = show == true ? 1 : 0;
         if(show == false) { autoHide = false; }
 
-        sequence.Append(cgImg.DOFade(alpha, eventData.eventDuration));
+        float textPos = show == true ? -50f : 0;
 
-        if(autoHide == true)
+        sequence.Append(cgImg.DOFade(alpha, eventData.eventDuration));
+        sequence.Join(textMgr.textTransform.DOAnchorPosY(textPos, eventData.eventDuration).SetEase(Ease.OutCubic));
+
+        if (autoHide == true)
         {
             sequence.AppendInterval(duration);
 
             sequence.Append(cgImg.DOFade(0, eventData.eventDuration));
+            sequence.Join(textMgr.textTransform.DOAnchorPosY(0, eventData.eventDuration).SetEase(Ease.OutCubic));
         }
     }
 

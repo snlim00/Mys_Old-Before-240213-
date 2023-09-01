@@ -15,11 +15,11 @@ public class InitialManager : MonoBehaviour
             .Subscribe(_ => {
                 if(Input.GetKey(KeyCode.LeftShift))
                 {
-                    MysSceneManager.LoadLobbyScene(null);
+                    MysSceneManager.LoadEditorLobbyScene(null);
                 }
                 else
                 {
-                    MysSceneManager.LoadEditorLobbyScene(null);
+                    MysSceneManager.LoadLobbyScene(null);
                 }
             })
             .AddTo(this);

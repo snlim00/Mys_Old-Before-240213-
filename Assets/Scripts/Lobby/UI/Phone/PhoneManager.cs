@@ -38,25 +38,28 @@ public class PhoneManager : Singleton<PhoneManager>
 
     public void OpenScene(PhoneSceneList scene)
     {
-        DisableAllScene();
+        CloseAllScene();
 
         switch(scene)
         {
             case PhoneSceneList.Home:
                 homeScene.gameObject.SetActive(true);
+                homeScene.OnOpenScene();
                 break;
 
             case PhoneSceneList.TalkMain:
                 talkMainScene.gameObject.SetActive(true);
+                talkMainScene.OnOpenScene();
                 break;
 
             case PhoneSceneList.TalkProfile:
                 talkProfileScene.gameObject.SetActive(true);
+                talkProfileScene.OnOpenScene();
                 break;
         }
     }
 
-    private void DisableAllScene()
+    private void CloseAllScene()
     {
         foreach(var scene in Enum.GetValues(typeof(PhoneSceneList)))
         {
@@ -98,6 +101,8 @@ public class PhoneManager : Singleton<PhoneManager>
     {
         if(isEnable == true) { return; }
 
+        OpenScene(PhoneSceneList.Home);
+
         isEnable = true;
 
         Sequence seq = DOTween.Sequence();
@@ -116,6 +121,8 @@ public class PhoneManager : Singleton<PhoneManager>
     public void OnPutInPhoneButtonClick()
     {
         if (isEnable == false) { return; }
+
+        OpenScene(PhoneSceneList.Home);
 
         isEnable = false;
 

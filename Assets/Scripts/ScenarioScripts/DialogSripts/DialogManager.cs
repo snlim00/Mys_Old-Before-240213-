@@ -11,10 +11,12 @@ public class DialogManager : Singleton<DialogManager>
 {
     [SerializeField] private EventManager eventMgr;
     [SerializeField] private TextManager textMgr;
+    [SerializeField] private MouseEffect mouseEffect;
     public Canvas canvas;
 
     private Sequence autoSkipSeq;
     private IDisposable skipStream;
+    private ScriptObject skipData;
 
     private TweenManager tweenMgr = new();
 
@@ -154,6 +156,8 @@ public class DialogManager : Singleton<DialogManager>
     #region Skip
     private void SetSkip(ScriptObject script)
     {
+        skipData = script;
+
         if (script.skipMethod == SkipMethod.Auto) //Auto 스킵일 경우 가장 긴 트윈이 종료된 이후 Next가 호출되도록 함.
         {
             Sequence skipSeq = DOTween.Sequence();
@@ -174,6 +178,9 @@ public class DialogManager : Singleton<DialogManager>
         }
         else if (script.skipMethod == SkipMethod.Skipable || script.skipMethod == SkipMethod.NoSkip)
         {
+            Observable.Timer(TimeSpan.FromSeconds(tweenMgr.FindLongestDuration()))
+                .Subscribe(_ => mouseEffect.ActiveMouseEffect(true));
+
             skipStream = Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.Space))
                 .Subscribe(_ => Skip(script));
@@ -189,6 +196,8 @@ public class DialogManager : Singleton<DialogManager>
             tweenMgr.SkipAllTweens();
 
             onSkip.Invoke();
+
+            mouseEffect.ActiveMouseEffect(true);
         }
         else if (isPlaying == false) //스킵 타입과 관계없이 isPlaying이 false라면 다음 스크립트로 이동
         {
@@ -203,7 +212,9 @@ public class DialogManager : Singleton<DialogManager>
 
         skipStream?.Dispose();
 
-        if(scriptMgr.nextScript != null)
+        mouseEffect.ActiveMouseEffect(false);
+
+        if (scriptMgr.nextScript != null)
         {
             ScriptObject nextScript = scriptMgr.Next();
 
@@ -241,5 +252,7 @@ public class DialogManager : Singleton<DialogManager>
     public void ResetAll()
     {
         eventMgr.ResetAll();
+        textMgr.ResetAll();
+        mouseEffect.ActiveMouseEffect(false);
     }
 }

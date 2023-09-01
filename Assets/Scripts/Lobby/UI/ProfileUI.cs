@@ -9,6 +9,7 @@ public class ProfileUI : MonoBehaviour
     [SerializeField] private Text playerName;
     [SerializeField] private Text moneyAmount;
     [SerializeField] private Text dateAmount;
+    [SerializeField] private Image dateProgress;
 
     void Start()
     {
@@ -20,5 +21,6 @@ public class ProfileUI : MonoBehaviour
         int date = GameData.saveFile.date;
 
         dateAmount.text = string.Format("{0:D3}", date);
+        dateProgress.fillAmount = date / 9f;
     }
 }

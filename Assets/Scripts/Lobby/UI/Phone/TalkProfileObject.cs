@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TalkProfileObject : MonoBehaviour
+public class TalkProfileObject : NotiableObject
 {
     public string characterName;
 
