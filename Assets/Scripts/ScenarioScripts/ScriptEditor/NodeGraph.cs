@@ -360,7 +360,7 @@ public class NodeGraph : Singleton<NodeGraph>
             //노드의 scriptId 설정
             node.script.scriptId = scriptMgr.scriptGroupId * 10000 + index;
 
-            node.RefreshNodeType();
+            node.Refresh();
 
             //노드 이름 설정
             {

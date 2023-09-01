@@ -14,6 +14,11 @@ public class ToggleVariable : Variable
         toggle.onValueChanged.AddListener((value) =>
         {
             ApplyValue();
+
+            if(targetKey == ScriptDataKey.LinkEvent)
+            {
+                nodeGrp.RefreshAll();
+            }
         });
     }
 
