@@ -468,12 +468,30 @@ public class EventManager : Singleton<EventManager>
 
         Sprite sprite = Resources.Load<Sprite>(PathManager.CreateCgImagePath(resource));
 
-        cgImg.sprite = sprite;
+        if(show == true)
+        {
+            cgImg.sprite = sprite;
+        }
 
         int alpha = show == true ? 1 : 0;
         if(show == false) { autoHide = false; }
 
         float textPos = show == true ? -50f : 0;
+
+        if (show == true)
+        {
+            sequence.AppendCallback(() =>
+            {
+                textMgr.text.alignment = TextAnchor.UpperCenter;
+            });
+        }
+        else
+        {
+            sequence.AppendCallback(() =>
+            {
+                textMgr.text.alignment = TextAnchor.UpperLeft;
+            });
+        }
 
         sequence.Append(cgImg.DOFade(alpha, eventData.eventDuration));
         sequence.Join(textMgr.textTransform.DOAnchorPosY(textPos, eventData.eventDuration).SetEase(Ease.OutCubic));
@@ -484,6 +502,11 @@ public class EventManager : Singleton<EventManager>
 
             sequence.Append(cgImg.DOFade(0, eventData.eventDuration));
             sequence.Join(textMgr.textTransform.DOAnchorPosY(0, eventData.eventDuration).SetEase(Ease.OutCubic));
+
+            sequence.AppendCallback(() =>
+            {
+                textMgr.text.alignment = TextAnchor.UpperLeft;
+            });
         }
     }
 
