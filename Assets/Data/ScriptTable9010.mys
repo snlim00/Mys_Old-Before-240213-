@@ -23,7 +23,7 @@ ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEve
 90100006,Text,,이게 도대체 뭔 상황이냐.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100007,Text,,분명 내 자취방에 들어왔는데 다른 사람이 나한테 강도라고 하는거냐고…!,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100008,Text,,(하루 전),0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
-90100009,Text,,[집 / PM 19:42],0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
+90100009,Text,,(집 / PM 19:42),0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100010,Text,주인공,…너무 앰생 씹덕 히키코모리처럼 사는 거 아닌가.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100011,Text,,문득 애니를 보다 생각이 들었다.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100012,Text,,21살. 무직 백수. 대학은 떨어짐. 집에서 밥 축내면서 애니만 보는 중.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
