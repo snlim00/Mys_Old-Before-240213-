@@ -101,7 +101,7 @@ public class NodeGraph : Singleton<NodeGraph>
                 CreateNodeCommand();
             }
 
-            if(Input.GetKeyDown(KeyCode.L))
+            if(Input.GetKeyDown(KeyCode.X))
             {
                 if(selectedNode.prevNode != null)
                 {
