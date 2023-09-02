@@ -17,10 +17,6 @@ public class InitialManager : MonoBehaviour
                 {
                     MysSceneManager.LoadEditorLobbyScene(null);
                 }
-                else
-                {
-                    MysSceneManager.LoadLobbyScene(null);
-                }
             })
             .AddTo(this);
     }
