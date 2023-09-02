@@ -68,8 +68,9 @@ public class InitialUI : MonoBehaviour
         sideBarSeq.Append(sideBar.rectTransform.DOAnchorPosX(0, 0.5f).SetEase(Ease.OutQuad));
         sideBarSeq.Join(background.rectTransform.DOAnchorPosX(0, 0.5f).SetEase(Ease.OutQuad));
         sideBarSeq.Join(background.transform.DOScale(1, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Append(logo.DOFade(1, 0.5f).SetEase(Ease.OutQuad));
         sideBarSeq.Join(arrowEffect.transform.DORotate(new(0, 0, 0), 0.5f).SetEase(Ease.OutQuad));
+        sideBarSeq.AppendInterval(0.3f);
+        sideBarSeq.Append(logo.DOFade(1, 1f).SetEase(Ease.OutQuad));
 
         sideBarSeq.Play();
     }
