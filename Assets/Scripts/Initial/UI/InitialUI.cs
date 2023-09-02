@@ -18,6 +18,9 @@ public class InitialUI : MonoBehaviour
 
     [SerializeField] private Image arrowEffect;
 
+    public const float aniDuration = 0.4f;
+    private Ease aniEase = Ease.OutQuad;
+
     private void Start()
     {
         startBtn.onClick.AddListener(() => MysSceneManager.LoadLobbyScene(null));
@@ -45,16 +48,15 @@ public class InitialUI : MonoBehaviour
 
     private void ActiveSideBar()
     {
-        "Active Side Bar".Log();
         activeSideBar = true;
 
         sideBarSeq = DOTween.Sequence();
 
-        sideBarSeq.Append(sideBar.rectTransform.DOAnchorPosX(-200, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(background.rectTransform.DOAnchorPosX(-100, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(background.transform.DOScale(1.1f, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(logo.DOFade(0, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(arrowEffect.transform.DORotate(new(0, 0, 180), 0.5f).SetEase(Ease.OutQuad));
+        sideBarSeq.Append(sideBar.rectTransform.DOAnchorPosX(-200, aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(background.rectTransform.DOAnchorPosX(-100, aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(background.transform.DOScale(1.1f, aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(arrowEffect.transform.DORotate(new(0, 0, 180), aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(logo.DOFade(0, aniDuration).SetEase(Ease.OutQuad));
 
         sideBarSeq.Play();
     }
@@ -65,10 +67,10 @@ public class InitialUI : MonoBehaviour
 
         sideBarSeq = DOTween.Sequence();
 
-        sideBarSeq.Append(sideBar.rectTransform.DOAnchorPosX(0, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(background.rectTransform.DOAnchorPosX(0, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(background.transform.DOScale(1, 0.5f).SetEase(Ease.OutQuad));
-        sideBarSeq.Join(arrowEffect.transform.DORotate(new(0, 0, 0), 0.5f).SetEase(Ease.OutQuad));
+        sideBarSeq.Append(sideBar.rectTransform.DOAnchorPosX(0, aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(background.rectTransform.DOAnchorPosX(0, aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(background.transform.DOScale(1, aniDuration).SetEase(aniEase));
+        sideBarSeq.Join(arrowEffect.transform.DORotate(new(0, 0, 0), aniDuration).SetEase(aniEase));
         sideBarSeq.AppendInterval(0.3f);
         sideBarSeq.Append(logo.DOFade(1, 1f).SetEase(Ease.OutQuad));
 

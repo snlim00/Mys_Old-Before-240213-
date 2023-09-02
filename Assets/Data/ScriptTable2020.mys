@@ -15,7 +15,6 @@ Yunha
 
 [Script]
 ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6,EventParam7,EventParam8,EventParam9,EventParam10,EventParam11,EventParam12,EventParam13,EventParam14,EventParam15,EventParam16,EventParam17,EventParam18,EventParam19
-ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6,EventParam7,EventParam8,EventParam9,EventParam10,EventParam11,EventParam12,EventParam13,EventParam14,EventParam15,EventParam16,EventParam17,EventParam18,EventParam19
 20200001,Text,,아 공부하기 귀찮다.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 20200002,Text,,사람이 정말 똑똑해야할까. 그냥 그런 대로 살아가도…,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 20200003,Text,,근데 부모님 돈을 받아버린 이상 이렇게 살면 안되겠지.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,

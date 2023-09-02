@@ -215,7 +215,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &19425981
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1466,6 +1466,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 38077054402565a4392c0a3a4a0e8db3, type: 3}
     - target: {fileID: 5488690242781095468, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_Text
       value: "\uAF43 \uB108\uBB34 \uC774\uC058\uB2E4 ~~~~~"
@@ -2605,6 +2609,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 38077054402565a4392c0a3a4a0e8db3, type: 3}
     - target: {fileID: 5488690242781095468, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_Text
       value: "\uAF43 \uB108\uBB34 \uC774\uC058\uB2E4 ~~~~~"
@@ -8516,6 +8524,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 46470321be797844c97cf7869498e2e0, type: 3}
     - target: {fileID: 5488690242781095468, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_Text
       value: "\uBC29\uC7A5\uC0B0\uC5D0\uC11C..."
@@ -9471,6 +9483,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: "\uC170\uD1A1 \uC798 \uC548 \uBD10\uC694"
       objectReference: {fileID: 0}
+    - target: {fileID: 7731383870938657678, guid: 8be70967c55251b4d950d200fc99ec9b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8c9d3dc62a3811842ba5536ebdf4bbce, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8be70967c55251b4d950d200fc99ec9b, type: 3}
 --- !u!224 &1303214593 stripped
@@ -9812,10 +9828,10 @@ RectTransform:
   m_Father: {fileID: 2059184221}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 79.08333, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 79.08333, y: -12.541666}
+  m_SizeDelta: {x: 134.16666, y: 17.083332}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1371420890
 MonoBehaviour:
@@ -10936,6 +10952,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d9639825c0cf6ad46a28915f35c0dc2f, type: 3}
     - target: {fileID: 3312627460222126488, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: characterName
       value: Seeun
@@ -11064,6 +11084,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: "\uD64D\uC138\uC740"
       objectReference: {fileID: 0}
+    - target: {fileID: 5488690244242633425, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5488690244673382767, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -11071,6 +11095,14 @@ PrefabInstance:
     - target: {fileID: 5488690244673382767, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488690244673382767, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 91.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488690244673382767, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -10.626
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
@@ -11264,6 +11296,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 46470321be797844c97cf7869498e2e0, type: 3}
     - target: {fileID: 5488690242781095468, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_Text
       value: "\uBC29\uC7A5\uC0B0\uC5D0\uC11C..."
@@ -13264,6 +13300,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 52c9b26d02db1dc449c0d6c2076ef5aa, type: 3}
     - target: {fileID: 3312627460222126488, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: characterName
       value: Yunha
@@ -14257,6 +14297,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1202551069}
     m_Modifications:
+    - target: {fileID: 353971317895569359, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 257059ba2cc9aaf47aa5ca0691093186, type: 3}
     - target: {fileID: 3312627460222126488, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: characterName
       value: Jihyae
@@ -15542,7 +15586,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 12.3, y: 78.5}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 166.16666, y: 24.083332}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2059184222
 MonoBehaviour:

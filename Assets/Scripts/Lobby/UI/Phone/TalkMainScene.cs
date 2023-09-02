@@ -57,12 +57,12 @@ public class TalkMainScene : PhoneScene
 
         if(chapterData[CharacterInfo.Yunha] < 3)
         {
-            jihyaeProfile.ShowNoti(true);
+            yunhaProfile.ShowNoti(true);
         }
 
         if(chapterData[CharacterInfo.Seeun] < 3)
         {
-            jihyaeProfile.ShowNoti(true);
+            seeunProfile.ShowNoti(true);
         }
     }
 }
