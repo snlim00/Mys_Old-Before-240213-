@@ -101,6 +101,16 @@ public class NodeGraph : Singleton<NodeGraph>
                 CreateNodeCommand();
             }
 
+            if(Input.GetKeyDown(KeyCode.L))
+            {
+                if(selectedNode.prevNode != null)
+                {
+                    selectedNode.prevNode.script.linkEvent = !selectedNode.prevNode.script.linkEvent;
+
+                    RefreshAll();
+                }
+            }
+
             if(Input.GetKeyDown(KeyCode.Delete))
             {
                 RemoveNode();
