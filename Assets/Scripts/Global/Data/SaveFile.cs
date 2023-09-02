@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class SaveFile
 {
+    public string playerName;
+
 	public Dictionary<string, int> chapterData;
 
     public Dictionary<string, int> lovePoint;
@@ -55,6 +57,8 @@ public class SaveFile
 	public static SaveFile CreateNewSaveFile()
 	{
         var saveFile = new SaveFile();
+
+        saveFile.playerName = string.Empty;
 
         saveFile.chapterData = new()
         {

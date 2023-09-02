@@ -5,6 +5,8 @@ using UnityEngine;
 public static class GameConstants
 {
     public static bool isEditorMode = true;
+
+    public const int firstScript = 9010;
 }
 
 public static class Tag
