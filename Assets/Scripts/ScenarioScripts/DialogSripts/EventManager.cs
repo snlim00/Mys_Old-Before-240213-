@@ -84,6 +84,10 @@ public class EventManager : Singleton<EventManager>
                 Event_SetBackground(script, ref sequence);
                 break;
 
+            case EventType.PlayBGM:
+                Event_PlayBGM(script, ref sequence);
+                break;
+
             case EventType.FadeIn:
                 Event_FadeIn(script, ref sequence);
                 break;
@@ -190,6 +194,20 @@ public class EventManager : Singleton<EventManager>
         sequence.Append(background.DOFade(0, eventData.eventDuration / 2));
         sequence.AppendCallback(() => SetBackground(sprite));
         sequence.Append(background.DOFade(1, eventData.eventDuration / 2));
+    }
+
+    public void Event_PlayBGM(ScriptObject script, ref Sequence sequence)
+    {
+        EventData eventData = script.eventData;
+
+        string resource = eventData.eventParam[0];
+
+        AudioClip clip = Resources.Load<AudioClip>(PathManager.CreateBGMPath(resource));
+
+        PathManager.CreateBGMPath(resource).Log();
+        clip.Log();
+
+        sequence.AppendCallback(() => SoundManager.PlayBGM(clip));
     }
 
     public void Event_FadeIn(ScriptObject script, ref Sequence sequence)

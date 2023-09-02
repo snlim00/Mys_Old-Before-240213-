@@ -65,6 +65,7 @@ public enum EventType
 {
     None,
     SetBackground,
+    PlayBGM,
     FadeIn,
     CreateObject,
     MoveObject,

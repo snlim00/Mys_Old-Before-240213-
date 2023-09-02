@@ -186,6 +186,25 @@ public class ScriptInfo
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam0, "Resource", string.Empty, explain: explain0));
             }
 
+            //EventInfo_PlayBGM
+            {
+                ScriptInfo info = new()
+                {
+                    excludedKeys = new()
+                    {
+                        ScriptDataKey.EventDuration,
+                        ScriptDataKey.DurationTurn,
+                        ScriptDataKey.LoopCount,
+                        ScriptDataKey.LoopDelay,
+                        ScriptDataKey.LoopType,
+                    },
+                };
+                eventInfos.Add(EventType.PlayBGM, info);
+
+                string explain0 = "BGM의 리소스 경로를 입력해주세요. \n* Assets/Resources/Audio/BGM/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam0, "Resource", string.Empty, explain: explain0));
+            }
+
 
             //EventInfo_FadeIn
             {

@@ -35,4 +35,9 @@ public class PathManager
     {
         return "Images/Background/" + path;
     }
+
+    public static string CreateBGMPath(string path)
+    {
+        return "Audio/BGM/" + path;
+    }
 }
