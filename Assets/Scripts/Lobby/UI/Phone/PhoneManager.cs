@@ -16,7 +16,7 @@ public class PhoneManager : Singleton<PhoneManager>
 {
     private RectTransform rectTransform;
 
-    [SerializeField] private GameObject talkNotice;
+    [SerializeField] private Image talkNotice;
     [SerializeField] private Button takeOutBtn;
 
     private bool isEnable = false;
@@ -34,6 +34,22 @@ public class PhoneManager : Singleton<PhoneManager>
         defaultPosition = rectTransform.anchoredPosition;
 
         takeOutBtn.onClick.AddListener(OnTakeOutPhoneButtonClick);
+
+
+        var chapterData = GameData.saveFile.chapterData;
+
+        if (chapterData[CharacterInfo.Jihyae] >= 3 && chapterData[CharacterInfo.Yunha] >= 3 && chapterData[CharacterInfo.Seeun] >= 3)
+        {
+            talkNotice.SetAlpha(0);
+        }
+        else
+        {
+            talkNotice.SetAlpha(1);
+
+            var pos = talkNotice.rectTransform.anchoredPosition;
+
+            talkNotice.rectTransform.DOAnchorPosY(pos.y - 12, 1).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo).Play();
+        }
     }
 
     public void OpenScene(PhoneSceneList scene)
