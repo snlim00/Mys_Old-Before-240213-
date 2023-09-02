@@ -99,6 +99,7 @@ public class NodeGraph : Singleton<NodeGraph>
             if(Input.GetKeyDown(KeyCode.C))
             {
                 CreateNodeCommand();
+                Save();
             }
 
             if(Input.GetKeyDown(KeyCode.X))
@@ -359,6 +360,8 @@ public class NodeGraph : Singleton<NodeGraph>
     public void RefreshAll()
     {
         RefreshAllNode();
+
+        selectedNode.SelectNode();
 
         SetContentSize();
     }
