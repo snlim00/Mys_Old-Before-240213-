@@ -10,6 +10,7 @@ public class DialogObject : MonoBehaviour
 
     private RectTransform rectTransform;
     public Image image;
+    public Image subImage;
 
     public string objName = string.Empty;
 
@@ -46,6 +47,21 @@ public class DialogObject : MonoBehaviour
         sizeDelta.y = 450;
 
         image.rectTransform.sizeDelta = sizeDelta;
+    }
+
+    public void SetSubSprite(Sprite sprite)
+    {
+        subImage.sprite = sprite;
+
+        subImage.SetNativeSize();
+
+        var sizeDelta = subImage.rectTransform.sizeDelta;
+
+        sizeDelta.x = (sizeDelta.x * 450) / sizeDelta.y; //450은 캔버스의 높이임. 이후 리터럴이 아닌 값을 구해서 사용하도로 변경할 것.
+
+        sizeDelta.y = 450;
+
+        subImage.rectTransform.sizeDelta = sizeDelta;
     }
 
     public void SetPosition(float position)

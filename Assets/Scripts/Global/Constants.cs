@@ -135,12 +135,13 @@ public static class CharacterInfo
     public const string Jihyae = "Jihyae";
     public const string Yunha = "Yunha";
     public const string Seeun = "Seeun";
+    public const string Public = "Public";
 
     public static string[] GetCharacterNames()
     {
         string[] arr =
         {
-            Jihyae, Yunha, Seeun,
+            Jihyae, Yunha, Seeun
         };
 
         return arr;

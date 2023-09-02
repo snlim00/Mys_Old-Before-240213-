@@ -60,7 +60,8 @@ public class SaveFile
         {
             { CharacterInfo.Jihyae, 0 },
             { CharacterInfo.Seeun, 0 },
-            { CharacterInfo.Yunha, 0 }
+            { CharacterInfo.Yunha, 0 },
+            { CharacterInfo.Public, 0 }
         };
 
         saveFile.lovePoint = new()

@@ -328,11 +328,26 @@ public class EventManager : Singleton<EventManager>
 
         string name = eventData.eventParam[0];
         string resource = eventData.eventParam[1];
+        bool doFade = bool.Parse(eventData.eventParam[2]);
+        float fadeDuration = float.Parse(eventData.eventParam[3]);
 
         DialogObject obj = objectList[name];
         Sprite sprite = Resources.Load<Sprite>(PathManager.CreateImagePath(resource));
 
-        sequence.AppendCallback(() => obj.SetSprite(sprite));
+        if(doFade == false)
+        {
+            sequence.AppendCallback(() => obj.SetSprite(sprite));
+        }
+        else
+        {
+            sequence.AppendCallback(() =>
+            {
+                obj.SetSubSprite(obj.image.sprite);
+                obj.SetSprite(sprite);
+                obj.subImage.SetAlpha(1);
+            });
+            sequence.Append(obj.subImage.DOFade(0, fadeDuration));
+        }
     }
 
     public void Event_SetObjectScale(ScriptObject script, ref Sequence sequence)
@@ -343,10 +358,9 @@ public class EventManager : Singleton<EventManager>
         float scale = float.Parse(eventData.eventParam[1]);
         bool fittingTop = bool.Parse(eventData.eventParam[2]);
 
-        DialogObject obj = objectList[name];
-
         sequence.AppendCallback(() =>
         {
+            DialogObject obj = objectList[name];
             obj.SetScale(scale, fittingTop);
         });
     }
@@ -406,7 +420,7 @@ public class EventManager : Singleton<EventManager>
         float targetAlpha = hide == true ? 0 : 1f;
 
         sequence.Append(textMgr.text.DOFade(targetAlpha, eventData.eventDuration));
-        sequence.Insert(0, textMgr.textBox.DOFade(targetAlpha * 0.5f, eventData.eventDuration));
+        sequence.Insert(0, textMgr.textBox.DOFade(targetAlpha, eventData.eventDuration));
         sequence.Insert(0, textMgr.characterName.DOFade(targetAlpha, eventData.eventDuration));
     }
 

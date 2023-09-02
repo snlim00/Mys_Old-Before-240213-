@@ -12,9 +12,31 @@ public class TextManager : MonoBehaviour
     public Image textBox;
     public Text text;
     public Text characterName;
+    public Shadow characterNameShadow;
 
     public Sequence CreateTextSequence(ScriptObject script)
     {
+        if(script.characterName == "·ùÁöÇý" || script.characterName == "ÁöÇý")
+        {
+            characterNameShadow.effectColor = new(255 / 255f, 240 / 255f, 197 / 255f, 0.5f);
+            this.text.color = new(255 / 255f, 240 / 255f, 197 / 255f);
+        }
+        else if(script.characterName == "¹ÚÀ±ÇÏ" || script.characterName == "À±ÇÏ")
+        {
+            characterNameShadow.effectColor = new(241 / 255f, 205 / 255f, 255 / 255f, 0.5f);
+            this.text.color = new(241 / 255f, 205 / 255f, 255 / 255f);
+        }
+        else if(script.characterName == "È«¼¼Àº" || script.characterName == "¼¼Àº")
+        {
+            characterNameShadow.effectColor = new(197 / 255f, 244 / 255f, 255 / 255f, 0.5f);
+            this.text.color = new(197 / 255f, 244 / 255f, 255 / 255f);
+        }
+        else
+        {
+            characterNameShadow.effectColor = new(0, 0, 0, 0.5f);
+            this.text.color = Color.white;
+        }
+
         Sequence seq = DOTween.Sequence();
 
         string text = script.text.Replace("<br>", Environment.NewLine);

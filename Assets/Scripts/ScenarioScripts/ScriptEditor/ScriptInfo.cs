@@ -316,6 +316,10 @@ public class ScriptInfo
                 info.paramInfo.Add(new(VariableType.Object, ScriptDataKey.EventParam0, "Object", string.Empty, explain: explain0));
                 string explain1 = "오브젝트의 리소스 경로를 입력해주세요. \n* Assets/Resources/Images/ 이후의 경로만 입력 \n* 확장자는 입력하지 않음";
                 info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam1, "Resource", string.Empty, explain: explain1));
+                string explain2 = "Fade를 진행하며 이미지를 교체하고 싶다면 선택하세요.";
+                info.paramInfo.Add(new(VariableType.Toggle, ScriptDataKey.EventParam2, "Do Fade", true.ToString(), explain: explain2));
+                string explain3 = "Fade가 이루어지는 속도를 입력해주세요.";
+                info.paramInfo.Add(new(VariableType.InputField, ScriptDataKey.EventParam3, "Fade Duration", 0.25f.ToString(), explain: explain3, contentType: InputField.ContentType.DecimalNumber));
             }
 
 
