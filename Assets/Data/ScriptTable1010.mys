@@ -15,7 +15,6 @@ Jihyae
 
 [Script]
 ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6,EventParam7,EventParam8,EventParam9,EventParam10,EventParam11,EventParam12,EventParam13,EventParam14,EventParam15,EventParam16,EventParam17,EventParam18,EventParam19
-ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEvent,Audio0,Audio1,EventType,DurationTurn,EventDelay,EventDuration,LoopCount,LoopType,LoopDelay,EventParam0,EventParam1,EventParam2,EventParam3,EventParam4,EventParam5,EventParam6,EventParam7,EventParam8,EventParam9,EventParam10,EventParam11,EventParam12,EventParam13,EventParam14,EventParam15,EventParam16,EventParam17,EventParam18,EventParam19
 10100001,Text,,띠- 띠- 띠띠-,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 10100002,Text,지혜,에헤~,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 10100003,Text,주인공,…?,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
