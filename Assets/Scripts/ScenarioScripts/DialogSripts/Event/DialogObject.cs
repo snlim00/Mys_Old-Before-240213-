@@ -104,6 +104,6 @@ public class DialogObject : MonoBehaviour
     public Vector3 GetPosition(float position)
     {
         //800은 캔버스의 너비임. 이후 리터럴이 아닌 값을 구해서 사용하도로 변경할 것.
-        return new(((800f / 7f) * position) - (800f / 2), 0, 0);
+        return new(((800f / 6f) * position) - (800f / 2), 0, 0);
     }
 }
