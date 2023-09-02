@@ -218,6 +218,7 @@ public class NodeGraph : Singleton<NodeGraph>
 
     private void Save()
     {
+        "Save".Log();
         editorMgr.ExportScript();
     }
 
@@ -227,7 +228,7 @@ public class NodeGraph : Singleton<NodeGraph>
         {
             HideInspector(true);
             inputType = InputType.Playing;
-            editorMgr.ExportScript();
+            Save();
             dialogMgr.MoveTo(RuntimeData.scriptMgr.scriptGroupId, selectedNode.script.scriptId);
 
             dialogMgr.onStop.AddListener(() =>
