@@ -8,6 +8,9 @@ public class SoundManager : Singleton<SoundManager>
 
     [SerializeField] private AudioSource bgmSource;
 
+    private static int sfxSourceIdx = 0;
+    [SerializeField] private List<AudioSource> sfxSource;
+
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -18,14 +21,22 @@ public class SoundManager : Singleton<SoundManager>
         instance = SoundManager.Instance;
     }
 
-    private void Update()
-    {
-        
-    }
-
     public static void PlayBGM(AudioClip audio)
     {
         instance.bgmSource.clip = audio;
         instance.bgmSource.Play();
+    }
+
+    public static void PlaySFX(AudioClip audio)
+    {
+        instance.sfxSource[sfxSourceIdx].clip = audio;
+        instance.sfxSource[sfxSourceIdx].Play();
+
+        sfxSourceIdx++;
+
+        if(sfxSourceIdx >= instance.sfxSource.Count)
+        {
+            sfxSourceIdx = 0;
+        }
     }
 }
