@@ -44,9 +44,12 @@ public class DialogManager : Singleton<DialogManager>
         //    .Subscribe(_ => MysSceneManager.LoadLobbyScene(null));
     }
 
-    public void StartDialog(int scriptGroupId, int firstScriptId = -1)
+    public void StartDialog(int scriptGroupId, int firstScriptId = -1, bool doNotReset = false)
     {
-        ResetAll();
+        if(doNotReset == false)
+        {
+            ResetAll();
+        }
 
         scriptMgr = CSVReader.ReadScript(scriptGroupId);
 
@@ -288,7 +291,7 @@ public class DialogManager : Singleton<DialogManager>
         {
             if(script.scriptId == targetScriptId)
             {
-                StartDialog(scriptGroupId, targetScriptId);
+                StartDialog(scriptGroupId, targetScriptId, true);
                 return true;
             }
 
