@@ -1173,7 +1173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8db78e3bf375eae4d883ab8ed031fcfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bgm: {fileID: 8300000, guid: 9c4705e7f5efff844a8adaf731aaf1b4, type: 3}
+  bgm: {fileID: 8300000, guid: 7fea972afe075714cb410eb27cddd916, type: 3}
 --- !u!4 &140277864
 Transform:
   m_ObjectHideFlags: 0
@@ -11027,7 +11027,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5488690243253718795, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 28.291666
       objectReference: {fileID: 0}
     - target: {fileID: 5488690243253718795, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -14376,7 +14376,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5488690243253718795, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 23.083332
       objectReference: {fileID: 0}
     - target: {fileID: 5488690243253718795, guid: 77f71eb5dcdda6647b4814537fa56ab4, type: 3}
       propertyPath: m_AnchoredPosition.y
