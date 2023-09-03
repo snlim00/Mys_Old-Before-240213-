@@ -496,12 +496,15 @@ public class EventManager : Singleton<EventManager>
         sequence.Append(cgImg.DOFade(alpha, eventData.eventDuration));
         sequence.Join(textMgr.textTransform.DOAnchorPosY(textPos, eventData.eventDuration).SetEase(Ease.OutCubic));
 
+        sequence.Join(textMgr.characterName.DOFade(1 - alpha, eventData.eventDuration).SetEase(Ease.OutCubic));
+
         if (autoHide == true)
         {
             sequence.AppendInterval(duration);
 
             sequence.Append(cgImg.DOFade(0, eventData.eventDuration));
             sequence.Join(textMgr.textTransform.DOAnchorPosY(0, eventData.eventDuration).SetEase(Ease.OutCubic));
+            sequence.Join(textMgr.characterName.DOFade(1, eventData.eventDuration).SetEase(Ease.OutCubic));
 
             sequence.AppendCallback(() =>
             {
