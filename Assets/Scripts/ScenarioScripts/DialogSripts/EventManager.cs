@@ -447,7 +447,7 @@ public class EventManager : Singleton<EventManager>
         sequence.Join(this.title.DOFade(alpha, eventData.eventDuration));
         sequence.Join(this.subtitle.DOFade(alpha, eventData.eventDuration));
 
-        if(autoHide == true)
+        if (autoHide == true)
         {
             sequence.AppendInterval(duration);
 

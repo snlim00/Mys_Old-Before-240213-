@@ -18,8 +18,8 @@ public class InitialUI : MonoBehaviour
 
     [SerializeField] private Image arrowEffect;
 
-    public const float aniDuration = 0.4f;
-    private Ease aniEase = Ease.OutQuad;
+    public const float aniDuration = 0.8f;
+    private Ease aniEase = Ease.OutExpo;
 
     private void Start()
     {
