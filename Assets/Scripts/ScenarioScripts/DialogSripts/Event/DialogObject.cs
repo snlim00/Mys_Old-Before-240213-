@@ -76,7 +76,7 @@ public class DialogObject : MonoBehaviour
 
     public Tween MoveObject(float position, float duration, Ease ease)
     {
-        return transform.DOLocalMove(GetPosition(position), duration).SetEase(ease);
+        return transform.DOLocalMoveX(GetPosition(position).x, duration).SetEase(ease);
     }
 
     public void SetScale(float scale, bool fittingTop)
