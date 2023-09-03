@@ -12,6 +12,8 @@ public class SoundManager : Singleton<SoundManager>
     private static int sfxSourceIdx = 0;
     [SerializeField] private List<AudioSource> sfxSource;
 
+    [SerializeField] private AudioClip touchSfx;
+
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -20,6 +22,14 @@ public class SoundManager : Singleton<SoundManager>
     private void Start()
     {
         instance = SoundManager.Instance;
+    }
+
+    private void Update()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            PlaySFX(touchSfx);
+        }
     }
 
     public static void PlayBGM(AudioClip audio, bool doFadeIn = true, float fadeDuration = 1)

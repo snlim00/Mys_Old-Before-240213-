@@ -905,6 +905,7 @@ MonoBehaviour:
   - {fileID: 553701058}
   - {fileID: 553701057}
   - {fileID: 553701056}
+  touchSfx: {fileID: 8300000, guid: 6607740a5f0825548adee1ddcae9fc8d, type: 3}
 --- !u!82 &553701056
 AudioSource:
   m_ObjectHideFlags: 0
