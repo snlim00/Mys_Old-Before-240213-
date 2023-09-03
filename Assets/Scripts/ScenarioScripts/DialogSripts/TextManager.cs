@@ -40,6 +40,7 @@ public class TextManager : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         string text = script.text.Replace("<br>", Environment.NewLine);
+        text = text.Replace("<PlayerName>", GameData.saveFile.playerName);
 
         seq.AppendCallback(() => characterName.text = script.characterName);
         seq.AppendCallback(() => this.text.text = ""); //텍스트박스 비우기
@@ -61,5 +62,7 @@ public class TextManager : MonoBehaviour
         characterName.text = string.Empty;
         text.text = string.Empty;
         textTransform.anchoredPosition = Vector3.zero;
+
+        text.alignment = TextAnchor.UpperLeft;
     }
 }

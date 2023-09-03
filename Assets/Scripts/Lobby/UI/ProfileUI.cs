@@ -20,6 +20,7 @@ public class ProfileUI : MonoBehaviour
     {
         int date = GameData.saveFile.date;
 
+        playerName.text = GameData.saveFile.playerName;
         dateAmount.text = string.Format("{0:D3}", date);
         dateProgress.fillAmount = date / 9f;
     }
