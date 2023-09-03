@@ -64,5 +64,10 @@ public class TalkMainScene : PhoneScene
         {
             seeunProfile.ShowNoti(true);
         }
+
+        if (TutorialManager.Instance.doPhoneTutorial == true)
+        {
+            TutorialManager.Instance.ActiveTutorialImage(2, true);
+        }
     }
 }
