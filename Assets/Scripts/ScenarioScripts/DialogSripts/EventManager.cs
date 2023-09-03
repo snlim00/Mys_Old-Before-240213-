@@ -274,7 +274,7 @@ public class EventManager : Singleton<EventManager>
         string name = eventData.eventParam[0];
         float position = float.Parse(eventData.eventParam[1]);
 
-        Ease ease = DOTween.defaultEaseType;
+        Ease ease = Ease.OutCubic;
         Enum.TryParse(typeof(Ease), eventData.eventParam[3], out object outValue);
         if (outValue != null)
         {
