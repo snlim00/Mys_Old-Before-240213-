@@ -628,7 +628,7 @@ public class EventManager : Singleton<EventManager>
             sequence.AppendInterval(1);
             sequence.AppendCallback(() =>
             {
-                MysSceneManager.LoadEditorLobbyScene(null);
+                MysSceneManager.LoadLobbyScene(null);
             });
         }
     }
