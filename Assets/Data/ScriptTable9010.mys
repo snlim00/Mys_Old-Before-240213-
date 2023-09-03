@@ -66,7 +66,7 @@ ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEve
 90100049,Text,,그렇게 의도치 않게 반 강제적으로 자취를 시작하게 됐고,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100050,Text,,집으로 들어간 순간 난…,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100051,Text,,(다시 현재로),0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
-90100052,Text,,[셰어하우스 / AM 08:31],0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
+90100052,Text,,(셰어하우스 / AM 08:31),0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100053,Text,,쾅!,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100054,Text,,똑똑ㅡ,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
 90100055,Text,주인공,아무도 없나보네.,0.03,Skipable,0.5,FALSE,,,None,,,,,,,,,,,,,,,,,,,,,,,,,,
