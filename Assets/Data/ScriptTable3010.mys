@@ -123,4 +123,5 @@ ScriptId,ScriptType,CharacterName,Text,TextDuration,SkipMethod,SkipDelay,LinkEve
 30100106,Text,,…뭔가 까칠한 듯 착하다. 좋은 애인 거 같네.,0.03,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,,,,,,,,,,,,,,
 30100107,Text,,이제 내 방이나 좀 둘러볼까?,0.03,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,,,,,,,,,,,,,,
 30100108,Text,,띠- 띠- 띠띠-,0.03,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,,,,,,,,,,,,,,
-30100109,Text,,…어? 누구지?,0.03,Skipable,0.5,False,,,None,0,0,0.5,0,Restart,0,,,,,,,,,,,,,,,,,,,,
+30100109,Text,,…어? 누구지?,0.03,Skipable,0.5,True,,,None,0,0,0.5,0,Restart,0,,,,,,,,,,,,,,,,,,,,
+30100110,Event,,,0.03,Skipable,0.5,False,,,CloseScenario,0,0,0.5,0,Restart,0,,,,,,,,,,,,,,,,,,,,
