@@ -42,7 +42,9 @@ public class TextManager : MonoBehaviour
         string text = script.text.Replace("<br>", Environment.NewLine);
         text = text.Replace("<PlayerName>", GameData.saveFile.playerName);
 
-        seq.AppendCallback(() => characterName.text = script.characterName);
+        string name = script.characterName.Replace("<PlayerName>", GameData.saveFile.playerName);
+
+        seq.AppendCallback(() => characterName.text = name);
         seq.AppendCallback(() => this.text.text = ""); //텍스트박스 비우기
 
         if (script.textDuration == 0) //textDuration이 0이라면 DOText를 실행하지 않고 그냥 텍스트를 설정하도록 함. (안 그러면 시퀀스가 좀 이상해지는 듯) 221219
