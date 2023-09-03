@@ -65,6 +65,13 @@ public class NicknameScene : MonoBehaviour
 
     private void InitVerifyScene()
     {
-        verifyInfoText.text = "정말 [" + nicknameInputField.text + "] 입니까?";
+        string name = nicknameInputField.text;
+
+        if(string.IsNullOrWhiteSpace(name))
+        {
+            name = "하봄";
+        }
+
+        verifyInfoText.text = "정말 [" + name + "] 입니까?";
     }
 }

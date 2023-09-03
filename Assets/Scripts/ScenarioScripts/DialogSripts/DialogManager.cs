@@ -5,13 +5,16 @@ using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
 using UniRx;
-using System.IO.Compression;
+using UnityEngine.UI;
 
 public class DialogManager : Singleton<DialogManager>   
 {
     [SerializeField] private EventManager eventMgr;
     [SerializeField] private TextManager textMgr;
     [SerializeField] private MouseEffect mouseEffect;
+
+    [SerializeField] private Button skipBtn;
+
     public Canvas canvas;
 
     private Sequence autoSkipSeq;
@@ -192,6 +195,8 @@ public class DialogManager : Singleton<DialogManager>
             skipStream = Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.Space))
                 .Subscribe(_ => Skip(script, stopCondition));
+
+            skipBtn.onClick.AddListener(() => Skip(script, stopCondition));
         }
     }
 
@@ -220,6 +225,8 @@ public class DialogManager : Singleton<DialogManager>
 
         skipStream?.Dispose();
 
+        skipBtn.onClick.RemoveAllListeners();
+
         mouseEffect.ActiveMouseEffect(false);
 
         if (scriptMgr.nextScript != null)
@@ -242,6 +249,8 @@ public class DialogManager : Singleton<DialogManager>
         tweenMgr.StopAllTweens();
 
         skipStream?.Dispose();
+
+        skipBtn.onClick.RemoveAllListeners();
 
         isPlaying = false;
 
