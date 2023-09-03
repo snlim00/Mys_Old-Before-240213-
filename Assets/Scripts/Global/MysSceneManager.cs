@@ -51,6 +51,11 @@ public class MysSceneManager : Singleton<MysSceneManager>
     {
         Sequence seq = DOTween.Sequence();
 
+        seq.AppendCallback(() =>
+        {
+            SoundManager.FadeOutBGM();
+        });
+
         seq.Append(Instance.fadeObj.DOFade(1, 1).SetEase(Ease.OutQuad));
 
         seq.AppendCallback(() =>
