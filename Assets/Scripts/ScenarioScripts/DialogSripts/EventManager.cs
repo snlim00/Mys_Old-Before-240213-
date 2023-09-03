@@ -272,7 +272,7 @@ public class EventManager : Singleton<EventManager>
         EventData eventData = script.eventData;
 
         string name = eventData.eventParam[0];
-        int position = int.Parse(eventData.eventParam[1]);
+        float position = float.Parse(eventData.eventParam[1]);
 
         Ease ease = DOTween.defaultEaseType;
         Enum.TryParse(typeof(Ease), eventData.eventParam[3], out object outValue);
