@@ -364,6 +364,8 @@ public class NodeGraph : Singleton<NodeGraph>
         selectedNode.SelectNode();
 
         SetContentSize();
+
+        objList.RefreshList();
     }
 
     public void RefreshAllNode()
