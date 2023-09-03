@@ -32,6 +32,11 @@ public class TalkProfileScene : PhoneScene
         storyBtn.onClick.AddListener(() =>
         {
             storyPopup.SetActive(!storyPopup.activeSelf);
+
+            if (TutorialManager.Instance.doPhoneTutorial == true)
+            {
+                TutorialManager.Instance.ActiveTutorialImage(4, true);
+            }
         });
 
         closeBtn.onClick.AddListener(() =>
@@ -104,6 +109,16 @@ public class TalkProfileScene : PhoneScene
         base.OnBackButtonClick();
 
         phoneMgr.OpenScene(PhoneSceneList.TalkMain);
+    }
+
+    public override void OnOpenScene()
+    {
+        base.OnOpenScene();
+
+        if (TutorialManager.Instance.doPhoneTutorial == true)
+        {
+            TutorialManager.Instance.ActiveTutorialImage(3, true);
+        }
     }
 
     public override void OnCloseScene()

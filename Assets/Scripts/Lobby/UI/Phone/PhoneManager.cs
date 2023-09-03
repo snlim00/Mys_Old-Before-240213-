@@ -50,6 +50,11 @@ public class PhoneManager : Singleton<PhoneManager>
 
             talkNotice.rectTransform.DOAnchorPosY(pos.y - 12, 1).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo).Play();
         }
+
+        if(TutorialManager.Instance.doPhoneTutorial == true)
+        {
+            TutorialManager.Instance.ActiveTutorialImage(0, true);
+        }
     }
 
     public void OpenScene(PhoneSceneList scene)
@@ -137,6 +142,11 @@ public class PhoneManager : Singleton<PhoneManager>
     public void OnPutInPhoneButtonClick()
     {
         if (isEnable == false) { return; }
+
+        if (TutorialManager.Instance.doPhoneTutorial == true)
+        {
+            TutorialManager.Instance.ActiveTutorialImage(0, true);
+        }
 
         OpenScene(PhoneSceneList.Home);
 

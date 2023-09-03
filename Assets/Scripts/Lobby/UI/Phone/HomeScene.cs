@@ -37,10 +37,12 @@ public class HomeScene : PhoneScene
             if(chapterData.Value < 3)
             {
                 talkApp.ShowNoti(true);
-                return;
             }
         }
 
-        talkApp.ShowNoti(false);
+        if (TutorialManager.Instance.doPhoneTutorial == true)
+        {
+            TutorialManager.Instance.ActiveTutorialImage(1, true);
+        }
     }
 }
