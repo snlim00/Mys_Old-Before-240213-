@@ -16,7 +16,7 @@ public class TalkMainScene : PhoneScene
 
         foreach (var profile in profileList)
         {
-            profile.profileImage.onClick.AddListener(() =>
+            profile.profileButton.onClick.AddListener(() =>
             {
                 phoneMgr.OpenScene(PhoneSceneList.TalkProfile);
 
@@ -25,7 +25,7 @@ public class TalkMainScene : PhoneScene
                     profile.profileName.text, 
                     profile.message.text, 
                     profile.profileMusic.text, 
-                    profile.profileImage.image.sprite);
+                    profile.profileImage.sprite);
             });
         }
     }

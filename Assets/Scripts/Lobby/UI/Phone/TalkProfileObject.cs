@@ -7,7 +7,8 @@ public class TalkProfileObject : NotiableObject
 {
     public string characterName;
 
-    public Button profileImage;
+    public Button profileButton;
+    public Image profileImage;
     public Text profileName;
     public Text message;
     public Text profileMusic;
