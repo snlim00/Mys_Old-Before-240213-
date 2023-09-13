@@ -167,9 +167,10 @@ public class EditorManager : Singleton<EditorManager>
         nodeGrp.RefreshAll();
         nodeGrp.SetAutomaticBranch();
 
-        string path = PathManager.CreateScriptPath(RuntimeData.scriptMgr.scriptGroupId);
+        string textPath = PathManager.CreateScriptTextPath(RuntimeData.scriptMgr.scriptGroupId);
+        string eventPath = PathManager.CreateScriptPath(RuntimeData.scriptMgr.scriptGroupId);
 
-        using (var writer = new CsvFileWriter(path))
+        using (var writer = new CsvFileWriter(eventPath))
         {
             List<string> colums = new List<string>();
 
@@ -219,42 +220,40 @@ public class EditorManager : Singleton<EditorManager>
                         }
                     }
 
+                    if (script.scriptType != ScriptType.Event) { return; }
+
                     foreach (ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
                     {
                         string value = node.script.GetVariableFromKey(key) ?? string.Empty;
 
+                        ScriptInfo scriptInfo = ScriptInfo.eventInfos[eventData.eventType];
+                        ParamInfo paramInfo = scriptInfo.GetParamInfo(key);
 
-                        if (script.scriptType == ScriptType.Event)
+                        if (paramInfo == null) //사용하지 않는 파라미터라면
                         {
-                            ScriptInfo scriptInfo = ScriptInfo.eventInfos[eventData.eventType];
-                            ParamInfo paramInfo = scriptInfo.GetParamInfo(key);
-
-                            if (paramInfo == null) //사용하지 않는 파라미터라면
+                            if (ScriptInfo.scriptParamInfos.TryGetValue(key, out var scriptParam)) //공용 파라미터에 있는 지 확인
                             {
-                                if (ScriptInfo.scriptParamInfos.TryGetValue(key, out var scriptParam)) //공용 파라미터에 있는 지 확인
-                                {
-                                    paramInfo = scriptParam;
+                                paramInfo = scriptParam;
 
-                                    if (scriptInfo.excludedKeys.Contains(key) == true) //공용 파라미터에 있지만 제외되는 키라면 값을 기본값으로 변경.
+                                if (scriptInfo.excludedKeys.Contains(key) == true) //공용 파라미터에 있지만 제외되는 키라면 값을 기본값으로 변경.
+                                {
+                                    value = paramInfo.defaultValue;
+                                }
+                                else
+                                {
+                                    if (string.IsNullOrWhiteSpace(value)) //공용 파라미터면서 사용되는 값이지만 입력되지 않은 경우 기본값으로 설정.
                                     {
                                         value = paramInfo.defaultValue;
                                     }
-                                    else
-                                    {
-                                        if (string.IsNullOrWhiteSpace(value)) //공용 파라미터면서 사용되는 값이지만 입력되지 않은 경우 기본값으로 설정.
-                                        {
-                                            value = paramInfo.defaultValue;
-                                        }
-                                    }
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (string.IsNullOrWhiteSpace(value)) //사용되는 파라미터임에도 값이 없다면 기본 값을 적용.
                             {
-                                if (string.IsNullOrWhiteSpace(value)) //사용되는 파라미터임에도 값이 없다면 기본 값을 적용.
-                                {
-                                    (node.script.scriptId + " | " + paramInfo.paramName + " : 해당 값이 입력되지 않았습니다.").LogError();
-                                    value = paramInfo.defaultValue;
-                                }
+                                (node.script.scriptId + " | " + paramInfo.paramName + " : 해당 값이 입력되지 않았습니다.").LogError();
+                                value = paramInfo.defaultValue;
                             }
                         }
 
@@ -273,6 +272,43 @@ public class EditorManager : Singleton<EditorManager>
             }
         }
 
-        
+        using (var writer = new CsvFileWriter(textPath))
+        {
+            List<string> colums = new List<string>();
+
+            //스크립트 정보 처리
+            {
+                string[] keys = Enum.GetNames(typeof(ScriptDataKey));
+
+                colums.AddRange(keys);
+                writer.WriteRow(colums);
+                colums.Clear();
+            }
+
+            //스크립트 처리
+            {
+                nodeGrp.TraversalNode(true, nodeGrp.head, (index, branchIndex, depth, node) =>
+                {
+                    var script = node.script;
+
+                    if(script.scriptType != ScriptType.Text) { return; }
+
+                    foreach (ScriptDataKey key in Enum.GetValues(typeof(ScriptDataKey)))
+                    {
+                        string value = node.script.GetVariableFromKey(key) ?? string.Empty;
+
+                        if (value == string.Empty)
+                        {
+                            value = "";
+                        }
+
+                        colums.Add(value);
+                    }
+
+                    writer.WriteRow(colums);
+                    colums = new();
+                });
+            }
+        }
     }
 }
