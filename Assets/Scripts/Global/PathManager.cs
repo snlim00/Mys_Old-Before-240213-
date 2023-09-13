@@ -7,6 +7,17 @@ public class PathManager
 {
     public static string scriptPath{ get { return Application.dataPath + "/Data/"; } }
 
+    [System.Obsolete]
+    public static string _CreateScriptPath(int scriptGroupID)
+    {
+        return scriptPath + "ScriptTable" + scriptGroupID + ".mys";
+    }
+
+    public static string CreateScriptTextPath(int scriptGroupID)
+    {
+        return scriptPath + "TextScript" + scriptGroupID + ".csv";
+    }
+
     public static string CreateScriptPath(int scriptGroupID)
     {
         return scriptPath + "ScriptTable" + scriptGroupID + ".mys";
