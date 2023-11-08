@@ -45,6 +45,11 @@ public class EventManager : Singleton<EventManager>
         dialogMgr = DialogManager.Instance;
     }
 
+    /// <summary>
+    /// 이벤트 스크립트로 시퀀스를 만들어 반환함.
+    /// </summary>
+    /// <param name="script"></param>
+    /// <returns></returns>
     public Sequence CreateEventSequence(ScriptObject script)
     {
         Sequence seq = DOTween.Sequence();
@@ -71,7 +76,11 @@ public class EventManager : Singleton<EventManager>
         return seq;
     }
 
-
+    /// <summary>
+    /// 시퀀스에 해당 이벤트에 해당하는 작업 추가
+    /// </summary>
+    /// <param name="script"></param>
+    /// <param name="sequence"></param>
     public void CallEvent(ScriptObject script, ref Sequence sequence)
     {
         switch (script.eventData.eventType)
@@ -155,6 +164,10 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    /// <summary>
+    /// 이벤트 관련 모든 변수 및 오브젝트 초기화
+    /// </summary>
+    /// 새로운 변수 및 오브젝트가 추가되면 해당 함수에서 초기화하도록 해줘야 함.
     public void ResetAll()
     {
         background.sprite = defaultBg;

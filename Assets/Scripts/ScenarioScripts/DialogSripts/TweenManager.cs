@@ -54,7 +54,10 @@ public class TweenManager
             tweenObj.isSkipped = false;
         });
     }
-
+    
+    /// <summary>
+    /// 모든 TweenObject의 Skip을 호출합니다.
+    /// </summary>
     public void SkipAllTweens()
     {
         //DoAllTweens(tweenObj =>

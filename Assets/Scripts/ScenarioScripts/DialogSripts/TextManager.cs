@@ -14,41 +14,52 @@ public class TextManager : MonoBehaviour
     public Text characterName;
     public Shadow characterNameShadow;
 
-    public Text textForLength;
+    public Text textForLength; //텍스트의 마지막 줄의 길이를 알기 위한 텍스트로, text와 완전히 동일한 설정의 텍스트 박스여야 함.
 
+    /// <summary>
+    /// 현재 입력된 텍스트의 마지막 줄이 적용된 텍스트 박스의 Width를 반환
+    /// </summary>
+    /// <returns></returns>
     public float GetLastLineTextLength()
     {
-        
-
         return textForLength.rectTransform.sizeDelta.x;
     }
 
+    /// <summary>
+    /// 이벤트 스크립트로 시퀀스를 만들어 반환함.
+    /// </summary>
+    /// <param name="script"></param>
+    /// <returns></returns>
     public Sequence CreateTextSequence(ScriptObject script)
     {
-        if(script.characterName == "류지혜" || script.characterName == "지혜")
+        //캐릭터 이름에 따라 그림자의 색상 변경
         {
-            characterNameShadow.effectColor = new(255 / 255f, 240 / 255f, 197 / 255f, 0.5f);
-            this.text.color = new(255 / 255f, 240 / 255f, 197 / 255f);
-        }
-        else if(script.characterName == "박윤하" || script.characterName == "윤하")
-        {
-            characterNameShadow.effectColor = new(241 / 255f, 205 / 255f, 255 / 255f, 0.5f);
-            this.text.color = new(241 / 255f, 205 / 255f, 255 / 255f);
-        }
-        else if(script.characterName == "홍세은" || script.characterName == "세은")
-        {
-            characterNameShadow.effectColor = new(197 / 255f, 244 / 255f, 255 / 255f, 0.5f);
-            this.text.color = new(197 / 255f, 244 / 255f, 255 / 255f);
-        }
-        else
-        {
-            characterNameShadow.effectColor = new(0, 0, 0, 0.5f);
-            this.text.color = Color.white;
+            if (script.characterName == "류지혜" || script.characterName == "지혜")
+            {
+                characterNameShadow.effectColor = new(255 / 255f, 240 / 255f, 197 / 255f, 0.5f);
+                this.text.color = new(255 / 255f, 240 / 255f, 197 / 255f);
+            }
+            else if (script.characterName == "박윤하" || script.characterName == "윤하")
+            {
+                characterNameShadow.effectColor = new(241 / 255f, 205 / 255f, 255 / 255f, 0.5f);
+                this.text.color = new(241 / 255f, 205 / 255f, 255 / 255f);
+            }
+            else if (script.characterName == "홍세은" || script.characterName == "세은")
+            {
+                characterNameShadow.effectColor = new(197 / 255f, 244 / 255f, 255 / 255f, 0.5f);
+                this.text.color = new(197 / 255f, 244 / 255f, 255 / 255f);
+            }
+            else
+            {
+                characterNameShadow.effectColor = new(0, 0, 0, 0.5f);
+                this.text.color = Color.white;
+            }
         }
 
         Sequence seq = DOTween.Sequence();
 
-        string msg = script.text.Replace("<br>", Environment.NewLine);
+        //치환해야할 텍스트 치환
+        string msg = script.text.Replace("<br>", Environment.NewLine); //<br>을 \n으로 치환 
         msg = msg.Replace("<PlayerName>", GameData.saveFile.playerName);
 
         string name = script.characterName.Replace("<PlayerName>", GameData.saveFile.playerName);
@@ -65,15 +76,18 @@ public class TextManager : MonoBehaviour
             seq.Append(this.text.DOText(msg, msg.Length * script.textDuration));
         }
 
+        //텍스트의 마지막 줄만 가져와 textForLength의 텍스트에 적용
         string[] lines = msg.Split('\n');
-
         string lastLine = lines[lines.Length - 1];
-
         textForLength.text = lastLine;
 
         return seq;
     }
 
+    /// <summary>
+    /// 텍스트 관련 모든 변수 및 오브젝트 초기화
+    /// </summary>
+    /// 새로운 변수 및 오브젝트가 추가되면 해당 함수에서 초기화하도록 해줘야 함.
     public void ResetAll()
     {
         characterName.text = string.Empty;
