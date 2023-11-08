@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UniRx;
+using static UnityEditor.PlayerSettings;
 
 public class MouseEffect : MonoBehaviour
 {
     [SerializeField] private Image img;
+
+    private TextManager textMgr;
 
     private bool isActive = false;
 
@@ -18,6 +22,8 @@ public class MouseEffect : MonoBehaviour
 
     private Tween floatTween;
 
+    public const float mouseEffectInterval = 11;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -25,19 +31,29 @@ public class MouseEffect : MonoBehaviour
         defaultAnchorPos = rectTransform.anchoredPosition;
     }
 
-    public void ActiveMouseEffect(bool doActive)
+    private void Start()
     {
-        if(effectTween?.IsPlaying() == true)
+        textMgr = FindObjectOfType<TextManager>();
+    }
+
+    public void ActiveMouseEffect(bool doActive, float? pos)
+    {
+        if (effectTween?.IsPlaying() == true)
         {
             effectTween.Kill();
             effectTween = null;
         }
 
-        if(floatTween?.IsPlaying() == true)
+        if (floatTween?.IsPlaying() == true)
         {
             floatTween.Kill(true);
             floatTween = null;
             rectTransform.anchoredPosition = new(rectTransform.anchoredPosition.x, defaultAnchorPos.y);
+        }
+
+        if (doActive == true)
+        {
+            rectTransform.localPosition = new((pos ?? 0) + mouseEffectInterval, rectTransform.localPosition.y);
         }
 
         float alpha = doActive == true ? 1 : 0;
@@ -45,6 +61,6 @@ public class MouseEffect : MonoBehaviour
         isActive = doActive;
 
         effectTween = img.DOFade(alpha, duration).Play();
-        floatTween = rectTransform.DOAnchorPosY(rectTransform.anchoredPosition.y - 5, 1).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo).Play();
+        floatTween = rectTransform.DOAnchorPosY(rectTransform.anchoredPosition.y - 4, 0.7f).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo).Play();
     }
 }

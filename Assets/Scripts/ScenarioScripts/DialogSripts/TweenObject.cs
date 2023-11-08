@@ -5,7 +5,6 @@ using DG.Tweening;
 using System;
 using UniRx;
 
-
 public class TweenObject
 {
     private TweenManager tweenMgr;

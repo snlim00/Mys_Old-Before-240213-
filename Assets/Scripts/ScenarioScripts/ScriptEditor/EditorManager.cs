@@ -104,6 +104,8 @@ public class EditorManager : Singleton<EditorManager>
         var command = new CreateNextNode();
         command.SetScript(script).Execute();
 
+        ("Create Node : " + script.scriptId).Log();
+
         return command.createdNode;
     }
 
@@ -113,6 +115,7 @@ public class EditorManager : Singleton<EditorManager>
 
         List<BranchBase> branchInfos = new();
 
+        //BranchInfo 또는 ChoiceInfo를 받아 BranchInfo로 만드는 과정.
         if(parentScript.eventData.eventType == EventType.Branch)
         {
             List<BranchInfo> temp = BranchInfo.CreateBranchInfo(parentScript);
@@ -138,7 +141,7 @@ public class EditorManager : Singleton<EditorManager>
 
             var branchInfo = branchInfos[i];
 
-            scriptMgr.SetCurrentScript(branchInfo.scriptId); //여기서 scriptId를 통해 스크립트를 가져오려고 하면 scriptId가 없음. //스크립트가 뒤죽박죽이 되어있음. 일부 Id는 유실됨.
+            scriptMgr.SetCurrentScript(branchInfo.scriptId);
 
             nodeGrp.SelectNode(parent);
 
@@ -150,14 +153,14 @@ public class EditorManager : Singleton<EditorManager>
             scriptMgr.Next();
 
             LoadScript(scriptMgr.currentScript, (script) => {
-                bool stop = script.scriptType == ScriptType.Event && script.eventData.eventType == EventType.BranchEnd;
+                bool doStop = script.scriptType == ScriptType.Event && script.eventData.eventType == EventType.BranchEnd;
 
-                if(stop == true)
+                if(doStop == true)
                 {
                     nodeGrp.SelectNode(parent);
                 }
 
-                return stop;
+                return doStop;
             });
         }
     }

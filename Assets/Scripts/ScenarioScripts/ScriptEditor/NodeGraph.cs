@@ -81,6 +81,11 @@ public class NodeGraph : Singleton<NodeGraph>
 
         if (inputType == InputType.Select)
         {
+            if(Input.GetKeyDown(KeyCode.Q) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
+            {
+                GotoLobby();
+            }
+
             if(Input.GetKeyDown(KeyCode.S))
             {
                 Save();
@@ -636,5 +641,11 @@ public class NodeGraph : Singleton<NodeGraph>
         SelectNode(head);
 
         inputType = InputType.Select;
+    }
+
+    private void GotoLobby()
+    {
+        Save();
+        MysSceneManager.LoadInitialScene(null);
     }
 }

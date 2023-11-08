@@ -24,6 +24,11 @@ public class MysSceneManager : Singleton<MysSceneManager>
         instance = MysSceneManager.Instance;
     }
 
+    public static void LoadInitialScene(Action cb)
+    {
+        LoadScene("InitialScene", cb);
+    }
+
     public static void LoadLobbyScene(Action cb)
     {
         LoadScene("Lobby", cb);

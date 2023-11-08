@@ -47,6 +47,14 @@ public class DialogManager : Singleton<DialogManager>
         //    .Subscribe(_ => MysSceneManager.LoadLobbyScene(null));
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            textMgr.GetLastLineTextLength().Log();
+        }
+    }
+
     public void StartDialog(int scriptGroupId, int firstScriptId = -1, bool doNotReset = false)
     {
         if(doNotReset == false)
@@ -190,7 +198,7 @@ public class DialogManager : Singleton<DialogManager>
         else if (script.skipMethod == SkipMethod.Skipable || script.skipMethod == SkipMethod.NoSkip)
         {
             Observable.Timer(TimeSpan.FromSeconds(tweenMgr.FindLongestDuration()))
-                .Subscribe(_ => mouseEffect.ActiveMouseEffect(true));
+                .Subscribe(_ => mouseEffect.ActiveMouseEffect(true && !string.IsNullOrWhiteSpace(textMgr.text.text), textMgr.GetLastLineTextLength()));
 
             skipStream = Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.Space))
@@ -210,7 +218,7 @@ public class DialogManager : Singleton<DialogManager>
 
             onSkip.Invoke();
 
-            mouseEffect.ActiveMouseEffect(true);
+            mouseEffect.ActiveMouseEffect(true && !string.IsNullOrWhiteSpace(textMgr.text.text), textMgr.GetLastLineTextLength());
         }
         else if (isPlaying == false) //스킵 타입과 관계없이 isPlaying이 false라면 다음 스크립트로 이동
         {
@@ -227,7 +235,7 @@ public class DialogManager : Singleton<DialogManager>
 
         skipBtn.onClick.RemoveAllListeners();
 
-        mouseEffect.ActiveMouseEffect(false);
+        mouseEffect.ActiveMouseEffect(false, textMgr.GetLastLineTextLength());
 
         if (scriptMgr.nextScript != null)
         {
@@ -270,7 +278,7 @@ public class DialogManager : Singleton<DialogManager>
     {
         eventMgr.ResetAll();
         textMgr.ResetAll();
-        mouseEffect.ActiveMouseEffect(false);
+        mouseEffect.ActiveMouseEffect(false, textMgr.GetLastLineTextLength());
     }
 
     public void MoveTo(int scriptGroupId, int targetScriptId)

@@ -27,6 +27,10 @@ public class TweenManager
         }
     }
 
+    /// <summary>
+    /// Tween을 삭제하더라도 문제가 생기지 않도록 역순회합니다.
+    /// </summary>
+    /// <param name="action"></param>
     public void DoAllTweensForModify(Action<TweenObject> action)
     {
         for (int i = tweenList.Count - 1; i >= 0; --i)

@@ -14,6 +14,15 @@ public class TextManager : MonoBehaviour
     public Text characterName;
     public Shadow characterNameShadow;
 
+    public Text textForLength;
+
+    public float GetLastLineTextLength()
+    {
+        
+
+        return textForLength.rectTransform.sizeDelta.x;
+    }
+
     public Sequence CreateTextSequence(ScriptObject script)
     {
         if(script.characterName == "류지혜" || script.characterName == "지혜")
@@ -39,8 +48,8 @@ public class TextManager : MonoBehaviour
 
         Sequence seq = DOTween.Sequence();
 
-        string text = script.text.Replace("<br>", Environment.NewLine);
-        text = text.Replace("<PlayerName>", GameData.saveFile.playerName);
+        string msg = script.text.Replace("<br>", Environment.NewLine);
+        msg = msg.Replace("<PlayerName>", GameData.saveFile.playerName);
 
         string name = script.characterName.Replace("<PlayerName>", GameData.saveFile.playerName);
 
@@ -49,12 +58,18 @@ public class TextManager : MonoBehaviour
 
         if (script.textDuration == 0) //textDuration이 0이라면 DOText를 실행하지 않고 그냥 텍스트를 설정하도록 함. (안 그러면 시퀀스가 좀 이상해지는 듯) 221219
         {
-            seq.AppendCallback(() => this.text.text = text);
+            seq.AppendCallback(() => this.text.text = msg);
         }
         else //textDuration은 한 글자가 생성되는 데 걸리는 시간이므로 text의 Length에 곱해서 사용.
         {
-            seq.Append(this.text.DOText(text, text.Length * script.textDuration));
+            seq.Append(this.text.DOText(msg, msg.Length * script.textDuration));
         }
+
+        string[] lines = msg.Split('\n');
+
+        string lastLine = lines[lines.Length - 1];
+
+        textForLength.text = lastLine;
 
         return seq;
     }
